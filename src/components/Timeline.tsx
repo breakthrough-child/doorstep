@@ -14,7 +14,7 @@ export function Timeline({ items, parentName }: { items: TimelineView[]; parentN
     );
   return (
     <>
-      <ol className="relative space-y-3 before:absolute before:bottom-3 before:left-[2.85rem] before:top-3 before:w-px before:bg-line sm:before:left-[3.35rem]">
+      <ol className="space-y-3">
         {items.map((e) => (
           <TimelineRow key={e.id} e={e} onOpen={() => setOpen(e)} />
         ))}
@@ -27,20 +27,17 @@ export function Timeline({ items, parentName }: { items: TimelineView[]; parentN
 function TimelineRow({ e, onOpen }: { e: TimelineView; onOpen: () => void }) {
   const Icon = KIND_ICON[e.kind] ?? KIND_ICON.motion!;
   return (
-    <li className="animate-rise relative grid grid-cols-[2.4rem_1fr] gap-3 sm:grid-cols-[2.9rem_1fr] sm:gap-4">
-      <div className="pt-3 text-right">
-        <time className="text-sm font-bold tabular-nums text-ink" dateTime={new Date(e.startMs).toISOString()}>
+    <li className="animate-rise grid grid-cols-[3rem_1fr] gap-2.5 sm:grid-cols-[3.5rem_1fr] sm:gap-4">
+      <div className="pt-3.5 text-right">
+        <time className="font-display text-[1.05rem] font-semibold tabular-nums text-ink" dateTime={new Date(e.startMs).toISOString()}>
           {e.time}
         </time>
       </div>
-      <div className="relative flex gap-3 rounded-2xl border border-line bg-card p-3 sm:p-3.5">
-        <span className="absolute -left-[1.42rem] top-3.5 grid h-6 w-6 place-items-center rounded-full border border-line bg-paper text-ink-soft sm:-left-[1.55rem]">
-          <Icon className="h-3.5 w-3.5" />
-        </span>
+      <div className="flex flex-col gap-3 rounded-2xl border border-line bg-card p-3 sm:flex-row sm:items-start sm:p-3.5">
         {e.hasSnapshot ? (
           <button
             onClick={onOpen}
-            className="group relative aspect-video w-28 shrink-0 overflow-hidden rounded-xl bg-paper ring-1 ring-line sm:w-40"
+            className="group relative aspect-video w-full shrink-0 overflow-hidden rounded-xl bg-paper ring-1 ring-line sm:w-40"
             aria-label={`Open snapshot from ${e.time}`}
           >
             {/* object-contain: never crop — the Ring watermark must stay fully visible. */}
@@ -53,7 +50,7 @@ function TimelineRow({ e, onOpen }: { e: TimelineView; onOpen: () => void }) {
           </button>
         ) : (
           <div
-            className="grid aspect-video w-28 shrink-0 place-items-center rounded-xl bg-paper text-center text-[0.7rem] leading-tight text-ink-soft ring-1 ring-line sm:w-40"
+            className="grid aspect-[4/1] w-full shrink-0 place-items-center rounded-xl bg-paper text-center text-xs leading-tight text-ink-soft ring-1 ring-line sm:aspect-video sm:w-40"
             title={e.snapshotNote ?? undefined}
           >
             <span className="px-2">No image from Ring</span>
@@ -61,7 +58,10 @@ function TimelineRow({ e, onOpen }: { e: TimelineView; onOpen: () => void }) {
         )}
         <div className="min-w-0 flex-1">
           <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-ink-soft">
-            <span className="font-bold uppercase tracking-wide">{KIND_LABEL[e.kind] ?? e.kind}</span>
+            <span className="inline-flex items-center gap-1 font-bold uppercase tracking-wide">
+              <Icon className="h-3.5 w-3.5" />
+              {KIND_LABEL[e.kind] ?? e.kind}
+            </span>
             {e.origin !== "live" && (
               <span className="rounded-full bg-sky-soft px-2 py-px font-bold text-sky">{e.origin === "simulated" ? "Simulated" : "Replayed"}</span>
             )}

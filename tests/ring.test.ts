@@ -200,8 +200,9 @@ describe("RingClient", () => {
   });
 
   it("paginates history newest-first and stops past the window", async () => {
+    const T = 1_790_000_000_000; // realistic epoch ms (small numbers are treated as epoch seconds)
     const page = (ids: Array<[string, number]>, next?: string) => ({
-      data: ids.map(([id, start]) => ({ type: "history-events", id, attributes: { event_type: "ding", start } })),
+      data: ids.map(([id, start]) => ({ type: "history-events", id, attributes: { event_type: "ding", start: T + start } })),
       links: next ? { next: `/v1/history/devices/d/events?page[key]=${next}` } : {},
     });
     const fetchImpl = vi
@@ -210,7 +211,7 @@ describe("RingClient", () => {
       .mockResolvedValueOnce(json(200, page([["c", 3000], ["d", 1000]], "k2")))
       .mockResolvedValueOnce(json(200, page([["e", 500]])));
     const c = new RingClient({ token: "t", fetchImpl });
-    const events = await c.listEventsSince("d", 2000);
+    const events = await c.listEventsSince("d", T + 2000);
     expect(events.map((e) => e.id)).toEqual(["a", "b", "c"]);
     expect(fetchImpl).toHaveBeenCalledTimes(2);
     expect(String(fetchImpl.mock.calls[1]![0])).toContain("page%5Bkey%5D=k1");

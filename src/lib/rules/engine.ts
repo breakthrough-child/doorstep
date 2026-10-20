@@ -166,7 +166,7 @@ export function packagesLeftOut({ now, plan, events }: RulesInput): AlertCandida
         detail:
           reason === "dark"
             ? `Delivered at ${clockLabel(p.startMs, tz)} and still out after dark.`
-            : `Delivered at ${clockLabel(p.startMs, tz)}; still out after ${Math.max(waited, plan.packageHours)} h.`,
+            : `Delivered at ${clockLabel(p.startMs, tz)}; still out after ${Math.max(waited, plan.packageHours)}\u00a0h.`,
         triggeredAt: triggerAt,
         eventIds: pickup ? [p.id, pickup.id] : [p.id],
         bestEffort: false,

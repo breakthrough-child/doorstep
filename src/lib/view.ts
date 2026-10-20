@@ -57,6 +57,7 @@ export interface AppState {
     speed: number;
     playing: boolean;
     progress: number;
+    startMs: number;
     startLabel: string;
     endLabel: string;
   };
@@ -124,6 +125,7 @@ export function buildState(): AppState {
       speed: scenarioState.speed,
       playing: scenarioState.playing,
       progress: end > start ? Math.min(1, (scenarioState.simMs - start) / (end - start)) : 1,
+      startMs: start,
       startLabel: s.startTime,
       endLabel: s.endTime,
     };

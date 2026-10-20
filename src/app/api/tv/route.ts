@@ -6,15 +6,19 @@ export const dynamic = "force-dynamic";
 
 /**
  * Feed for the Fire TV visual doorbell. "atDoor" is the most recent person/doorbell/package event
- * that reached Doorstep in the last 60 real seconds (and happened within 10 minutes of app time),
- * with its AI description. Real-time matters here: at 60x a scenario minute lasts one second.
+ * that reached Doorstep in the last 60 real seconds, with its AI description. Real time matters
+ * here: at 60x a scenario minute lasts one second.
  */
 export async function GET() {
   await tick();
   const s = buildState();
-  const recent = s.timeline.find(
-    (e) => (e.kind === "ding" || e.kind === "person" || e.kind === "package") && Date.now() - e.receivedAt <= 60_000 && s.now - e.startMs <= 10 * 60_000,
-  );
+  const recent = s.timeline.find((e) => {
+    if (e.kind !== "ding" && e.kind !== "person" && e.kind !== "package") return false;
+    if (Date.now() - e.receivedAt > 60_000) return false;
+    // Skip backfilled events: a scenario's pre-loaded morning, or a replay batch load.
+    return s.mode === "SCENARIO" ? e.startMs >= (s.scenario?.startMs ?? 0) : s.now - e.startMs <= 5 * 60_000;
+  });
+
   return NextResponse.json(
     {
       parentName: s.parentName,

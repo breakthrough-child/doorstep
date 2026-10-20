@@ -73,7 +73,7 @@
   --color-sky: var(--sky);
   --color-sky-soft: var(--sky-soft);
   --font-serif: "Fraunces", "Iowan Old Style", Georgia, serif;
-  --font-sans: "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-sans: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, sans-serif;
 }
 
 html {
