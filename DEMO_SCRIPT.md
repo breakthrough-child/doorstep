@@ -1,0 +1,22 @@
+# Doorstep — demo video script (target 2:40, hard limit 2:50)
+
+**Setup before recording**
+- `npm run dev`, real Bedrock credentials in `.env.local` (check the `/demo` panel says **Bedrock: real**).
+- Pre-warm captions: run each scenario once at 300× before recording, so every caption is cached. Bedrock latency then never shows on camera, and it costs nothing extra.
+- Browser at 1440×900, zoom 100%, light theme. Second window: `/demo`, preview set to **Ada's phone**.
+- If the Fire TV app runs in the Vega Virtual Device, have it open and polling. Otherwise use the **Grace's TV** preview in `/demo` (label it "web preview of the TV screen" on screen).
+- Close notifications. Hide the bookmarks bar.
+
+| # | Time | Shot | Exact clicks in `/demo` | Voice-over (approx.) |
+|---|---|---|---|---|
+| 1 | 0:00–0:15 | **Payoff.** Phone frame: Today screen goes from calm sage to amber "1 thing needs your attention — The aide doesn't seem to have come". Cut to the TV visual doorbell lighting up with the AI sentence. | Before recording: scenario **The aide doesn't come** at **60×**, skip to ~10:30 with **+2 h** ×1 then **+30 min** as needed, then **Pause**. On record: **Resume**. At 10:45 the alert lands. For the TV beat: **late_night_ding**, press Play at 60×, the TV lights up at 23:41. | "Ada lives two hundred miles from her mum, Grace. This is the moment Doorstep exists for: the carer didn't come, and Ada knows by quarter to eleven, not at bedtime." |
+| 2 | 0:15–0:35 | **Problem.** Ring app clip or a still of a raw motion-alert list vs Doorstep's Today screen. | Phone frame on Today (normal day finished). | "A doorbell camera gives families footage and pings: forty motion alerts a day, and no answer to the only question that matters: is Mum's day normal? Doorstep turns Ring events into plain sentences and stays quiet unless something doesn't fit her day." |
+| 3 | 0:35–1:20 | **Scenario at 60× → 300×.** A normal day plays: timeline fills with Bedrock captions ("A courier leaves a package on the step"), visits tick to "Someone came at 9:12", package brought in. Status stays "All normal". Then `package_left_out`: amber alert at 16:15, still out after dark. | **Stop & clear** → **Grace's normal day** at **60×** for ~8 s, then speed **300×**. Then **A package left out** at **300×**. Click a timeline thumbnail to show the uncropped image + "never identifies people" line. | "Every snapshot goes to Amazon Bedrock, Nova Lite, which writes one calm sentence and never identifies anyone. A rules engine, not AI, decides when to speak up: quiet mornings, missed visits, packages left out, late-night doorbells, unanswered rings." |
+| 4 | 1:20–1:40 | **Acknowledge + care plan.** Tap "I'm on it", then the Care plan screen with the visitor schedule. | Phone frame: tap alert button; navigate Care plan. | "Ada can say she's on it. The care plan is how a family describes a normal day: when the aide comes, when it's too quiet, what counts as late." |
+| 5 | 1:40–2:00 | **Digest.** Digest screen with the Bedrock-written day summary. | Let the scenario finish (auto digest) or press **Write today's digest** on the Digest tab. | "At the end of the day, Bedrock writes Ada a short note. Mum's day in three sentences." |
+| 6 | 2:00–2:20 | **Architecture beat.** Mermaid diagram from README, then 3 s each: `src/lib/ring/client.ts` (`getSnapshot` 303 handling), `src/lib/bedrock/index.ts` (Converse call), `src/lib/rules/engine.ts`. Mode badge close-up: LIVE / REPLAY / SIMULATED. | Switch to **LIVE** in `/demo` with a fresh Playground token to show real devices + API log, then back. | "Real Ring Partner API: device discovery, event history, watermarked snapshots, with a token-expiry flow. The Playground has no webhooks, so we replay recorded Playground data and label simulated days honestly. Bedrock Converse, cached per event: a whole day costs under a cent." |
+| 7 | 2:20–2:40 | **Impact close.** TV visual doorbell (accessibility for deaf / hard-of-hearing residents), back to the calm sage Today screen. | **Grace's TV** preview or VVD; **late_night_ding** at 60×; press OK on the remote to dismiss. | "For Grace, a TV that shows who's at the door when she can't hear the chime. For Ada, peace of mind that's quiet when everything's fine. Doorstep." |
+
+**Fallbacks**
+- Bedrock slow during recording → captions are pre-warmed (cached), so playback shows them instantly.
+- Playground token expired mid-shot → the banner "Ring token expired — paste a new Playground token" is itself worth 2 seconds of footage. Paste a fresh token.

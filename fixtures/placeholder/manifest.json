@@ -1,0 +1,15 @@
+{
+  "recordedAt": 1792494600000,
+  "synthetic": true,
+  "source": "Hand-written placeholder shaped per the published Ring Partner API schema. Replace with a real Playground recording: npm run record.",
+  "devices": "devices.json",
+  "history": [{ "deviceId": "placeholder.device.front-door", "pages": ["history-front-door-1.json"] }],
+  "snapshots": {
+    "ph-evt-6": "snapshots/placeholder-1.jpg",
+    "ph-evt-5": "snapshots/placeholder-2.jpg",
+    "ph-evt-4": "snapshots/placeholder-3.jpg",
+    "ph-evt-3": "snapshots/placeholder-4.jpg",
+    "ph-evt-2": "snapshots/placeholder-5.jpg"
+  },
+  "notes": ["Placeholder data — not recorded from Ring. Snapshot images are Doorstep illustrations."]
+}

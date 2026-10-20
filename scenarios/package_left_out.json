@@ -1,0 +1,126 @@
+{
+  "id": "package_left_out",
+  "title": "A package left out",
+  "summary": "A courier drops a parcel at 13:15 and nobody brings it in. Doorstep flags it after 3 hours and it's still out after dark.",
+  "startTime": "06:30",
+  "endTime": "20:30",
+  "events": [
+    {
+      "at": "08:10",
+      "kind": "motion",
+      "image": "resident_steps_out",
+      "sentence": "Someone opens the front door and steps out onto the porch.",
+      "tags": {
+        "people": 1,
+        "doorOpen": true
+      }
+    },
+    {
+      "at": "09:05",
+      "kind": "ding",
+      "image": "aide_arrives",
+      "sentence": "A visitor carrying a bag rings the doorbell.",
+      "tags": {
+        "people": 1,
+        "roles": [
+          "visitor"
+        ]
+      }
+    },
+    {
+      "at": "09:06",
+      "kind": "person",
+      "image": "door_answered",
+      "sentence": "The front door opens and the visitor with the bag is let in.",
+      "tags": {
+        "people": 2,
+        "doorOpen": true
+      }
+    },
+    {
+      "at": "10:28",
+      "kind": "person",
+      "image": "aide_leaves",
+      "sentence": "A visitor with a bag walks away from the front door.",
+      "tags": {
+        "people": 1,
+        "doorOpen": false
+      }
+    },
+    {
+      "at": "12:10",
+      "kind": "ding",
+      "image": "meal_delivery",
+      "sentence": "A delivery person holding a food bag rings the doorbell.",
+      "tags": {
+        "people": 1,
+        "roles": [
+          "delivery person"
+        ]
+      }
+    },
+    {
+      "at": "12:11",
+      "kind": "person",
+      "image": "door_answered",
+      "sentence": "The door opens and the delivery is handed over.",
+      "tags": {
+        "people": 2,
+        "doorOpen": true
+      }
+    },
+    {
+      "at": "13:15",
+      "kind": "package",
+      "image": "courier_package",
+      "sentence": "A courier in a high-visibility vest leaves a package on the step.",
+      "tags": {
+        "people": 1,
+        "packageVisible": true,
+        "roles": [
+          "courier"
+        ]
+      }
+    },
+    {
+      "at": "13:16",
+      "kind": "motion",
+      "image": "package_on_porch",
+      "sentence": "A package sits on the porch step; nobody is around.",
+      "tags": {
+        "people": 0,
+        "packageVisible": true
+      }
+    },
+    {
+      "at": "15:40",
+      "kind": "vehicle",
+      "image": "car_passing",
+      "sentence": "A car passes on the street beyond the garden.",
+      "tags": {
+        "people": 0,
+        "vehicle": true
+      }
+    },
+    {
+      "at": "17:05",
+      "kind": "motion",
+      "image": "package_on_porch_dusk",
+      "sentence": "The package is still on the porch step as evening falls.",
+      "tags": {
+        "people": 0,
+        "packageVisible": true
+      }
+    },
+    {
+      "at": "19:20",
+      "kind": "motion",
+      "image": "package_on_porch_night",
+      "sentence": "In the dark, the package is still sitting on the step under the porch light.",
+      "tags": {
+        "people": 0,
+        "packageVisible": true
+      }
+    }
+  ]
+}

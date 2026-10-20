@@ -1,0 +1,15 @@
+{
+  "id": "missed_aide_visit",
+  "title": "The aide doesn't come",
+  "summary": "Grace is up and about, but nobody arrives during the home aide's 09:00–10:30 window. Doorstep flags it at 10:45; the rest of the day is normal.",
+  "startTime": "06:30",
+  "endTime": "20:00",
+  "events": [
+    { "at": "07:52", "kind": "motion", "image": "resident_steps_out", "sentence": "Someone opens the front door and steps out onto the porch.", "tags": { "people": 1, "doorOpen": true } },
+    { "at": "08:01", "kind": "motion", "image": "porch_empty", "sentence": "The porch is empty and the front door is closed.", "tags": { "people": 0, "doorOpen": false } },
+    { "at": "11:30", "kind": "vehicle", "image": "car_passing", "sentence": "A car passes on the street beyond the garden.", "tags": { "people": 0, "vehicle": true } },
+    { "at": "12:24", "kind": "ding", "image": "meal_delivery", "sentence": "A delivery person holding a food bag rings the doorbell.", "tags": { "people": 1, "roles": ["delivery person"] } },
+    { "at": "12:25", "kind": "person", "image": "door_answered", "sentence": "The door opens and the delivery is handed over.", "tags": { "people": 2, "doorOpen": true } },
+    { "at": "16:05", "kind": "animal", "image": "cat_on_porch", "sentence": "A cat wanders across the porch.", "tags": { "people": 0 } }
+  ]
+}

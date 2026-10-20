@@ -1,0 +1,21 @@
+{
+  "meta": { "time": "2026-10-20T09:00:00Z" },
+  "data": [
+    {
+      "type": "devices",
+      "id": "placeholder.device.front-door",
+      "attributes": { "name": "Front Door", "image_url": null },
+      "relationships": {
+        "status": { "data": { "type": "device-status", "id": "placeholder.device.front-door" }, "links": { "related": "/v1/devices/placeholder.device.front-door/status" } },
+        "capabilities": { "data": { "type": "device-capabilities", "id": "placeholder.device.front-door" }, "links": { "related": "/v1/devices/placeholder.device.front-door/capabilities" } },
+        "configurations": { "data": { "type": "device-configurations", "id": "placeholder.device.front-door" }, "links": { "related": "/v1/devices/placeholder.device.front-door/configurations" } },
+        "location": { "links": { "related": "/v1/devices/placeholder.device.front-door/location" } }
+      }
+    }
+  ],
+  "included": [
+    { "type": "device-status", "id": "placeholder.device.front-door", "attributes": { "online": true } },
+    { "type": "device-capabilities", "id": "placeholder.device.front-door", "attributes": { "video": { "codecs": ["AVC"], "ratio": "16:9", "max_resolution": 1080, "supported_resolutions": [720, 1080] } } },
+    { "type": "device-configurations", "id": "placeholder.device.front-door", "attributes": { "e2e_encryption": { "enabled": false }, "motion_detection": { "enabled": "on", "motion_zones": [] }, "image_enhancements": { "privacy_zones": [] } } }
+  ]
+}

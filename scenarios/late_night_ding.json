@@ -1,0 +1,113 @@
+{
+  "id": "late_night_ding",
+  "title": "Late-night doorbell",
+  "summary": "An ordinary day, then someone rings the bell twice at 23:41 and lingers. The door never opens. Doorstep raises a late-night alert and flags the unanswered doorbell. (Daytime events load instantly when the scenario starts at 22:30.)",
+  "startTime": "22:30",
+  "endTime": "23:59",
+  "events": [
+    {
+      "at": "08:05",
+      "kind": "motion",
+      "image": "resident_steps_out",
+      "sentence": "Someone opens the front door and steps out onto the porch.",
+      "tags": {
+        "people": 1,
+        "doorOpen": true
+      }
+    },
+    {
+      "at": "09:10",
+      "kind": "ding",
+      "image": "aide_arrives",
+      "sentence": "A visitor carrying a bag rings the doorbell.",
+      "tags": {
+        "people": 1,
+        "roles": [
+          "visitor"
+        ]
+      }
+    },
+    {
+      "at": "09:11",
+      "kind": "person",
+      "image": "door_answered",
+      "sentence": "The front door opens and the visitor with the bag is let in.",
+      "tags": {
+        "people": 2,
+        "doorOpen": true
+      }
+    },
+    {
+      "at": "10:35",
+      "kind": "person",
+      "image": "aide_leaves",
+      "sentence": "A visitor with a bag walks away from the front door.",
+      "tags": {
+        "people": 1,
+        "doorOpen": false
+      }
+    },
+    {
+      "at": "12:10",
+      "kind": "ding",
+      "image": "meal_delivery",
+      "sentence": "A delivery person holding a food bag rings the doorbell.",
+      "tags": {
+        "people": 1,
+        "roles": [
+          "delivery person"
+        ]
+      }
+    },
+    {
+      "at": "12:11",
+      "kind": "person",
+      "image": "door_answered",
+      "sentence": "The door opens and the delivery is handed over.",
+      "tags": {
+        "people": 2,
+        "doorOpen": true
+      }
+    },
+    {
+      "at": "23:41",
+      "kind": "ding",
+      "image": "visitor_ding_night",
+      "sentence": "Someone in dark clothing rings the doorbell; the porch light is on.",
+      "tags": {
+        "people": 1,
+        "doorOpen": false
+      }
+    },
+    {
+      "at": "23:42",
+      "kind": "person",
+      "image": "person_night",
+      "sentence": "A person stands near the edge of the porch in the dark.",
+      "tags": {
+        "people": 1,
+        "doorOpen": false
+      }
+    },
+    {
+      "at": "23:44",
+      "kind": "ding",
+      "image": "visitor_ding_night",
+      "sentence": "Someone rings the doorbell again; the door stays closed.",
+      "tags": {
+        "people": 1,
+        "doorOpen": false
+      }
+    },
+    {
+      "at": "23:49",
+      "kind": "motion",
+      "image": "porch_empty_night",
+      "sentence": "The porch is empty and quiet under the porch light.",
+      "tags": {
+        "people": 0,
+        "doorOpen": false
+      }
+    }
+  ]
+}

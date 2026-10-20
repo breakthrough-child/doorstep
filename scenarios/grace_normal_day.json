@@ -1,0 +1,21 @@
+{
+  "id": "grace_normal_day",
+  "title": "Grace's normal day",
+  "summary": "A typical weekday: Grace steps out in the morning, the aide visits, lunch is delivered, a package arrives and is brought in. No alerts.",
+  "startTime": "06:30",
+  "endTime": "21:30",
+  "events": [
+    { "at": "07:48", "kind": "motion", "image": "resident_steps_out", "sentence": "Someone opens the front door and steps out onto the porch.", "tags": { "people": 1, "doorOpen": true } },
+    { "at": "07:56", "kind": "motion", "image": "porch_empty", "sentence": "The porch is empty and the front door is closed.", "tags": { "people": 0, "doorOpen": false } },
+    { "at": "09:12", "kind": "ding", "image": "aide_arrives", "sentence": "A visitor carrying a bag rings the doorbell.", "tags": { "people": 1, "roles": ["visitor"] } },
+    { "at": "09:13", "kind": "person", "image": "door_answered", "sentence": "The front door opens and the visitor with the bag is let in.", "tags": { "people": 2, "doorOpen": true, "roles": ["visitor"] } },
+    { "at": "10:41", "kind": "person", "image": "aide_leaves", "sentence": "A visitor with a bag walks away from the front door.", "tags": { "people": 1, "doorOpen": false, "roles": ["visitor"] } },
+    { "at": "12:20", "kind": "ding", "image": "meal_delivery", "sentence": "A delivery person holding a food bag rings the doorbell.", "tags": { "people": 1, "roles": ["delivery person"] } },
+    { "at": "12:21", "kind": "person", "image": "door_answered", "sentence": "The door opens and the delivery is handed over.", "tags": { "people": 2, "doorOpen": true } },
+    { "at": "14:05", "kind": "package", "image": "courier_package", "sentence": "A courier in a high-visibility vest leaves a package on the step.", "tags": { "people": 1, "packageVisible": true, "roles": ["courier"] } },
+    { "at": "14:06", "kind": "motion", "image": "package_on_porch", "sentence": "A package sits on the porch step; nobody is around.", "tags": { "people": 0, "packageVisible": true } },
+    { "at": "15:32", "kind": "person", "image": "package_brought_in", "sentence": "Someone at the open door carries the package inside.", "tags": { "people": 1, "packageVisible": false, "doorOpen": true } },
+    { "at": "17:10", "kind": "vehicle", "image": "car_passing", "sentence": "A car passes on the street beyond the garden.", "tags": { "people": 0, "vehicle": true } },
+    { "at": "19:40", "kind": "animal", "image": "cat_on_porch", "sentence": "A cat wanders across the porch.", "tags": { "people": 0 } }
+  ]
+}

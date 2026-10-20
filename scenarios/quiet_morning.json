@@ -1,0 +1,12 @@
+{
+  "id": "quiet_morning",
+  "title": "A quiet morning",
+  "summary": "A Sunday with no visits scheduled, and no door activity at all by 10:30. Doorstep raises a gentle alert; it clears when Grace steps out at 11:20.",
+  "startTime": "06:30",
+  "endTime": "14:00",
+  "visitors": [],
+  "events": [
+    { "at": "11:20", "kind": "motion", "image": "resident_steps_out", "sentence": "Someone opens the front door and steps out onto the porch.", "tags": { "people": 1, "doorOpen": true } },
+    { "at": "11:31", "kind": "motion", "image": "porch_empty", "sentence": "The porch is empty and the front door is closed.", "tags": { "people": 0, "doorOpen": false } }
+  ]
+}

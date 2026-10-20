@@ -1,0 +1,10 @@
+{
+  "data": [
+    { "type": "history-events", "id": "ph-evt-6", "attributes": { "event_type": "motion", "sub_type": "human", "is_third_party_reviewed": false, "start": 1792494600000, "end": 1792494630000 }, "relationships": { "source": { "data": { "type": "devices", "id": "placeholder.device.front-door" } } } },
+    { "type": "history-events", "id": "ph-evt-5", "attributes": { "event_type": "motion", "sub_type": "package_delivery", "is_third_party_reviewed": false, "start": 1792488300000, "end": 1792488330000 }, "relationships": { "source": { "data": { "type": "devices", "id": "placeholder.device.front-door" } } } },
+    { "type": "history-events", "id": "ph-evt-4", "attributes": { "event_type": "motion", "sub_type": "vehicle", "is_third_party_reviewed": false, "start": 1792484700000, "end": 1792484720000 }, "relationships": { "source": { "data": { "type": "devices", "id": "placeholder.device.front-door" } } } },
+    { "type": "history-events", "id": "ph-evt-3", "attributes": { "event_type": "ding", "is_third_party_reviewed": false, "start": 1792481400000, "end": 1792481430000 }, "relationships": { "source": { "data": { "type": "devices", "id": "placeholder.device.front-door" } } } },
+    { "type": "history-events", "id": "ph-evt-2", "attributes": { "event_type": "motion", "sub_type": "human", "is_third_party_reviewed": false, "start": 1792481460000, "end": 1792481490000 }, "relationships": { "source": { "data": { "type": "devices", "id": "placeholder.device.front-door" } } } }
+  ],
+  "links": {}
+}
