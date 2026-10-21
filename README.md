@@ -35,7 +35,7 @@ The Ring Developer Playground gives sandbox API access without hardware, but its
 | Mode | Badge | Ring data | Events | Snapshots |
 |---|---|---|---|---|
 | `LIVE` | **Live** (green) | Real Playground API calls with your token | Polled from Event History every 30 s | Real, watermarked Ring images |
-| `REPLAY` (default) | **Replay** (blue) | Real Playground responses recorded on Oct 21 in `fixtures/playground/` (devices, 3 history events), pushed through the same JSON:API normalizer | Recorded events, time-shifted to today | Real 1920×1080 Ring snapshots with the mandatory watermark |
+| `REPLAY` (default) | **Replay** (blue) | Real Playground responses recorded on Oct 21 in `fixtures/playground/` (devices, 6 history events: package, vehicle and motion simulations), pushed through the same JSON:API normalizer | Recorded events, time-shifted to today | Real 1920×1080 Ring snapshots with the mandatory watermark |
 | `SCENARIO` | **Simulated** (blue) | Replayed devices | Timed synthetic events on a simulated clock, each labelled "Simulated" | Drawn illustrations stamped "SIMULATED SCENE" (never fake Ring images) |
 
 - Record your own fixtures: trigger a few event simulations in the Playground, then `RING_ACCESS_TOKEN=… npm run record`. A fresh token has an empty history, so simulate first. The token is never written to disk; the recorder refuses to save any file containing it.

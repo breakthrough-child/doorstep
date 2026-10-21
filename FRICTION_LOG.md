@@ -144,8 +144,8 @@ Environment: Ubuntu laptop, Node 22.22, no Ring hardware, no Fire TV hardware. D
 
 - **Area:** Ring Developer Playground event simulation → Event History
 - **Date:** Wed Oct 21
-- **Steps:** Triggered event simulation in the Playground (whose release notes advertise Package, Vehicle and Motion), then read Event History.
-- **Actual:** One event: `event_type: "on_demand"`, `is_third_party_reviewed: true`, no `sub_type`, plus an undocumented `relationships.cv_detections: {data: []}` and `meta.riid: null`. The snapshot clearly shows a **package** on snowy steps, and its burned-in camera clock reads **2018-12-05**, so it's a canned clip.
+- **Steps:** Triggered event simulations in the Playground (whose release notes advertise Package, Vehicle and Motion) across one token's lifetime, polling Event History in LIVE mode, then recorded. That gave 6 events whose snapshots show a parcel on snowy steps (package), a car park (vehicle) and a woodpecker at a bird feeder (motion).
+- **Actual:** All 6 events: `event_type: "on_demand"`, `is_third_party_reviewed: true`, no `sub_type`, plus an undocumented `relationships.cv_detections: {data: []}` and `meta.riid: null`. The snapshot clearly shows a **package** on snowy steps, and its burned-in camera clock reads **2018-12-05**, so it's a canned clip.
 - **Expected:** A `motion` event with a package subtype (as the release notes imply), so apps can test package logic.
 - **Severity:** Medium. Category-specific logic (package left out, person at door) can't be exercised against the Playground. It also blurs live views (opened by a person) with detections.
 - **Workaround:** Doorstep maps `on_demand` to "Live view" and relies on the vision description of the snapshot. Its package logic is exercised via clearly labelled simulated scenarios.

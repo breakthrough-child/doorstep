@@ -3,30 +3,48 @@
     "method": "GET",
     "path": "/v1/devices?include=status,capabilities,configurations",
     "status": 200,
-    "ms": 2815
+    "ms": 2498
   },
   {
     "method": "GET",
     "path": "/v1/history/devices/ava1.ring.device.F4BQW4RZV4X227HOCDCVC2NJRCSZYEON347VA3JYW4TGULFUPWROA4D2CR25ATGIQOXZD2YCZVNOP6PTVR7D7Q27CXWP6HV5/events",
     "status": 200,
-    "ms": 1956
+    "ms": 3594
   },
   {
     "method": "POST",
     "path": "/v1/devices/ava1.ring.device.F4BQW4RZV4X227HOCDCVC2NJRCSZYEON347VA3JYW4TGULFUPWROA4D2CR25ATGIQOXZD2YCZVNOP6PTVR7D7Q27CXWP6HV5/media/image/download",
     "status": 303,
-    "ms": 472
+    "ms": 355
   },
   {
     "method": "POST",
     "path": "/v1/devices/ava1.ring.device.F4BQW4RZV4X227HOCDCVC2NJRCSZYEON347VA3JYW4TGULFUPWROA4D2CR25ATGIQOXZD2YCZVNOP6PTVR7D7Q27CXWP6HV5/media/image/download",
     "status": 303,
-    "ms": 519
+    "ms": 8113
   },
   {
     "method": "POST",
     "path": "/v1/devices/ava1.ring.device.F4BQW4RZV4X227HOCDCVC2NJRCSZYEON347VA3JYW4TGULFUPWROA4D2CR25ATGIQOXZD2YCZVNOP6PTVR7D7Q27CXWP6HV5/media/image/download",
     "status": 303,
-    "ms": 486
+    "ms": 2959
+  },
+  {
+    "method": "POST",
+    "path": "/v1/devices/ava1.ring.device.F4BQW4RZV4X227HOCDCVC2NJRCSZYEON347VA3JYW4TGULFUPWROA4D2CR25ATGIQOXZD2YCZVNOP6PTVR7D7Q27CXWP6HV5/media/image/download",
+    "status": 303,
+    "ms": 2333
+  },
+  {
+    "method": "POST",
+    "path": "/v1/devices/ava1.ring.device.F4BQW4RZV4X227HOCDCVC2NJRCSZYEON347VA3JYW4TGULFUPWROA4D2CR25ATGIQOXZD2YCZVNOP6PTVR7D7Q27CXWP6HV5/media/image/download",
+    "status": 303,
+    "ms": 2153
+  },
+  {
+    "method": "POST",
+    "path": "/v1/devices/ava1.ring.device.F4BQW4RZV4X227HOCDCVC2NJRCSZYEON347VA3JYW4TGULFUPWROA4D2CR25ATGIQOXZD2YCZVNOP6PTVR7D7Q27CXWP6HV5/media/image/download",
+    "status": 303,
+    "ms": 551
   }
 ]

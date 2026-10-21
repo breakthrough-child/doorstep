@@ -17,6 +17,15 @@
             "related": "/v1/devices/ava1.ring.device.F4BQW4RZV4X227HOCDCVC2NJRCSZYEON347VA3JYW4TGULFUPWROA4D2CR25ATGIQOXZD2YCZVNOP6PTVR7D7Q27CXWP6HV5/status"
           }
         },
+        "configurations": {
+          "data": {
+            "type": "device-configurations",
+            "id": "ava1.ring.device.configurations.FUGVTEN3L7WQY6QKSN5BFSPWB6GKJTF2BVUZHXX5SNZ5UA2QPAMB6GMOPWORFF4J3D6ZTIAFXZTTMT7HBFGEI2LQY22WDU34XPVTP2RL346EFA4BWQSAIWZJTE"
+          },
+          "links": {
+            "related": "/v1/devices/ava1.ring.device.F4BQW4RZV4X227HOCDCVC2NJRCSZYEON347VA3JYW4TGULFUPWROA4D2CR25ATGIQOXZD2YCZVNOP6PTVR7D7Q27CXWP6HV5/configurations"
+          }
+        },
         "capabilities": {
           "data": {
             "type": "device-capabilities",
@@ -34,15 +43,6 @@
           "links": {
             "related": "/v1/devices/ava1.ring.device.F4BQW4RZV4X227HOCDCVC2NJRCSZYEON347VA3JYW4TGULFUPWROA4D2CR25ATGIQOXZD2YCZVNOP6PTVR7D7Q27CXWP6HV5/location"
           }
-        },
-        "configurations": {
-          "data": {
-            "type": "device-configurations",
-            "id": "ava1.ring.device.configurations.FUGVTEN3L7WQY6QKSN5BFSPWB6GKJTF2BVUZHXX5SNZ5UA2QPAMB6GMOPWORFF4J3D6ZTIAFXZTTMT7HBFGEI2LQY22WDU34XPVTP2RL346EFA4BWQSAIWZJTE"
-          },
-          "links": {
-            "related": "/v1/devices/ava1.ring.device.F4BQW4RZV4X227HOCDCVC2NJRCSZYEON347VA3JYW4TGULFUPWROA4D2CR25ATGIQOXZD2YCZVNOP6PTVR7D7Q27CXWP6HV5/configurations"
-          }
         }
       }
     }
@@ -52,22 +52,43 @@
       "type": "device-status",
       "id": "ava1.ring.device.status.WPG64MBPONZMV643JM6FJSURIMNVSERXUXG7HQTYDPXZLK5SOTC5M2Z3XIUS725BNINIPW4RPLOJT5MYPFC6R7PCKJV6PQAH",
       "attributes": {
-        "online": true,
-        "reported_at": "2026-10-21T22:58:41Z",
+        "state": null,
+        "reported_at": "2026-10-21T23:04:08Z",
         "audio": {
           "snooze": {
             "active": null,
             "until": null
           }
         },
-        "state": null
+        "online": true
       }
     },
     {
       "type": "device-capabilities",
       "id": "ava1.ring.device.capabilities.UHZUI4SPGGHZPLHYQR36MG4VM7FG4EZXMNBS5ZJMHWUPZQN3GJUZYIM5IPPSW7VGFIB6YP3WWH2QBYOUNT47ZSCM6RWUPJBT",
       "attributes": {
+        "smoke_detection": null,
+        "audio": {
+          "customizable_slots": null,
+          "supported_actions": null
+        },
+        "flood_detection": null,
+        "freeze_detection": null,
+        "motion_detection": {
+          "configurations": [
+            "enabled",
+            "motion_zones"
+          ]
+        },
+        "image_enhancements": {
+          "configurations": [
+            "color_night_vision",
+            "privacy_zones",
+            "snapshot"
+          ]
+        },
         "tamper_detection": null,
+        "battery_status": null,
         "video": {
           "configurations": [
             "resolution_mode"
@@ -81,43 +102,15 @@
             1080
           ]
         },
-        "flood_detection": null,
         "co_detection_listener": null,
-        "contact_detection": null,
-        "freeze_detection": null,
-        "image_enhancements": {
-          "configurations": [
-            "color_night_vision",
-            "privacy_zones",
-            "snapshot"
-          ]
-        },
-        "audio": {
-          "customizable_slots": null,
-          "supported_actions": null
-        },
-        "motion_detection": {
-          "configurations": [
-            "enabled",
-            "motion_zones"
-          ]
-        },
         "glass_break_detection": null,
-        "battery_status": null,
-        "smoke_detection": null
+        "contact_detection": null
       }
     },
     {
       "type": "device-configurations",
       "id": "ava1.ring.device.configurations.FUGVTEN3L7WQY6QKSN5BFSPWB6GKJTF2BVUZHXX5SNZ5UA2QPAMB6GMOPWORFF4J3D6ZTIAFXZTTMT7HBFGEI2LQY22WDU34XPVTP2RL346EFA4BWQSAIWZJTE",
       "attributes": {
-        "audio": {
-          "customizable_slots": null,
-          "volume": 11
-        },
-        "e2e_encryption": {
-          "enabled": false
-        },
         "motion_detection": {
           "enabled": "on",
           "motion_zones": [
@@ -166,11 +159,18 @@
           "ir_led_night_vision": "off",
           "auto_zoom_track": "off",
           "privacy_zones": []
+        },
+        "audio": {
+          "customizable_slots": null,
+          "volume": 11
+        },
+        "e2e_encryption": {
+          "enabled": false
         }
       }
     }
   ],
   "meta": {
-    "time": "2026-10-21T22:59:27Z"
+    "time": "2026-10-21T23:10:54Z"
   }
 }
