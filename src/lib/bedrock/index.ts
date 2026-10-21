@@ -43,6 +43,17 @@ const KIND_HINT: Record<EventKind, string> = {
   on_demand: "a live view opened by the family",
 };
 
+/** Plain sentences used when there's no model output (sample/mock mode, or no image). */
+const FALLBACK_SENTENCE: Record<EventKind, (t: string) => string> = {
+  person: (t) => `Someone was at the front door at ${t}.`,
+  ding: (t) => `Someone rang the doorbell at ${t}.`,
+  package: (t) => `A package delivery was detected at ${t}.`,
+  vehicle: (t) => `A vehicle was detected near the door at ${t}.`,
+  motion: (t) => `Movement at the front door at ${t}.`,
+  animal: (t) => `An animal was at the front door at ${t}.`,
+  on_demand: (t) => `The camera was checked with a live view at ${t}.`,
+};
+
 const DESCRIBE_SYSTEM = `You write captions for a front-door camera used by a family caring for an elderly parent who lives alone.
 Rules:
 - Describe what is happening in ONE calm, plain-English sentence of at most 22 words. Present tense.
@@ -70,7 +81,7 @@ export interface DescribeResult {
 }
 
 export async function describeSnapshot(input: DescribeInput, mock: boolean): Promise<DescribeResult> {
-  const fallback = `${capitalize(KIND_HINT[input.kind])} at the front door at ${input.timeLabel}.`;
+  const fallback = FALLBACK_SENTENCE[input.kind](input.timeLabel);
   if (mock || !input.image) {
     return {
       ...mockDescription(input, fallback),
