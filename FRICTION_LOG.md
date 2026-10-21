@@ -76,7 +76,8 @@ Environment: Ubuntu laptop, Node 22.22, no Ring hardware, no Fire TV hardware. D
 - **Actual:** Returns `303 See Other` with a pre-signed `Location`. Node's `fetch` follows 303 automatically, turning the POST into a GET and *forwarding the Authorization header* to the pre-signed host if it's same-origin, or dropping it cross-origin. The docs don't say which is expected; some pre-signed stores reject requests that also carry an Authorization header.
 - **Severity:** Low/Medium
 - **Workaround:** The Doorstep client uses `redirect: "manual"`, reads `Location`, and GETs it without the Bearer header.
-- **Suggestion:** State whether the pre-signed URL should be fetched without auth, and its expiry.
+- **Update (Wed Oct 21, real Playground):** The `Location` points at `download-us-east-1.prod.phoenix.devices.amazon.dev`, and an unauthenticated GET works. Errors can also come from that second hop, with a JSON:API body (see F-11), and the docs only describe errors on the first request.
+- **Suggestion:** State that the pre-signed URL must be fetched without auth, give its expiry, and document that errors can arrive on either hop.
 
 ## F-08 · Bedrock: every Nova Lite quota in eu-north-1 provisioned at 0, mostly "Not adjustable"; runtime says "Too many tokens per day"
 
@@ -99,3 +100,85 @@ Environment: Ubuntu laptop, Node 22.22, no Ring hardware, no Fire TV hardware. D
   1. Return a distinct, non-retryable error (e.g. `ServiceQuotaExceededException` with "account quota for this model is 0 in this region") when the applied quota is zero, rather than a retryable `ThrottlingException`.
   2. Show a banner in the Bedrock console / model catalog when an account's on-demand quotas for a model are 0, with a link to request access.
   3. Make "Not adjustable" quotas explain *why*, e.g. new-account limits and when they lift, and offer a path that doesn't need a support case. Hackathon timelines are days, not weeks.
+
+## F-09 · Playground: fresh token sees no events and no media; boundary is the token's issue time, enforced with an undocumented 403 code
+
+- **Area:** Ring Developer Playground + Partner API (Event History, Image Snapshots)
+- **Date:** Wed Oct 21, ~22:10–22:50 UTC
+- **Task attempted:** Record real fixtures (`npm run record`) with a freshly generated Playground token.
+- **Steps:**
+  1. Generate a token, run the recorder: `GET /v1/devices?include=…` → 200 (1 "Playground Device").
+  2. `GET /v1/history/devices/{id}/events` → **200 `{"data": []}`**. There's no `links` key at all, not even an empty `links.next`.
+  3. `POST …/media/image/download` with `at_timestamp` 5 min, 20 min, 40 min, 2 h and 1 day before now → **403 `TIME_RANGE_NOT_AUTHORIZED`**, "Requested time range is not within authorized boundaries". `latest_in_range` over 23 h → the same 403.
+  4. The same call for 10 s and 1 min ago (after the token's `iat`) → 303, then the pre-signed GET returns **416** (no recording).
+  5. Triggered event simulation in the Playground UI, generated a new token, re-ran the recorder → exactly **one** history event, `event_type: "on_demand"`, with a snapshot.
+- **Expected:** The Playground sandbox comes with some sample event history and media. At minimum, the docs list `TIME_RANGE_NOT_AUTHORIZED` and explain the boundary.
+- **Actual:** The authorized window starts at the token's issue time ("only events after the user granted consent", applied to each Playground token). History is empty until you simulate an event, and every older media request fails with an error code that isn't in the Image Snapshots error table (which lists `REQUEST_FORBIDDEN` for 403).
+- **Severity:** Medium. It cost a token's 30-minute lifetime to understand, and a recorder run immediately after generating a token captures nothing.
+- **Workaround:** Simulate events in the Playground first, then record. Doorstep's client surfaces the 403 code in the API log and skips the snapshot.
+- **Suggestions:** Document `TIME_RANGE_NOT_AUTHORIZED` and the consent/issue-time boundary in the Image Snapshots and Event History sections. Seed each Playground account with a few sample events, or keep the consent boundary at the *first* token, not each new one.
+
+## F-10 · Snapshot resolution: omitting `resolution` returns 640×360, not full size
+
+- **Area:** Partner API — `POST /v1/devices/{id}/media/image/download`
+- **Date:** Wed Oct 21
+- **Steps:** Same event, same `at_timestamp`: (a) `image_options: {format: "jpeg"}` → **640×360** JPEG (~40 KB); (b) `image_options: {format: "jpeg", resolution: {width: 1920, height: 1080}}` → **1920×1080** (~99 KB); (c) `format: "png"` without resolution → 640×360.
+- **Expected:** Per the docs' watermark note, omitting `resolution` (or asking for 1920×1080) gives full resolution, minimising the watermark's share of the frame.
+- **Actual:** Omitting it gives 640×360, where the fixed-size watermark covers a large part of the top of the frame. That matters for AI captioning.
+- **Severity:** Medium. It quietly degrades every snapshot for anyone following the docs.
+- **Workaround:** Doorstep always requests `resolution: {width: 1920, height: 1080}` explicitly.
+- **Suggestion:** Make the default match the docs (full size), or fix the docs.
+
+## F-11 · `latest_in_range` snapshot fails on the pre-signed host with `422 GRECO_NO_VALID_KEY`
+
+- **Area:** Partner API — Image Snapshots, `type: "latest_in_range"`
+- **Date:** Wed Oct 21
+- **Steps:** `latest_in_range` with `start_timestamp` = the simulated event's start and `end_timestamp` = now − 1 s → **303**. Then GET the pre-signed `Location` → **422** `{"errors":[{"code":"GRECO_NO_VALID_KEY","detail":"No valid Greco key available for decryption"}]}`. `at_timestamp` inside the same range works.
+- **Expected:** The latest frame in the range, or a documented error.
+- **Actual:** An internal-sounding decryption error from the second hop that isn't in the docs, and nothing a partner can act on.
+- **Severity:** Low/Medium. We use `at_timestamp`, but `latest_in_range` is the natural call for "what does the porch look like now?".
+- **Workaround:** Use `at_timestamp` (event start + 1 s).
+- **Suggestion:** Fix or document `latest_in_range` in the Playground, and translate internal errors into documented codes.
+
+## F-12 · Simulated Playground event arrives in history as `on_demand`, with no subtype
+
+- **Area:** Ring Developer Playground event simulation → Event History
+- **Date:** Wed Oct 21
+- **Steps:** Triggered event simulation in the Playground (whose release notes advertise Package, Vehicle and Motion), then read Event History.
+- **Actual:** One event: `event_type: "on_demand"`, `is_third_party_reviewed: true`, no `sub_type`, plus an undocumented `relationships.cv_detections: {data: []}` and `meta.riid: null`. The snapshot clearly shows a **package** on snowy steps, and its burned-in camera clock reads **2018-12-05**, so it's a canned clip.
+- **Expected:** A `motion` event with a package subtype (as the release notes imply), so apps can test package logic.
+- **Severity:** Medium. Category-specific logic (package left out, person at door) can't be exercised against the Playground. It also blurs live views (opened by a person) with detections.
+- **Workaround:** Doorstep maps `on_demand` to "Live view" and relies on the vision description of the snapshot. Its package logic is exercised via clearly labelled simulated scenarios.
+- **Suggestions:** Emit simulated events with their real `event_type`/subtype (`motion` + `package_delivery`, `human`, `vehicle`), and document `cv_detections` (it looks like exactly what a caretaking app needs).
+
+## F-13 · Response fields that aren't in the reference
+
+- **Area:** Partner API — schema accuracy
+- **Date:** Wed Oct 21
+- **Observed in real Playground responses:**
+  - `GET /v1/users/me` returns `first_name`, `last_name` and `email` attributes. The docs say only "Returns the Account ID". That's personal data a privacy review needs to know about.
+  - `device-status` has `state`, `reported_at` and `audio.snooze` (not only `online`).
+  - `device-capabilities` has `audio` plus a set of sensor keys (`glass_break_detection`, `smoke_detection`, `co_detection_listener`, `flood_detection`, `freeze_detection`, `contact_detection`, `tamper_detection`, `battery_status`), all `null` on the doorbell.
+  - `device-configurations` has `audio.volume` and `audio.customizable_slots`.
+  - `GET /v1/accounts/me/subscriptions` returns **422** "Unable to process subscription request for this user" for the Playground user (`x-amzn-errortype: AvaException422`).
+  - Included resources have their own ids (`ava1.ring.device.status.…`) distinct from the device id. That's correct JSON:API, but the docs' examples imply the same id.
+- **Severity:** Low. Our normalizer tolerates extra fields; the PII and the 422 are worth documenting.
+- **Suggestion:** Generate the reference from the real schema (OpenAPI). Document the `users/me` PII fields and the Playground's subscription behaviour.
+
+## F-14 · Vega SDK (Fire TV): Linux installer requires system package surgery, so we dropped the Fire TV track
+
+- **Area:** Vega SDK 0.24 install on Ubuntu 24.04 (developer.amazon.com/docs/vega/0.24/install-vega-sdk.html)
+- **Date:** Tue Oct 20 (read), decision Wed Oct 21
+- **Task attempted:** Install the Vega SDK and Vega Virtual Device to build a 10-foot "visual doorbell" companion app.
+- **Steps:** Read the install guide and Hello World guide, and checked prerequisites on the machine (KVM device present, user not in the `kvm` group, 15 GB RAM).
+- **What the installer requires before `curl … get_vvm.sh | bash`:**
+  1. `sudo apt remove curl && sudo apt install curl`, i.e. remove and reinstall the system curl (unexplained in the guide).
+  2. `sudo add-apt-repository -y ppa:deadsnakes/ppa`, a third-party PPA.
+  3. `sudo apt install -y libpython3.8-dev`, Python 3.8 headers (EOL since Oct 2024) for native debugging.
+  4. KVM virtualization (link to an external guide), Watchman and lz4.
+  5. Piping a remote script into bash, which also edits shell rc files and installs a VS Code extension.
+- **Expected:** A self-contained SDK (container or tarball) or a documented, minimal set of system changes, with the reasons.
+- **Actual:** Several system-level changes on a personal laptop, including removing a core package and adding a third-party PPA. The hello-world path is centred on the VS Code extension rather than a scriptable CLI. With a 3-day deadline on our only machine, the risk of breaking the dev environment outweighed the Fire TV track.
+- **Severity:** High (for us). It blocked an entire track; we deliberately didn't attempt it.
+- **Workaround:** Shipped the visual doorbell as an accessible web screen (`/tv`): 10-foot type, OK/Enter dismisses, auto-clears after 60 s. We don't claim the Fire TV track.
+- **Suggestions:** Explain *why* curl must be reinstalled (or remove the step). Bundle Python/lz4 in the SDK instead of requiring a deadsnakes PPA. Offer a Docker/devcontainer image with the VVD. Document a non-interactive CLI path (`vega project create …`).

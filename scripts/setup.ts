@@ -32,6 +32,6 @@ const n = insertEvents(replay.events);
 setSetting("replay_meta", replay.meta);
 setSetting("replay_loaded_for", localDateKey(Date.now(), DEFAULT_PLAN.timeZone));
 console.log(
-  `• Loaded ${n} replay events from ${fixtureDir().replace(process.cwd() + "/", "")}${replay.meta.synthetic ? " (placeholder — run `npm run record` with a Playground token for real data)" : ""}`,
+  `• Loaded ${n} replay events from ${fixtureDir().replace(process.cwd() + "/", "")}${replay.meta.synthetic ? " (hand-written fixtures)" : ` (recorded from the Ring Developer Playground ${new Date(replay.meta.recordedAt).toISOString().slice(0, 16).replace("T", " ")} UTC)`}`,
 );
 console.log("\nDone. Next: npm run dev → http://localhost:3000");

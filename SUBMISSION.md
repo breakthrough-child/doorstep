@@ -3,8 +3,6 @@
 Ready-to-paste answers for "Build, Ship, Shape: Amazon Developer Hackathon".
 
 > **If Amazon Bedrock is still blocked on Thursday evening:** delete every block between `<!-- AWS-BUILDER:START -->` and `<!-- AWS-BUILDER:END -->` (there are 6), delete the one table row tagged `<!-- AWS-BUILDER -->`, and un-comment the "without AWS" variant marked `<!-- NO-AWS -->`. Or run `npm run submission:no-aws`, which does exactly that into `SUBMISSION.no-aws.md`. Nothing else references the AWS Builder track. The Bedrock friction entry (F-08) stays in the friction log either way: it's genuine product feedback.
->
-> Fire TV: keep the Fire TV track and section only if the Vega app runs in the Vega Virtual Device by Thursday midday (see `<!-- FIRE-TV:START/END -->`).
 
 ---
 
@@ -19,9 +17,6 @@ Calm, plain-language updates from a parent's front door. Doorstep tells you when
 ## Tracks
 
 - **Ring** (primary)
-<!-- FIRE-TV:START -->
-- **Fire TV**: the visual doorbell for deaf / hard-of-hearing residents
-<!-- FIRE-TV:END -->
 <!-- AWS-BUILDER:START -->
 - **AWS Builder mini challenge**: Amazon Bedrock (Nova Lite)
 <!-- AWS-BUILDER:END -->
@@ -45,7 +40,7 @@ Millions of adult children look after a parent who lives alone, often from anoth
   - **Unanswered doorbell**: a best-effort heuristic, labelled as such.
 - **Daily digest**: a short, warm note on the parent's day at the door.
 - **A care plan** where the family describes a normal day: visitors' windows, quiet-morning time, night hours, package threshold.
-- **Visual doorbell for the TV**: a full-screen, high-contrast "someone is at the door" screen with the description. It's dismissed with OK on the remote and clears itself after a minute. Built for residents who can't hear the chime.
+- **Visual doorbell for the living room**: a full-screen, high-contrast "someone is at the door" web page for a TV or tablet, with the description. Dismiss with OK/Enter; it clears itself after a minute. Built for residents who can't hear the chime.
 - **Honest demo modes.** LIVE (real Ring Developer Playground), REPLAY (recorded Playground responses), SCENARIO (timed synthetic events, labelled "Simulated"). A badge on every screen shows which is active.
 
 ## How we built it
@@ -63,9 +58,6 @@ Millions of adult children look after a parent who lives alone, often from anoth
 <!-- AWS-BUILDER:START -->
 - **Amazon Bedrock** (Converse API, Amazon Nova Lite via the EU cross-region inference profile) for snapshot captions (image in, JSON out) and the daily digest. Results are cached per event and per day, token usage is logged per call, and there's a one-command health check (`npm run check:bedrock`). See "AWS services" below.
 <!-- AWS-BUILDER:END -->
-<!-- FIRE-TV:START -->
-- **Vega OS app** (React Native, Vega SDK) running in the Vega Virtual Device. It polls the Doorstep backend and shows the visual doorbell with proper D-pad focus and a 10-foot UI.
-<!-- FIRE-TV:END -->
 
 ## Privacy
 
@@ -157,11 +149,6 @@ Doorstep uses **Amazon Bedrock Runtime (Converse API)** with **Amazon Nova Lite*
 All calls are server-side, cached by event id / day so nothing is paid for twice, and token usage is logged per call. A busy day costs well under one US cent. Full data flow, IAM policy and cost table: `docs/AWS.md`.
 <!-- AWS-BUILDER:END -->
 
-<!-- FIRE-TV:START -->
-### Vega SDK / Vega Virtual Device
-
-- [Fill in after the Vega attempt: install experience on Ubuntu 24.04, VVD networking to the host, focus management, what worked, what didn't.]
-<!-- FIRE-TV:END -->
 
 ### Next.js, Node.js, better-sqlite3 (supporting tools)
 

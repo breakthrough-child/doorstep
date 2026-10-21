@@ -2,7 +2,8 @@ import { describe, expect, it, vi } from "vitest";
 import { indexIncluded, nextPageKey, resolveMany, resolveOne, type Document } from "@/lib/ring/jsonapi";
 import { mapEventKind, normalizeDevices, normalizeHistoryEvents } from "@/lib/ring/normalize";
 import { RingApiError, RingClient, RingTokenExpiredError } from "@/lib/ring/client";
-import placeholderDevices from "../fixtures/placeholder/devices.json";
+import playgroundDevices from "../fixtures/playground/devices.json";
+import playgroundHistory from "../fixtures/playground/history-0-0.json";
 
 describe("JSON:API helpers", () => {
   const doc: Document = {
@@ -55,15 +56,17 @@ describe("JSON:API helpers", () => {
 
 describe("device normalization", () => {
   it("reads online/caps/config from included resources, not device attributes", () => {
-    const [d] = normalizeDevices(placeholderDevices as never);
+    // Real Ring Developer Playground response: included resources have their own ids
+    // (ava1.ring.device.status.…), resolved via the relationship's data.id.
+    const [d] = normalizeDevices(playgroundDevices as never);
     expect(d).toMatchObject({
-      id: "placeholder.device.front-door",
-      name: "Front Door",
+      name: "Playground Device",
       online: true,
       privacyZoneCount: 0,
       e2eEncrypted: false,
       maxResolution: 1080,
     });
+    expect(d?.id).toMatch(/^ava1\.ring\.device\./);
   });
 
   it("leaves online null when status wasn't included", () => {
@@ -118,6 +121,14 @@ describe("event kind mapping", () => {
 });
 
 describe("history normalization", () => {
+  it("maps the recorded Playground history (on_demand, extra cv_detections relationship)", () => {
+    const [e, ...rest] = normalizeHistoryEvents(playgroundHistory as never, "fallback", "replay");
+    expect(rest).toHaveLength(0);
+    expect(e).toMatchObject({ kind: "on_demand", rawType: "on_demand", origin: "replay" });
+    expect(e!.endMs! - e!.startMs).toBeGreaterThan(0);
+    expect(e!.deviceId).toMatch(/^ava1\.ring\.device\./);
+  });
+
   it("maps documented history-events", () => {
     const doc = {
       data: [
@@ -155,10 +166,10 @@ const json = (status: number, body: unknown, headers: Record<string, string> = {
 
 describe("RingClient", () => {
   it("sends the bearer token and include params", async () => {
-    const fetchImpl = vi.fn(async (_url: string | URL | Request, _init?: RequestInit) => json(200, placeholderDevices));
+    const fetchImpl = vi.fn(async (_url: string | URL | Request, _init?: RequestInit) => json(200, playgroundDevices));
     const c = new RingClient({ token: "tok", fetchImpl: fetchImpl as never });
     const devices = await c.listDevices();
-    expect(devices[0]?.name).toBe("Front Door");
+    expect(devices[0]?.name).toBe("Playground Device");
     const [url, init] = fetchImpl.mock.calls[0]!;
     expect(String(url)).toBe("https://api.amazonvision.com/v1/devices?include=status,capabilities,configurations");
     expect((init?.headers as Record<string, string>).Authorization).toBe("Bearer tok");
@@ -233,10 +244,25 @@ describe("RingClient", () => {
     const [firstUrl, firstInit] = fetchImpl.mock.calls[0]!;
     expect(String(firstUrl)).toBe("https://api.amazonvision.com/v1/devices/dev%201/media/image/download");
     expect(firstInit.redirect).toBe("manual");
-    expect(JSON.parse(firstInit.body)).toMatchObject({ type: "at_timestamp", timestamp: 1699999999000, image_options: { format: "jpeg" } });
+    expect(JSON.parse(firstInit.body)).toMatchObject({
+      type: "at_timestamp",
+      timestamp: 1699999999000,
+      image_options: { format: "jpeg", resolution: { width: 1920, height: 1080 } },
+    });
     const [secondUrl, secondInit] = fetchImpl.mock.calls[1]!;
     expect(secondUrl).toBe("https://media.example/presigned?sig=1");
     expect(JSON.stringify(secondInit ?? {})).not.toContain("secret");
+  });
+
+  it("surfaces JSON:API errors from the pre-signed host (Playground: 422 GRECO_NO_VALID_KEY)", async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(null, { status: 303, headers: { location: "https://media.example/x" } }))
+      .mockResolvedValueOnce(json(422, { errors: [{ status: "422", code: "GRECO_NO_VALID_KEY", detail: "No valid Greco key available for decryption" }] }));
+    const err = await new RingClient({ token: "t", fetchImpl }).getSnapshot("d", 1).catch((e) => e);
+    expect(err).toBeInstanceOf(RingApiError);
+    expect(err.status).toBe(422);
+    expect(err.code).toBe("GRECO_NO_VALID_KEY");
   });
 
   it("maps snapshot 416 MEDIA_NOT_FOUND to a RingApiError", async () => {

@@ -9,7 +9,7 @@ Doorstep turns raw Ring front-door events into calm, plain-language information 
 - **AI event descriptions.** Each Ring snapshot is described by Amazon Bedrock (Nova Lite) in one plain sentence: *"A courier in a high-visibility vest leaves a package on the step."* It describes what happens and **never identifies people**.
 - **Caretaking alerts** from a deterministic, unit-tested rules engine: quiet morning, missed visit, package left out, late-night door activity, unanswered doorbell (best-effort).
 - **Daily digest.** A short, warm Bedrock-written note on the parent's day at the door.
-- **Visual doorbell for the TV.** A full-screen, high-contrast "someone is at the door" alert for deaf or hard-of-hearing residents who can't hear the chime.
+- **Visual doorbell for the living room.** A full-screen, high-contrast "someone is at the door" page (`/tv`), for deaf or hard-of-hearing residents who can't hear the chime. It runs in any big-screen browser. (A native Fire TV app was planned; we dropped it, see friction log F-14.)
 
 <!-- SCREENSHOTS -->
 
@@ -61,7 +61,7 @@ flowchart LR
   end
   AWS["Amazon Bedrock<br/>us.amazon.nova-lite-v1:0"]
   UI["Family web app<br/>Today · Alerts · Digest · Care plan"]
-  TV["Fire TV visual doorbell<br/>(Vega app / web preview)"]
+  TV["Visual doorbell screen<br/>/tv (any big-screen browser)"]
 
   D & H & S --> RC --> SRC
   FX["fixtures/ (recorded)"] --> SRC

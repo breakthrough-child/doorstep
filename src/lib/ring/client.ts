@@ -174,8 +174,10 @@ export class RingClient {
     const body = {
       type: "at_timestamp",
       timestamp: Math.min(Math.round(timestampMs), Date.now()),
-      // Omit resolution → full size, which keeps the mandatory watermark smallest relative to frame.
-      image_options: { format: "jpeg" },
+      // Ask for 1920×1080 explicitly: the Playground returns 640×360 when resolution is omitted
+      // (docs say omitting gives full size — FRICTION F-10). Full size keeps the fixed-size
+      // watermark smallest relative to the frame.
+      image_options: { format: "jpeg", resolution: { width: 1920, height: 1080 } },
       ...(opts.componentId ? { components: [{ component_id: opts.componentId }] } : {}),
     };
     const res = await this.request("POST", path, body, { redirect: "manual" });
@@ -184,7 +186,8 @@ export class RingClient {
       const location = res.headers.get("location");
       if (!location) throw new RingApiError("Snapshot redirect without Location header", res.status, null, path);
       media = await this.fetchImpl(location, { cache: "no-store" });
-      if (!media.ok) throw new RingApiError(`Pre-signed snapshot fetch failed (${media.status})`, media.status, null, path);
+      // The pre-signed host can fail too (e.g. 416 no media, 422 GRECO_NO_VALID_KEY) with a JSON:API body.
+      if (!media.ok) throw await toError(media, `${path} (pre-signed download)`);
     } else if (res.ok) {
       media = res; // Some environments may return the bytes directly.
     } else {

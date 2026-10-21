@@ -1,6 +1,7 @@
 "use client";
 
-// Web preview of the Fire TV "visual doorbell" (the Vega app in /tv mirrors this screen).
+// Visual doorbell: a full-screen web page for the living-room TV (or any browser on a large screen),
+// for residents who can't hear the chime.
 // 10-foot UI: huge type, high contrast, safe-area margins; OK/Enter dismisses; auto-clears after 60 s.
 import { useCallback, useEffect, useRef, useState } from "react";
 

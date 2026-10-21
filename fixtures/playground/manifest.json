@@ -1,0 +1,21 @@
+{
+  "recordedAt": 1792623001006,
+  "synthetic": false,
+  "source": "Recorded from the Ring Developer Playground via scripts/record-fixtures.ts (token stripped).",
+  "devices": "devices.json",
+  "history": [
+    {
+      "deviceId": "ava1.ring.device.F4BQW4RZV4X227HOCDCVC2NJRCSZYEON347VA3JYW4TGULFUPWROA4D2CR25ATGIQOXZD2YCZVNOP6PTVR7D7Q27CXWP6HV5",
+      "pages": [
+        "history-0-0.json"
+      ]
+    }
+  ],
+  "snapshots": {
+    "ava1.ring.history.event.YALR234VMEKNYH24VC2EI54TS5AWXN5MO35E5AGKZT3PFC27XN5RWPZS6GT4OWHHJMHVJZF4TWJGTYQQ6SA4FY4S6EM46XIF": "snapshots/ava1.ring.history.event.YALR234VMEKNYH24VC2EI54TS5AWXN5MO35E5AGKZT3PFC27XN5RWPZS6GT4OWHHJMHVJZF4TWJG.jpg"
+  },
+  "snapshotErrors": {},
+  "notes": [
+    "event types for ava1.ring.device.F4BQW4RZV4X227HOCDCVC2NJRCSZYEON347VA3JYW4TGULFUPWROA4D2CR25ATGIQOXZD2YCZVNOP6PTVR7D7Q27CXWP6HV5: {\"on_demand/-\":1}"
+  ]
+}

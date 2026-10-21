@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "type": "history-events",
+      "id": "ava1.ring.history.event.YALR234VMEKNYH24VC2EI54TS5AWXN5MO35E5AGKZT3PFC27XN5RWPZS6GT4OWHHJMHVJZF4TWJGTYQQ6SA4FY4S6EM46XIF",
+      "attributes": {
+        "is_third_party_reviewed": true,
+        "end": 1792622717695,
+        "start": 1792622686017,
+        "event_type": "on_demand"
+      },
+      "relationships": {
+        "cv_detections": {
+          "data": []
+        },
+        "source": {
+          "data": {
+            "type": "devices",
+            "id": "ava1.ring.device.F4BQW4RZV4X227HOCDCVC2NJRCSZYEON347VA3JYW4TGULFUPWROA4D2CR25ATGIQOXZD2YCZVNOP6PTVR7D7Q27CXWP6HV5"
+          }
+        }
+      },
+      "meta": {
+        "riid": null
+      }
+    }
+  ]
+}
