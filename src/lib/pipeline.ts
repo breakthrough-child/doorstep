@@ -19,12 +19,12 @@ import {
   scenarioVisitors,
   type ScenarioState,
 } from "./data/scenarios";
-import { loadReplay, type ReplayMeta } from "./data/replay";
+import { loadReplay, readManifest, type ReplayMeta } from "./data/replay";
 import { tokenIssuedAtMs } from "./ring/token";
 import { generateDigest, getDigest } from "./digest";
 import * as store from "./store";
-import { clockLabel, localDateKey } from "./time";
-import type { CarePlan, DataMode, EventOrigin } from "./types";
+import { clockLabel, localDateKey, startOfLocalDay } from "./time";
+import type { CarePlan, DataMode, DescriptionTags, EventOrigin } from "./types";
 
 export const ORIGIN_FOR_MODE: Record<DataMode, EventOrigin> = {
   LIVE: "live",
@@ -182,11 +182,21 @@ function scenarioHint(eventId: string) {
 
 // --- REPLAY -------------------------------------------------------------------
 
+/** Sample caption for a recorded event (manifest.sampleCaptions), keyed by the original Ring id. */
+function replayHint(eventId: string) {
+  try {
+    const c = readManifest().sampleCaptions?.[eventId.replace(/^rp:/, "")];
+    return c ? { sentence: c.sentence, tags: c.tags as Partial<DescriptionTags> } : null;
+  } catch {
+    return null;
+  }
+}
+
 function ingestReplay(plan: CarePlan): number {
   const loadedFor = getSetting<string | null>("replay_loaded_for", null);
   const today = localDateKey(Date.now(), plan.timeZone);
   if (loadedFor === today) return 0;
-  const replay = loadReplay(Date.now());
+  const replay = loadReplay(Date.now(), undefined, startOfLocalDay(Date.now(), plan.timeZone));
   store.clearOrigin("replay");
   store.upsertDevices(replay.devices, "replay");
   const n = store.insertEvents(replay.events);
@@ -292,7 +302,7 @@ async function describeOne(e: store.StoredEvent, plan: CarePlan): Promise<boolea
     kind: e.kind,
     timeLabel: clockLabel(e.startMs, plan.timeZone),
     image: readSnapshot(e),
-    mockHint: e.origin === "simulated" ? scenarioHint(e.id) : null,
+    mockHint: e.origin === "simulated" ? scenarioHint(e.id) : e.origin === "replay" ? replayHint(e.id) : null,
   };
   const status = bedrockStatus();
   if (status === "mock" || status === "unavailable") {

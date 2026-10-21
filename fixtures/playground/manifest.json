@@ -23,5 +23,60 @@
   "snapshotErrors": {},
   "notes": [
     "event types for ava1.ring.device.F4BQW4RZV4X227HOCDCVC2NJRCSZYEON347VA3JYW4TGULFUPWROA4D2CR25ATGIQOXZD2YCZVNOP6PTVR7D7Q27CXWP6HV5: {\"on_demand/-\":6}"
-  ]
+  ],
+  "sampleCaptions": {
+    "ava1.ring.history.event.D33G5LUPFCYFI75VPLC6INK4ZG3GFRNPJWZ54JECTSJONIVWJ2FD4JOT6FACXFYMIAA33VTULFUY7MNRCHHO54VBGSTUXAGH": {
+      "sentence": "A woodpecker is feeding at a snow-covered bird feeder.",
+      "tags": {
+        "people": 0,
+        "vehicle": false,
+        "roles": []
+      }
+    },
+    "ava1.ring.history.event.Q5ERRYJ2LNVH625Q4TOK3KZFANH5QTTKCMMQCTDYYNESQVFWDZ2B4W5F3KPID5YT7DIITZSDOGGHHUUJ7W556JGDF354FMSY": {
+      "sentence": "A woodpecker is feeding at a snow-covered bird feeder.",
+      "tags": {
+        "people": 0,
+        "vehicle": false,
+        "roles": []
+      }
+    },
+    "ava1.ring.history.event.NQQC73LYXUCUSVH6CQZSIW66VOXKEJ27KHKQWMJNDCMQ2SMOUKSFJWMSMFSBQHOOSET2ZXJM2V4SUUWFEZ52FMES6MTHSNGZ": {
+      "sentence": "Cars are parked in the lot beyond the path; nobody is at the door.",
+      "tags": {
+        "people": 0,
+        "vehicle": true,
+        "packageVisible": false,
+        "roles": []
+      }
+    },
+    "ava1.ring.history.event.3U2LFW52CB24Z5VMNL5PQ2ZQ3TYJKCVQS6Q5OGRUOHQYOCX6JSXCD3WZ7WSMLA57QRTSIWUTKEMSZO7HY4TNOFSDW5VQNF5Q": {
+      "sentence": "Cars are parked in the lot beyond the path; nobody is at the door.",
+      "tags": {
+        "people": 0,
+        "vehicle": true,
+        "packageVisible": false,
+        "roles": []
+      }
+    },
+    "ava1.ring.history.event.DA6LXVDYXJU65XNPX566LRSSEHFAM3UYQYALVMTWBNCZD4R5T2UJCPKQO4CBCKPLDDIRLDNT75Q4FSAXBHCXYUAGH22HY3UI": {
+      "sentence": "Cars are parked in the lot beyond the path; nobody is at the door.",
+      "tags": {
+        "people": 0,
+        "vehicle": true,
+        "packageVisible": false,
+        "roles": []
+      }
+    },
+    "ava1.ring.history.event.YALR234VMEKNYH24VC2EI54TS5AWXN5MO35E5AGKZT3PFC27XN5RWPZS6GT4OWHHJMHVJZF4TWJGTYQQ6SA4FY4S6EM46XIF": {
+      "sentence": "A cardboard parcel sits on the snowy front steps; nobody is around.",
+      "tags": {
+        "people": 0,
+        "packageVisible": true,
+        "vehicle": false,
+        "roles": []
+      }
+    }
+  },
+  "sampleCaptionsNote": "Hand-written sample captions for each recorded snapshot, shown (labelled 'Sample caption') while Amazon Bedrock is unavailable. Real Nova Lite captions replace them automatically."
 }

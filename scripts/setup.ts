@@ -3,10 +3,10 @@ import "./env";
 // Safe to re-run; pass --reset to wipe ./data first.
 import fs from "node:fs";
 import { DATA_DIR, db, getSetting, setSetting } from "../src/lib/db";
-import { DEFAULT_PLAN, DEFAULT_VISITORS, listVisitors, replaceVisitors } from "../src/lib/config";
+import { DEFAULT_PLAN, DEFAULT_VISITORS, getCarePlan, listVisitors, replaceVisitors } from "../src/lib/config";
 import { loadReplay, fixtureDir } from "../src/lib/data/replay";
 import { clearOrigin, insertEvents, upsertDevices } from "../src/lib/store";
-import { localDateKey } from "../src/lib/time";
+import { localDateKey, startOfLocalDay } from "../src/lib/time";
 
 if (process.argv.includes("--reset") && fs.existsSync(DATA_DIR)) {
   fs.rmSync(DATA_DIR, { recursive: true, force: true });
@@ -25,7 +25,7 @@ if (!listVisitors().length) {
   console.log(`• Default visitors: ${DEFAULT_VISITORS.map((v) => v.name).join(", ")}`);
 }
 
-const replay = loadReplay(Date.now());
+const replay = loadReplay(Date.now(), undefined, startOfLocalDay(Date.now(), getCarePlan().timeZone));
 clearOrigin("replay");
 upsertDevices(replay.devices, "replay");
 const n = insertEvents(replay.events);

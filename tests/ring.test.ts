@@ -122,8 +122,11 @@ describe("event kind mapping", () => {
 
 describe("history normalization", () => {
   it("maps the recorded Playground history (on_demand, extra cv_detections relationship)", () => {
-    const [e, ...rest] = normalizeHistoryEvents(playgroundHistory as never, "fallback", "replay");
-    expect(rest).toHaveLength(0);
+    const events = normalizeHistoryEvents(playgroundHistory as never, "fallback", "replay");
+    expect(events.length).toBeGreaterThan(0);
+    // Package, vehicle and motion simulations all arrive as on_demand (FRICTION F-12).
+    expect(new Set(events.map((x) => x.kind))).toEqual(new Set(["on_demand"]));
+    const e = events[0];
     expect(e).toMatchObject({ kind: "on_demand", rawType: "on_demand", origin: "replay" });
     expect(e!.endMs! - e!.startMs).toBeGreaterThan(0);
     expect(e!.deviceId).toMatch(/^ava1\.ring\.device\./);
