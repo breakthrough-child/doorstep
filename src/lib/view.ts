@@ -6,7 +6,7 @@ import { getSetting } from "./db";
 import { listScenarios, loadScenario, scenarioEndMs, scenarioStartMs } from "./data/scenarios";
 import type { ReplayMeta } from "./data/replay";
 import { getDigest } from "./digest";
-import { currentNow, effectivePlan, getScenarioState, ORIGIN_FOR_MODE } from "./pipeline";
+import { coverageStart, currentNow, effectivePlan, getScenarioState, ORIGIN_FOR_MODE } from "./pipeline";
 import * as store from "./store";
 import { clockLabel, localDateKey, parseHHMM, weekdayOf, zonedTimeToUtc } from "./time";
 import type { Alert, DataMode, DescriptionTags, EventOrigin } from "./types";
@@ -15,7 +15,7 @@ export interface VisitStatus {
   id: string;
   name: string;
   window: string;
-  state: "upcoming" | "in_window" | "seen" | "missed";
+  state: "upcoming" | "in_window" | "seen" | "missed" | "not_watched";
   seenAt: string | null;
 }
 
@@ -103,6 +103,7 @@ export function buildState(): AppState {
   const urgent = active.some((a) => a.severity === "urgent");
 
   const people = items.filter((e) => e.kind === "person" || e.kind === "ding");
+  const coverage = coverageStart(mode);
   const weekday = weekdayOf(dateKey);
   const visits: VisitStatus[] = plan.visitors
     .filter((v) => v.days.includes(weekday))
@@ -111,14 +112,25 @@ export function buildState(): AppState {
       const we = zonedTimeToUtc(dateKey, parseHHMM(v.windowEnd), tz);
       const grace = plan.visitGraceMinutes * 60_000;
       const seen = people.find((e) => e.startMs >= ws - grace && e.startMs <= we + grace);
-      const state: VisitStatus["state"] = seen ? "seen" : now < ws ? "upcoming" : now <= we + grace ? "in_window" : "missed";
+      const unwatched = coverage !== undefined && coverage > ws - grace;
+      const state: VisitStatus["state"] = seen
+        ? "seen"
+        : unwatched
+          ? "not_watched"
+          : now < ws
+            ? "upcoming"
+            : now <= we + grace
+              ? "in_window"
+              : "missed";
       return { id: v.id, name: v.name, window: `${v.windowStart}–${v.windowEnd}`, state, seenAt: seen ? clockLabel(seen.startMs, tz) : null };
     });
 
   const last = items[items.length - 1];
-  const sub = items.length
-    ? `Last activity at ${clockLabel(last!.startMs, tz)} · ${items.length} door event${items.length === 1 ? "" : "s"} today`
-    : "No door activity yet today";
+  const watching = coverage !== undefined && coverage > dayStart ? ` · watching since ${clockLabel(coverage, tz)}` : "";
+  const sub =
+    (items.length
+      ? `Last activity at ${clockLabel(last!.startMs, tz)} · ${items.length} door event${items.length === 1 ? "" : "s"} today`
+      : "No door activity yet today") + watching;
   const status: AppState["status"] = active.length
     ? {
         level: urgent ? "urgent" : "attention",

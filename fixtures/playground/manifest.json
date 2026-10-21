@@ -1,5 +1,6 @@
 {
   "recordedAt": 1792623001006,
+  "coverageStartMs": 1792622617000,
   "synthetic": false,
   "source": "Recorded from the Ring Developer Playground via scripts/record-fixtures.ts (token stripped).",
   "devices": "devices.json",

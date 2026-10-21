@@ -98,6 +98,8 @@ function Visits({ visits }: { visits: VisitStatus[] }) {
               ? `Someone came at ${v.seenAt}`
               : v.state === "missed"
                 ? "Nobody seen in the window"
+                : v.state === "not_watched"
+                  ? "Before Doorstep was watching"
                 : v.state === "in_window"
                   ? "Expected now"
                   : "Later today";

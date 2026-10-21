@@ -10,6 +10,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { RingApiError, RingClient, RingTokenExpiredError } from "../src/lib/ring/client";
 import { normalizeHistoryEvents } from "../src/lib/ring/normalize";
+import { tokenIssuedAtMs } from "../src/lib/ring/token";
 import type { Document } from "../src/lib/ring/jsonapi";
 
 function arg(name: string, fallback?: string): string | undefined {
@@ -109,6 +110,8 @@ async function main() {
 
   save("manifest.json", {
     recordedAt: Date.now(),
+    // Where the API's authorized window starts (token issue time for Playground JWTs, F-09).
+    coverageStartMs: tokenIssuedAtMs(token!) ?? null,
     synthetic: false,
     source: "Recorded from the Ring Developer Playground via scripts/record-fixtures.ts (token stripped).",
     devices: "devices.json",

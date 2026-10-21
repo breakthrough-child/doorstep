@@ -19,7 +19,8 @@ import {
   scenarioVisitors,
   type ScenarioState,
 } from "./data/scenarios";
-import { loadReplay } from "./data/replay";
+import { loadReplay, type ReplayMeta } from "./data/replay";
+import { tokenIssuedAtMs } from "./ring/token";
 import { generateDigest, getDigest } from "./digest";
 import * as store from "./store";
 import { clockLabel, localDateKey } from "./time";
@@ -213,6 +214,7 @@ async function ingestLive(plan: CarePlan): Promise<number> {
   const last = getSetting<number>("live_last_poll", 0);
   if (Date.now() - last < LIVE_POLL_MS) return 0;
   setSetting("live_last_poll", Date.now());
+  if (!getSetting<number | null>("live_first_poll", null)) setSetting("live_first_poll", Date.now());
   const client = liveClient();
   const devices = await client.listDevices();
   store.upsertDevices(devices, "live");
@@ -345,6 +347,17 @@ function readSnapshot(e: store.StoredEvent): { bytes: Uint8Array; format: "jpeg"
 
 // --- Rules --------------------------------------------------------------------
 
+/** When Doorstep's view of the door begins, per mode (undefined = full coverage). */
+export function coverageStart(mode: DataMode = getDataMode()): number | undefined {
+  if (mode === "REPLAY") return getSetting<ReplayMeta | null>("replay_meta", null)?.coverageStartMs ?? undefined;
+  if (mode === "LIVE") {
+    const { token, pastedAt } = getRingToken();
+    if (!token) return undefined;
+    return tokenIssuedAtMs(token) ?? pastedAt ?? getSetting<number | null>("live_first_poll", null) ?? undefined;
+  }
+  return undefined;
+}
+
 function runRules(origin: EventOrigin, now: number, plan: CarePlan): string[] {
   const events = store.timeline(origin, now - 2 * DAY, now);
   // Don't judge the day past an event whose description is still on its way (its tags decide
@@ -354,6 +367,8 @@ function runRules(origin: EventOrigin, now: number, plan: CarePlan): string[] {
   );
   if (waiting) now = waiting.startMs - 1;
   const ruleEvents: RuleEvent[] = events.map((e) => ({ ...e, tags: e.description?.tags ?? null }));
-  const candidates = evaluateRules({ now, plan, events: ruleEvents });
+  const mode = (Object.keys(ORIGIN_FOR_MODE) as DataMode[]).find((m) => ORIGIN_FOR_MODE[m] === origin)!;
+  const candidates = evaluateRules({ now, plan, events: ruleEvents, coverageStartMs: coverageStart(mode) });
+  store.pruneAlerts(origin, candidates.map((c) => c.id), now - DAY, now);
   return store.upsertAlerts(candidates, origin);
 }

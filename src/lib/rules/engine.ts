@@ -24,6 +24,13 @@ export interface RulesInput {
   plan: CarePlan;
   /** Events from at least the previous 24 h. Order does not matter. */
   events: RuleEvent[];
+  /**
+   * When Doorstep's view of the door begins (e.g. the moment Ring access was granted).
+   * Absence-based rules (quiet morning, missed visit) never judge a window that started
+   * before this, because "nobody came" can't be claimed for time we couldn't see.
+   * Omit for full coverage.
+   */
+  coverageStartMs?: number;
 }
 
 const MIN = 60_000;
@@ -53,7 +60,7 @@ export function evaluateRules(input: RulesInput): AlertCandidate[] {
 // Quiet morning: no door activity of any kind between the end of the late-night
 // window (start of "morning") and the configured time.
 
-export function quietMorning({ now, plan, events }: RulesInput): AlertCandidate[] {
+export function quietMorning({ now, plan, events, coverageStartMs }: RulesInput): AlertCandidate[] {
   const tz = plan.timeZone;
   const today = localDateKey(now, tz);
   const byMin = parseHHMM(plan.quietMorningBy);
@@ -62,6 +69,7 @@ export function quietMorning({ now, plan, events }: RulesInput): AlertCandidate[
   const morningStartMin = Math.min(parseHHMM(plan.lateNightEnd), byMin);
   const from = zonedTimeToUtc(today, morningStartMin, tz);
   const by = zonedTimeToUtc(today, byMin, tz);
+  if (coverageStartMs !== undefined && coverageStartMs > from) return [];
   const activity = events.filter((e) => ACTIVITY_KINDS.has(e.kind));
   if (activity.some((e) => e.startMs >= from && e.startMs < by)) return [];
 
@@ -86,7 +94,7 @@ export function quietMorning({ now, plan, events }: RulesInput): AlertCandidate[
 // Missed visit: a scheduled visitor's window passed (plus grace) with nobody at the door.
 // Doorstep never identifies people, so "a visit" means any person/doorbell event in the window.
 
-export function missedVisits({ now, plan, events }: RulesInput): AlertCandidate[] {
+export function missedVisits({ now, plan, events, coverageStartMs }: RulesInput): AlertCandidate[] {
   const tz = plan.timeZone;
   const today = localDateKey(now, tz);
   const weekday = weekdayOf(today);
@@ -111,6 +119,7 @@ export function missedVisits({ now, plan, events }: RulesInput): AlertCandidate[
     const we = zonedTimeToUtc(today, endMin, tz);
     const deadline = we + grace;
     if (now < deadline) continue;
+    if (coverageStartMs !== undefined && coverageStartMs > ws - grace) continue;
     if (people.some((e) => e.startMs >= ws - grace && e.startMs <= deadline)) continue;
 
     // A late arrival "clears" the alert only if it's plausibly this visitor: within 2 hours,

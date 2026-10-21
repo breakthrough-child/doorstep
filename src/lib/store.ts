@@ -276,6 +276,21 @@ export function upsertAlerts(candidates: AlertCandidate[], origin: EventOrigin):
   return created;
 }
 
+/**
+ * Remove alerts the rules no longer produce for [fromMs, toMs] (e.g. tags arrived, coverage
+ * changed, care plan edited) — but only ones the family hasn't touched.
+ */
+export function pruneAlerts(origin: EventOrigin, keepIds: string[], fromMs: number, toMs: number): number {
+  const keep = new Set(keepIds.map((id) => `${origin}:${id}`));
+  const rows = db()
+    .prepare("SELECT id FROM alerts WHERE origin = ? AND status = 'open' AND triggered_at >= ? AND triggered_at <= ?")
+    .all(origin, fromMs, toMs) as Array<{ id: string }>;
+  const del = db().prepare("DELETE FROM alerts WHERE id = ?");
+  let n = 0;
+  for (const r of rows) if (!keep.has(r.id)) n += del.run(r.id).changes;
+  return n;
+}
+
 export function listAlerts(origin: EventOrigin, sinceMs = 0, upToMs = Number.MAX_SAFE_INTEGER): Alert[] {
   const rows = db()
     .prepare("SELECT * FROM alerts WHERE origin = ? AND triggered_at >= ? AND triggered_at <= ? ORDER BY triggered_at DESC")

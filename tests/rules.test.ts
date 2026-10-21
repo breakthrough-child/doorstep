@@ -135,6 +135,26 @@ describe("missed visit", () => {
   });
 });
 
+describe("coverage (when Doorstep's view of the door begins)", () => {
+  it("absence rules don't judge windows that began before coverage", () => {
+    const coverageStartMs = at("09:30");
+    expect(quietMorning({ now: at("11:00"), plan: plan(), events: [], coverageStartMs })).toEqual([]);
+    expect(missedVisits({ now: at("12:00"), plan: plan(), events: [], coverageStartMs })).toEqual([]);
+  });
+
+  it("they still fire when coverage began before the window", () => {
+    const coverageStartMs = at("04:00");
+    expect(quietMorning({ now: at("11:00"), plan: plan(), events: [], coverageStartMs })).toHaveLength(1);
+    expect(missedVisits({ now: at("12:00"), plan: plan(), events: [], coverageStartMs })).toHaveLength(1);
+  });
+
+  it("event-driven rules are unaffected by coverage", () => {
+    const events = [ev("23:41", "ding")];
+    const out = evaluateRules({ now: at("23:59"), plan: plan({ visitors: [] }), events, coverageStartMs: at("23:00") });
+    expect(out.map((a) => a.rule).sort()).toEqual(["late_night_activity", "unanswered_doorbell"]);
+  });
+});
+
 describe("package left out", () => {
   it("fires after N hours with no pickup", () => {
     const events = [ev("10:00", "package", { packageVisible: true })];
