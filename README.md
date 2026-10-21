@@ -35,12 +35,13 @@ The Ring Developer Playground gives sandbox API access without hardware, but its
 | Mode | Badge | Ring data | Events | Snapshots |
 |---|---|---|---|---|
 | `LIVE` | **Live** (green) | Real Playground API calls with your token | Polled from Event History every 30 s | Real, watermarked Ring images |
-| `REPLAY` (default) | **Replay** (blue) | Recorded real Playground responses in `fixtures/playground/`, pushed through the same JSON:API normalizer | Recorded events, time-shifted to today | Recorded Ring images |
+| `REPLAY` (default) | **Replay** (blue) | Real Playground responses recorded on Oct 21 in `fixtures/playground/` (devices, 3 history events), pushed through the same JSON:API normalizer | Recorded events, time-shifted to today | Real 1920×1080 Ring snapshots with the mandatory watermark |
 | `SCENARIO` | **Simulated** (blue) | Replayed devices | Timed synthetic events on a simulated clock, each labelled "Simulated" | Drawn illustrations stamped "SIMULATED SCENE" (never fake Ring images) |
 
-- Record your own fixtures: `RING_ACCESS_TOKEN=… npm run record`. The token is never written to disk; the recorder refuses to save any file containing it.
+- Record your own fixtures: trigger a few event simulations in the Playground, then `RING_ACCESS_TOKEN=… npm run record`. A fresh token has an empty history, so simulate first. The token is never written to disk; the recorder refuses to save any file containing it.
 - Scenarios: `grace_normal_day`, `missed_aide_visit`, `package_left_out`, `quiet_morning`, `late_night_ding`. Play at 1×/10×/60×/300× from `/demo`.
-- Without recorded fixtures, REPLAY falls back to `fixtures/placeholder/` (hand-written, schema-accurate) and the badge says **Placeholder fixtures**.
+- **Coverage-aware.** The Playground only authorizes data from each token's issue time. Doorstep tracks when its view of the door began ("watching since 23:43") and never raises "nobody came" alerts for time it couldn't see.
+- The Playground's simulated events all arrive as `on_demand` (live view) with no package/person subtype (friction F-12). That's why the caretaking rules are demonstrated with labelled SCENARIO days.
 
 ## Architecture
 

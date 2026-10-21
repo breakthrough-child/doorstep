@@ -67,7 +67,8 @@ No face recognition, no biometric matching, no identification of anyone. This is
 
 - **The Ring Developer Playground doesn't deliver webhooks**, and its tokens last ~30 minutes. We designed three explicit data modes (live / replayed / simulated) and label them on screen, so the demo never pretends.
 - **Event History has no documented time-range filter**, so "today's events" means paginating backwards until we pass the window (friction F-01).
-- **Event-type vocabulary differs between webhooks and history**, especially for packages (F-02).
+- **Event-type vocabulary differs between webhooks and history**, especially for packages (F-02). In the Playground every simulated event came through as `on_demand` (F-12).
+- **Playground data access starts at each token's issue time.** Fresh tokens see empty history and get undocumented 403s for earlier media (F-09). That led to a real product insight: Doorstep never claims "nobody came" for time it couldn't see. Absence-based alerts respect when coverage began, and the app says "watching since 23:43".
 - **The official sample app's device normalization doesn't match the documented schema** (F-03, F-04).
 <!-- AWS-BUILDER:START -->
 - **Amazon Bedrock was blocked by account quotas.** Every Nova Lite quota in eu-north-1 was applied at 0 (tokens per day: 0 vs a 5.76B default), and most are "Not adjustable". The runtime error is a retryable `ThrottlingException: Too many tokens per day` on the very first call. We built a fallback: real Bedrock stays the default, failures show clearly labelled sample captions, and the app switches to Nova Lite automatically the moment a call succeeds (F-08).
@@ -103,7 +104,9 @@ The most valuable caretaking signals are absences and timing, and those need rul
   - One canonical event type/subtype table across webhooks and history, with packages especially (F-02).
   - Say whether the snapshot's pre-signed URL should be fetched without auth, and how long it lives (F-07).
   - The reference is one ~370k-character page; an OpenAPI spec would let partners generate typed clients (F-06).
-- **Onboarding (zero → hello world):** From reading the docs to the first successful `GET /v1/devices` took roughly [N minutes — fill in after LIVE test], helped a lot by the Playground. The biggest time sink was reconciling the sample app with the reference.
+  - Real responses carry fields the reference doesn't mention. Notably, `users/me` returns name and email, which a privacy review needs to know (F-13).
+  - Omitting snapshot `resolution` returns 640×360, not full size as documented, so the watermark covers much more of the frame (F-10).
+- **Onboarding (zero → hello world):** With a Playground token, the first successful `GET /v1/devices` took minutes; our typed client worked first time against the real API. Getting *data* took longer. A fresh token sees no history and no media until you simulate events (F-09), and that cost a full 30-minute token to work out. The other time sink was reconciling the sample app with the reference.
 - **Would we build with it again?** Yes. The API surface is small, sensible and well suited to "ambient" products that don't stream video. We'd want webhooks in the Playground first.
 
 ### Ring Developer Playground
@@ -113,7 +116,9 @@ The most valuable caretaking signals are absences and timing, and those need rul
 - **What needs work:**
   - No webhook delivery, so any event-driven app needs a simulation layer.
   - 30-minute tokens with no refresh, so long demo sessions break mid-flow.
-  - [Add any Playground-vs-docs differences found while recording — see FRICTION_LOG.]
+  - A fresh token sees an empty history, and every earlier media request fails with an undocumented `403 TIME_RANGE_NOT_AUTHORIZED`. The authorized window starts at the token's issue time (F-09).
+  - Simulated events arrive in Event History as `on_demand` with no subtype, even when the clip shows a package (F-12), so category logic can't be tested against it.
+  - `latest_in_range` snapshots fail on the pre-signed host with `422 GRECO_NO_VALID_KEY` (F-11). `subscriptions` returns 422 for the Playground user (F-13).
 - **Would we use it again?** Absolutely. We'd love a "simulate event → webhook to my URL" button.
 
 ### Ring sample app (`ring-api-helloworld`)
@@ -164,6 +169,8 @@ All calls are server-side, cached by event id / day so nothing is paid for twice
 | **Important** | Ring Partner API | Time-range (`filter[start]`/`filter[end]`) and `page[size]` on Event History. |
 | **Important** | Ring Partner API | One canonical event type/subtype table shared by webhooks and history (packages!). |
 | **Important** | Ring Playground | Longer-lived or refreshable tokens for demo sessions. |
+| **Important** | Ring Playground | Emit simulated events with their real type/subtype (`motion` + `package_delivery` / `human` / `vehicle`), not `on_demand`, and seed a little sample history. |
+| **Important** | Ring Partner API | Document `TIME_RANGE_NOT_AUTHORIZED` and the consent boundary; make omitted snapshot `resolution` return full size as documented. |
 | **Important** | Ring docs | OpenAPI spec and per-resource pages. |
 | **Nice-to-have** | Ring sample app | Align normalization and webhook types with the published schema; don't expose the token to the browser. |
 | **Nice-to-have** | Ring Partner API | Document pre-signed snapshot URL auth expectations and lifetime. |
