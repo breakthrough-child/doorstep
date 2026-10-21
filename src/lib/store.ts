@@ -141,6 +141,17 @@ export function eventsNeedingDescription(origin: EventOrigin, upToMs: number, li
   return rows.map(toEvent);
 }
 
+/** Events whose cached description came from a given model (used to upgrade sample captions). */
+export function eventsWithModel(origin: EventOrigin, model: string, limit: number): StoredEvent[] {
+  const rows = db()
+    .prepare(
+      `SELECT e.* FROM events e JOIN descriptions d ON d.event_id = e.id
+       WHERE e.origin = ? AND d.model = ? ORDER BY e.start_ms DESC LIMIT ?`,
+    )
+    .all(origin, model, limit) as EventRow[];
+  return rows.map(toEvent);
+}
+
 type DescRow = {
   event_id: string;
   sentence: string;
@@ -240,7 +251,10 @@ export function upsertAlerts(candidates: AlertCandidate[], origin: EventOrigin):
   const created: string[] = [];
   const now = Date.now();
   conn.transaction(() => {
-    for (const c of candidates) {
+    for (const rule of candidates) {
+      // Rule ids are per-day/per-event; namespace by origin so replayed, live and simulated
+      // days never overwrite each other's alerts.
+      const c = { ...rule, id: `${origin}:${rule.id}` };
       const isNew = !existing.get(c.id);
       stmt.run(
         c.id,

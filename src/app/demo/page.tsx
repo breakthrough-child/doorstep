@@ -79,15 +79,27 @@ export default function DemoPanel() {
             {s && (
               <dl className="mt-3 grid gap-x-6 gap-y-1 text-sm sm:grid-cols-2">
                 <Row k="Ring token" v={s.ring.hasToken ? `${s.ring.tokenSource}${s.ring.expired ? " · EXPIRED" : ""}${s.ring.pastedAt ? ` · pasted ${ago(s.ring.pastedAt)}` : ""}` : "none"} />
-                <Row k="Bedrock" v={`${s.bedrock.mock ? "MOCK" : "real"} · ${s.bedrock.model}`} />
+                <Row
+                  k="Bedrock"
+                  v={`${
+                    s.bedrock.status === "ok"
+                      ? "REAL · working"
+                      : s.bedrock.status === "mock"
+                        ? "MOCK (BEDROCK_MOCK=1)"
+                        : s.bedrock.status === "unavailable"
+                          ? `UNAVAILABLE · sample captions · retry ${s.bedrock.nextRetryAt ? new Date(s.bedrock.nextRetryAt).toLocaleTimeString() : "soon"}`
+                          : "REAL · not called yet"
+                  } · ${s.bedrock.model} @ ${s.bedrock.region}`}
+                />
                 <Row k="Bedrock usage" v={`${s.bedrock.calls} calls · ${s.bedrock.inputTokens.toLocaleString()} in / ${s.bedrock.outputTokens.toLocaleString()} out tokens`} />
                 {s.replay && <Row k="Replay data" v={`${s.replay.synthetic ? "placeholder" : "recorded"} ${new Date(s.replay.recordedAt).toLocaleString()} · ${s.replay.eventCount} events`} />}
-                {s.bedrock.lastError && <Row k="Bedrock error" v={s.bedrock.lastError} />}
+                {s.bedrock.lastError && s.bedrock.status !== "ok" && <Row k="Last Bedrock error" v={s.bedrock.lastError} />}
               </dl>
             )}
             <div className="mt-3 flex flex-wrap gap-2">
               {s?.mode === "LIVE" && <Small onClick={() => act("poll", { action: "poll-live" })}>Poll Ring now</Small>}
               {s?.mode === "REPLAY" && <Small onClick={() => act("reload", { action: "reload-replay" })}>Reload fixtures</Small>}
+              {s?.bedrock.status === "unavailable" && <Small onClick={() => act("bedrock", { action: "retry-bedrock" })}>Retry Bedrock now</Small>}
               <Small onClick={() => act("reset", { action: "reset" })}>Reset all state</Small>
             </div>
           </Panel>

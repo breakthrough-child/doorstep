@@ -70,7 +70,7 @@ function TimelineRow({ e, onOpen }: { e: TimelineView; onOpen: () => void }) {
             {e.sentence ?? <span className="text-ink-soft italic">Describing what the camera saw…</span>}
           </p>
           {e.captionSource && (
-            <p className="mt-1.5 inline-flex items-center gap-1 text-[0.72rem] text-ink-soft">
+            <p className={`mt-1.5 inline-flex items-center gap-1 text-[0.72rem] ${e.captionSource.startsWith("Sample") ? "font-bold text-sky" : "text-ink-soft"}`}>
               <SparkIcon className="h-3 w-3" /> {e.captionSource}
             </p>
           )}

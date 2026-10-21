@@ -28,6 +28,7 @@ export interface RulesInput {
 
 const MIN = 60_000;
 const HOUR = 60 * MIN;
+const LATE_ARRIVAL_MS = 2 * HOUR;
 
 /** Kinds that represent a person at the door (as opposed to cars, animals or live views). */
 const PERSON_KINDS = new Set(["person", "ding"]);
@@ -92,6 +93,14 @@ export function missedVisits({ now, plan, events }: RulesInput): AlertCandidate[
   const grace = plan.visitGraceMinutes * MIN;
   const people = events.filter((e) => PERSON_KINDS.has(e.kind));
   const out: AlertCandidate[] = [];
+  const todays = plan.visitors.filter((v) => v.days.includes(weekday));
+  const inOtherWindow = (ms: number, selfId: string) =>
+    todays.some((o) => {
+      if (o.id === selfId) return false;
+      const from = zonedTimeToUtc(today, parseHHMM(o.windowStart), tz) - grace;
+      const to = zonedTimeToUtc(today, parseHHMM(o.windowEnd), tz) + grace;
+      return ms >= from && ms <= to;
+    });
 
   for (const v of plan.visitors) {
     if (!v.days.includes(weekday)) continue;
@@ -104,7 +113,11 @@ export function missedVisits({ now, plan, events }: RulesInput): AlertCandidate[
     if (now < deadline) continue;
     if (people.some((e) => e.startMs >= ws - grace && e.startMs <= deadline)) continue;
 
-    const late = people.find((e) => e.startMs > deadline);
+    // A late arrival "clears" the alert only if it's plausibly this visitor: within 2 hours,
+    // and not during another scheduled visitor's window (e.g. the lunch delivery).
+    const late = people.find(
+      (e) => e.startMs > deadline && e.startMs <= deadline + LATE_ARRIVAL_MS && !inOtherWindow(e.startMs, v.id),
+    );
     out.push({
       id: `missed_visit:${v.id}:${today}`,
       rule: "missed_visit",

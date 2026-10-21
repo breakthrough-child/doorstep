@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { resetBedrockHealth } from "@/lib/bedrock/health";
 import { setDataMode } from "@/lib/config";
 import { db } from "@/lib/db";
 import { SCENARIO_IDS } from "@/lib/data/scenarios";
@@ -24,6 +25,7 @@ const action = z.discriminatedUnion("action", [
   z.object({ action: z.literal("reset") }),
   z.object({ action: z.literal("reload-replay") }),
   z.object({ action: z.literal("poll-live") }),
+  z.object({ action: z.literal("retry-bedrock") }),
 ]);
 
 export async function POST(req: Request) {
@@ -69,6 +71,9 @@ export async function POST(req: Request) {
       break;
     case "poll-live":
       forceLivePoll();
+      break;
+    case "retry-bedrock":
+      resetBedrockHealth();
       break;
   }
   await tick();

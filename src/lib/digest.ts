@@ -1,6 +1,6 @@
 // Daily digest: gather the day's facts, ask Bedrock for a warm summary, cache per (origin, day).
 import { writeDigest, type DigestFacts } from "./bedrock";
-import { bedrockMock } from "./config";
+import { bedrockStatus, recordBedrockFailure, recordBedrockSuccess } from "./bedrock/health";
 import { db } from "./db";
 import * as store from "./store";
 import { clockLabel, localDateKey, parseHHMM, weekdayOf, zonedTimeToUtc } from "./time";
@@ -91,7 +91,22 @@ export function dayFacts(origin: EventOrigin, plan: CarePlan, now: number): Dige
 export async function generateDigest(origin: EventOrigin, plan: CarePlan, now: number): Promise<Digest> {
   const dateKey = localDateKey(now, plan.timeZone);
   const facts = dayFacts(origin, plan, now);
-  const { digest, usage } = await writeDigest(facts, bedrockMock());
+  const status = bedrockStatus();
+  let result: Awaited<ReturnType<typeof writeDigest>>;
+  if (status === "mock" || status === "unavailable") {
+    result = await writeDigest(facts, true);
+    if (status === "unavailable") result.usage.model = "sample";
+  } else {
+    try {
+      result = await writeDigest(facts, false);
+      recordBedrockSuccess();
+    } catch (err) {
+      recordBedrockFailure(err);
+      result = await writeDigest(facts, true);
+      result.usage.model = "sample";
+    }
+  }
+  const { digest, usage } = result;
   store.logBedrockUsage({ purpose: "digest", ref: `${origin}:${dateKey}`, ...usage });
   const row: Digest = {
     id: `${origin}:${dateKey}`,

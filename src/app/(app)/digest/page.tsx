@@ -102,7 +102,12 @@ function DigestCard({ d, featured = false, timeZone }: { d: Digest; featured?: b
       )}
       <p className="mt-4 inline-flex items-center gap-1 text-xs text-ink-soft">
         <SparkIcon className="h-3 w-3" />
-        {d.mock ? "Template digest (Bedrock mock mode)" : `Written by Amazon Bedrock · ${d.model}`} ·{" "}
+        {!d.mock
+          ? `Written by Amazon Bedrock · ${d.model}`
+          : d.model === "sample"
+            ? "Sample digest from a template — Amazon Bedrock not available yet"
+            : "Sample digest from a template — Bedrock mock mode"}{" "}
+        ·{" "}
         {new Intl.DateTimeFormat("en-GB", { hour: "numeric", minute: "2-digit", timeZone }).format(d.createdAt)}
       </p>
     </article>

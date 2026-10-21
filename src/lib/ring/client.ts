@@ -70,7 +70,8 @@ export class RingClient {
   constructor(opts: RingClientOptions) {
     if (!opts.token?.trim()) throw new RingTokenExpiredError("(no token)");
     this.token = opts.token.trim();
-    this.base = opts.baseUrl ?? RING_API_BASE;
+    // RING_API_BASE lets tests and the recorder target a fake server; never needed in normal use.
+    this.base = opts.baseUrl ?? process.env.RING_API_BASE ?? RING_API_BASE;
     this.fetchImpl = opts.fetchImpl ?? fetch;
     this.maxRetries = opts.maxRetries ?? 3;
     this.sleep = opts.sleep ?? ((ms) => new Promise((r) => setTimeout(r, ms)));

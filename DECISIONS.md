@@ -13,7 +13,9 @@ Defaults chosen without asking, and why. Newest at the bottom of each section.
 - **"After dark" is a configurable time (default 18:30), not sunset.** The Ring location API only exposes country/state, which isn't enough for a sunset calculation. A package delivered after dark gets 30 minutes' grace before alerting.
 - **Unanswered doorbell = no "door open" or "two people together" signal within 3 minutes of the last ring.** Repeated rings inside the window are one visit. It's labelled "best-effort guess" everywhere.
 - **Late-night bursts within 15 minutes are one alert.** It's the only "urgent" (rose) rule; everything else is amber "worth a look".
-- **Alert ids are deterministic** (`rule:subject:date`), so re-running rules never duplicates alerts or loses "I'm on it" / "All sorted".
+- **Alert ids are deterministic** (`origin:rule:subject:date`), so re-running rules never duplicates alerts or loses "I'm on it" / "All sorted". The origin prefix keeps a replayed day and a simulated day on the same date from overwriting each other (a bug we hit).
+- **A late arrival only clears a missed visit if it's within 2 hours of the deadline and not inside another scheduled visitor's window.** Otherwise the lunch delivery would "clear" the aide's missed visit.
+- **`missed_aide_visit` pins a daily schedule** (aide + lunch delivery every day), so the demo behaves the same on a weekend.
 - **Rules wait for in-flight descriptions** (up to 5 minutes). Tags decide pickups and answers, so we don't judge the day past an event whose caption is still coming.
 - **Alert actions are "I'm on it" (acknowledge) and "All sorted" (resolve)**: warmer wording for the same state machine.
 
@@ -38,10 +40,13 @@ Defaults chosen without asking, and why. Newest at the bottom of each section.
 
 ## AWS / Bedrock
 
-- **Model: `us.amazon.nova-lite-v1:0`** (Nova Lite via the US cross-region inference profile, from `us-east-1`). It's cheap, multimodal, and serves both captions and digests. Configurable via `BEDROCK_MODEL_ID`. Nova 2 Lite (`us.amazon.nova-2-lite-v1:0`) is a drop-in alternative.
+- **Model: `eu.amazon.nova-lite-v1:0` from `eu-north-1`** (Nova Lite via the EU cross-region inference profile), per the account owner's instruction, since the hackathon AWS account lives in Stockholm. It's cheap, multimodal, and serves both captions and digests. Configurable via `BEDROCK_MODEL_ID` / `AWS_REGION` (`BEDROCK_REGION` overrides the region for Bedrock only).
 - **Converse API, JSON-only prompt + tolerant parser**, not tool-use structured output. Nova Lite follows a JSON-only instruction well, and the parser (zod, `.catch()` per field, first-balanced-object extraction, prose fallback) is unit-tested. Simpler, and one round trip.
-- **`BEDROCK_MOCK` unset = auto.** Real Bedrock if AWS credentials are discoverable, otherwise canned captions. A fresh clone runs with zero setup, and the demo uses real Bedrock as soon as credentials exist.
-- **After 3 failed Bedrock attempts for an event**, it gets an event-type caption labelled "Bedrock unavailable", so the timeline never sticks on "Describing…".
+- **Real Bedrock is the default path; labelled sample captions are the fallback.** The account's Nova Lite quotas are 0 (F-08), so when a call fails Doorstep records the exact error and gives the event a sample caption. Scenario events use their scripted sentence; others use an event-type sentence. Samples are labelled in the timeline, in a note above it and on digests. Bedrock is retried after a cooldown: 10 min for "per day" quota errors, 5 min for access/validation errors, 1–2 min otherwise. The first success flips back to Nova Lite and re-captions samples (3 at a time, when idle).
+- **SDK `maxAttempts: 2`** so a throttled/zero-quota account doesn't stall each pipeline tick for ~15 s.
+- **`npm run check:bedrock`** makes one real image+text call and prints success or the exact error. It also updates the running app's Bedrock status.
+- **`BEDROCK_MOCK=1`** forces samples (offline dev). Unset: real whenever credentials are discoverable. With no credentials at all (a judge's fresh clone), samples are used and labelled.
+- **SUBMISSION.md marks the AWS Builder material with `AWS-BUILDER` markers**, and `npm run submission:no-aws` produces a clean variant, in case Bedrock isn't unlocked by Thursday evening.
 - **Captions are cached by event id forever** (scenario resets keep them), so we never pay twice.
 
 ## Engineering

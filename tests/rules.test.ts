@@ -111,6 +111,24 @@ describe("missed visit", () => {
     expect(a?.clearedReason).toContain("11:40");
   });
 
+  it("a late arrival more than 2 hours after the deadline doesn't clear it", () => {
+    const [a] = missedVisits({ now: at("14:00"), plan: plan(), events: [ev("12:50", "ding")] });
+    expect(a?.clearedAt).toBeNull();
+  });
+
+  it("someone arriving during another visitor's window doesn't clear it", () => {
+    const p = plan({
+      visitors: [
+        { id: "aide", name: "Home aide", days: [0, 1, 2, 3, 4, 5, 6], windowStart: "09:00", windowEnd: "10:30" },
+        { id: "meals", name: "Meal delivery", days: [0, 1, 2, 3, 4, 5, 6], windowStart: "11:30", windowEnd: "12:00" },
+      ],
+    });
+    const out = missedVisits({ now: at("13:00"), plan: p, events: [ev("11:40", "ding")] });
+    expect(out).toHaveLength(1);
+    expect(out[0]?.id).toBe(`missed_visit:aide:${DAY}`);
+    expect(out[0]?.clearedAt).toBeNull();
+  });
+
   it("uses a stable id per visitor per day", () => {
     const [a] = missedVisits({ now: at("12:00"), plan: plan(), events: [] });
     expect(a?.id).toBe(`missed_visit:aide:${DAY}`);

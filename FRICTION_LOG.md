@@ -77,3 +77,25 @@ Environment: Ubuntu laptop, Node 22.22, no Ring hardware, no Fire TV hardware. D
 - **Severity:** Low/Medium
 - **Workaround:** The Doorstep client uses `redirect: "manual"`, reads `Location`, and GETs it without the Bearer header.
 - **Suggestion:** State whether the pre-signed URL should be fetched without auth, and its expiry.
+
+## F-08 · Bedrock: every Nova Lite quota in eu-north-1 provisioned at 0, mostly "Not adjustable"; runtime says "Too many tokens per day"
+
+- **Area:** Amazon Bedrock — Service Quotas / Converse, Amazon Nova Lite (`eu.amazon.nova-lite-v1:0` from `eu-north-1`)
+- **Date:** Wed Oct 21
+- **Task attempted:** First real Bedrock call: caption one porch snapshot with Nova Lite via the Converse API (`npm run check:bedrock`).
+- **Steps:**
+  1. Created IAM credentials for the hackathon account, set `AWS_REGION=eu-north-1`, `BEDROCK_MODEL_ID=eu.amazon.nova-lite-v1:0`.
+  2. `npm run check:bedrock` → one Converse call with a 1280×720 JPEG + a short prompt.
+  3. Opened Service Quotas → Amazon Bedrock in eu-north-1.
+- **Expected:** The call succeeds (on-demand serverless models are meant to work out of the box), or fails with an access/quota error that says what to fix.
+- **Actual:**
+  - The very first call fails: `ThrottlingException: Too many tokens per day, please wait before trying again.` (HTTP 429, request id `954594e7-95ac-4fcc-bdab-570cc55d7d5b`, ~15 s including the SDK's automatic retries).
+  - Service Quotas shows every Nova Lite quota for the account in eu-north-1 **applied at 0**. For example, *tokens per day* is **0** vs an AWS default of **5.76 billion**. Most of these quotas are marked **"Not adjustable"**, so the console offers no self-service increase.
+  - Raised a quota increase request and a support case. Bedrock remained blocked at time of writing.
+- **Severity:** **High.** It blocks the AWS Builder integration entirely: no Bedrock call can succeed, and there's no self-service fix.
+- **Why it hurt:** The error is a *throttling* error, which reads as "slow down" and which SDKs retry automatically. Its real meaning is "this account may not use this model at all". A new account gets no `AccessDeniedException` or `ServiceQuotaExceededException` and no console banner saying the account's Bedrock quotas are zero. You only find out by reading Service Quotas line by line.
+- **Workaround:** Doorstep keeps real Bedrock as the default path. When a call fails it records the exact error, shows clearly labelled **sample captions**, and retries every 10 minutes for daily-quota errors. On the first success it switches to Nova Lite automatically and re-captions the samples. `npm run check:bedrock` makes one real call and prints success or the exact error with a hint. The SDK is limited to 2 attempts so a zero quota doesn't stall the pipeline.
+- **Suggestions:**
+  1. Return a distinct, non-retryable error (e.g. `ServiceQuotaExceededException` with "account quota for this model is 0 in this region") when the applied quota is zero, rather than a retryable `ThrottlingException`.
+  2. Show a banner in the Bedrock console / model catalog when an account's on-demand quotas for a model are 0, with a link to request access.
+  3. Make "Not adjustable" quotas explain *why*, e.g. new-account limits and when they lift, and offer a path that doesn't need a support case. Hackathon timelines are days, not weeks.

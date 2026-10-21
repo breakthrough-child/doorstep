@@ -1,5 +1,7 @@
 # AWS integration — Amazon Bedrock
 
+> **Status (Wed Oct 21):** the integration is complete, but the hackathon AWS account's Nova Lite quotas in eu-north-1 are applied at **0** (tokens per day: 0 vs a 5.76B default). Every call fails with `ThrottlingException: Too many tokens per day`. A quota increase and a support case are open (FRICTION_LOG F-08). Until calls succeed, the app shows **labelled sample captions** and retries automatically. Run `npm run check:bedrock` to test the account with one real call.
+
 Doorstep uses **Amazon Bedrock** (Converse API, `@aws-sdk/client-bedrock-runtime`) with **Amazon Nova Lite** for the two jobs where a model beats rules: describing what a Ring snapshot shows, and writing a warm daily summary. The caretaking alerts are a deterministic rules engine, not AI.
 
 ## Services used
@@ -8,7 +10,7 @@ Doorstep uses **Amazon Bedrock** (Converse API, `@aws-sdk/client-bedrock-runtime
 |---|---|---|
 | Amazon Bedrock Runtime — `Converse` | Snapshot → one plain sentence + structured tags (image + text in, JSON out) | `src/lib/bedrock/index.ts` → `describeSnapshot()` |
 | Amazon Bedrock Runtime — `Converse` | Day's events + alerts → short digest (text in, JSON out) | `src/lib/bedrock/index.ts` → `writeDigest()` |
-| Amazon Nova Lite (`us.amazon.nova-lite-v1:0`, US cross-region inference profile from `us-east-1`) | Multimodal model for both calls | `BEDROCK_MODEL_ID` env var |
+| Amazon Nova Lite (`eu.amazon.nova-lite-v1:0`, EU cross-region inference profile, called from `eu-north-1`) | Multimodal model for both calls | `BEDROCK_MODEL_ID` / `AWS_REGION` env vars |
 
 No other AWS services are needed. Persistence is local SQLite, so judges run the app with zero cloud setup.
 
@@ -50,7 +52,9 @@ sequenceDiagram
 - **Secrets stay server-side.** Bedrock and Ring are only called from route handlers and the poller. The browser never sees AWS credentials or the Ring token.
 - **Caching.** Descriptions are keyed by event id and digests by `(data origin, local date)`. Restarting a demo scenario reuses its captions, so a result is never paid for twice.
 - **Fallbacks.** Strict JSON parsing (zod) with lenient recovery: the first balanced JSON object, then the first prose sentence. If Bedrock fails 3 times for an event, the event gets a plain "event type" caption labelled as such. Digest output that won't parse falls back to a deterministic template.
-- **Mock mode.** `BEDROCK_MOCK=1` returns canned outputs of the same shape for offline development. When unset, Doorstep calls Bedrock if AWS credentials are discoverable and mocks otherwise. The UI labels each caption's source (Bedrock model id, mock, or event-type only).
+- **Real by default, with labelled samples as fallback.** With AWS credentials present, every caption is first attempted on Bedrock. If a call fails (quota, access, network), the exact error is recorded and the event gets a **sample caption**, labelled "Sample caption — Amazon Bedrock not available yet" in the UI. Bedrock is retried after a cooldown (10 min for daily-quota errors). The first success switches back to Nova Lite and re-captions the samples in the background. Digests behave the same way.
+- **Mock mode.** `BEDROCK_MOCK=1` never calls AWS; it uses the same sample captions, labelled as mock-mode samples.
+- **Health check.** `npm run check:bedrock` makes one real Nova Lite call (image + text) and prints the caption and token usage, or the exact error name, HTTP status, request id and a hint. If the app's database exists, it also updates the app's Bedrock status immediately.
 
 ## Usage logging
 
@@ -58,7 +62,7 @@ Every call logs model, input/output tokens and latency to the console (`[bedrock
 
 ## Cost
 
-Nova Lite on-demand pricing (us-east-1, check the current Bedrock pricing page): about **$0.00006 per 1K input tokens** and **$0.00024 per 1K output tokens**.
+Nova Lite on-demand pricing (check the current Bedrock pricing page for your region; EU profiles are priced close to us-east-1): about **$0.00006 per 1K input tokens** and **$0.00024 per 1K output tokens**.
 
 | Call | Typical tokens | Approx. cost |
 |---|---|---|
@@ -71,7 +75,7 @@ Nova Lite on-demand pricing (us-east-1, check the current Bedrock pricing page):
 
 ## Setup
 
-1. AWS account with Bedrock in `us-east-1`. Amazon's serverless models are enabled for invocation by default in commercial regions (the old per-model "Model access" page was retired). If your account or organization restricts model access via IAM/SCP, allow `bedrock:InvokeModel` on the Nova Lite inference profile and its underlying model in each region the profile routes to (`us-east-1`, `us-east-2`, `us-west-2`).
+1. AWS account with Bedrock in `eu-north-1` (or any region; in `us-east-1` use `us.amazon.nova-lite-v1:0`). **Check Service Quotas → Amazon Bedrock for Nova Lite in your region first.** New accounts can have on-demand quotas applied at 0 (F-08), which no IAM setting fixes. If your organization restricts model access via IAM/SCP, allow `bedrock:InvokeModel` on the inference profile and on the underlying foundation model in every region the EU profile routes to.
 2. Minimal IAM policy for the credentials Doorstep uses:
 
 ```json
@@ -82,7 +86,7 @@ Nova Lite on-demand pricing (us-east-1, check the current Bedrock pricing page):
       "Effect": "Allow",
       "Action": ["bedrock:InvokeModel"],
       "Resource": [
-        "arn:aws:bedrock:us-east-1:*:inference-profile/us.amazon.nova-lite-v1:0",
+        "arn:aws:bedrock:eu-north-1:*:inference-profile/eu.amazon.nova-lite-v1:0",
         "arn:aws:bedrock:*::foundation-model/amazon.nova-lite-v1:0"
       ]
     }
@@ -90,4 +94,4 @@ Nova Lite on-demand pricing (us-east-1, check the current Bedrock pricing page):
 }
 ```
 
-3. Put `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION=us-east-1` in `.env.local` (or use `AWS_PROFILE`/SSO). Restart `npm run dev`.
+3. Put `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION=eu-north-1` (and optionally `BEDROCK_MODEL_ID`) in `.env.local`, or use `AWS_PROFILE`/SSO. Run `npm run check:bedrock`, then restart `npm run dev`.

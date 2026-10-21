@@ -35,7 +35,9 @@ function rulesFired(id: string): string[] {
     tags: { people: 0, packageVisible: null, doorOpen: null, vehicle: false, roles: [], ...m.hint.tags },
   }));
   const p = s.visitors ? { ...plan, visitors: s.visitors } : plan;
-  return evaluateRules({ now: scenarioEndMs(s, DATE, TZ), plan: p, events }).map((a) => a.rule);
+  return evaluateRules({ now: scenarioEndMs(s, DATE, TZ), plan: p, events })
+    .filter((a) => a.clearedAt === null || id === "quiet_morning") // quiet_morning is designed to clear
+    .map((a) => a.rule);
 }
 
 describe("scenarios", () => {
@@ -52,6 +54,17 @@ describe("scenarios", () => {
     expect(rulesFired("package_left_out")).toEqual(["package_left_out"]);
     expect(rulesFired("quiet_morning")).toEqual(["quiet_morning"]);
     expect(rulesFired("late_night_ding").sort()).toEqual(["late_night_activity", "unanswered_doorbell"]);
+  });
+
+  it("missed_aide_visit behaves the same on a weekend (pinned schedule)", () => {
+    const s = listScenarios().find((x) => x.id === "missed_aide_visit")!;
+    const sunday = "2026-10-25";
+    const events = materialize(s, sunday, TZ, "dev").map((m) => ({
+      ...m.event,
+      tags: { people: 0, packageVisible: null, doorOpen: null, vehicle: false, roles: [], ...m.hint.tags },
+    }));
+    const out = evaluateRules({ now: scenarioEndMs(s, sunday, TZ), plan: { ...plan, visitors: s.visitors! }, events });
+    expect(out.map((a) => [a.rule, a.clearedAt])).toEqual([["missed_visit", null]]);
   });
 
   it("advances the simulated clock by speed and stops at the end", () => {

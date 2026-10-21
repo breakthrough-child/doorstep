@@ -24,7 +24,7 @@ npm run dev
 
 Open <http://localhost:3000>. Onboarding offers **Skip — use demo data**, which starts on replayed Ring data. Open **<http://localhost:3000/demo>** to switch data modes and play scenarios.
 
-No credentials are needed for a first run: REPLAY mode plus mock captions. To use real services, copy `.env.example` to `.env.local` and add AWS credentials (Bedrock) and/or a Ring Developer Playground token. See [docs/AWS.md](docs/AWS.md).
+No credentials are needed for a first run: REPLAY mode plus labelled sample captions. To use real services, copy `.env.example` to `.env.local` and add AWS credentials (Bedrock, default `eu-north-1` with `eu.amazon.nova-lite-v1:0`) and/or a Ring Developer Playground token. Check Bedrock access with `npm run check:bedrock`. See [docs/AWS.md](docs/AWS.md).
 
 Requirements: Node 20.9+ (tested on Node 22, Ubuntu 24.04). `better-sqlite3` ships prebuilt binaries for common platforms.
 
@@ -76,7 +76,7 @@ flowchart LR
 - **Ring client** (`src/lib/ring/`): typed responses, `?include=` + `included` resolution by type+id, newest-first pagination via `links.next` `page[key]`, exponential backoff that honours `Retry-After` on 429/5xx, `RingTokenExpiredError` on 401 driving the "paste a new Playground token" banner, and the snapshot 303 → pre-signed URL hop done manually without forwarding the Bearer token. It's imported and called at runtime by the poller, the token-check endpoint and the fixture recorder.
 - **Pipeline** (`src/lib/pipeline.ts`): ingest → snapshot → Bedrock caption → rules → alerts. Single-flight `tick()` run by a 1.5 s poller (`src/instrumentation.ts`) and by `/api/state`.
 - **Rules engine** (`src/lib/rules/engine.ts`): pure functions of (events, care plan, now), evaluated in the parent's time zone, with deterministic alert ids so a family's "I'm on it" survives re-evaluation. Covered by Vitest, including DST days.
-- **Bedrock** (`src/lib/bedrock/`): Converse with image + text in, strict JSON out, tolerant parsing with fallbacks, results cached by event id, token usage logged per call. Details and costs: [docs/AWS.md](docs/AWS.md).
+- **Bedrock** (`src/lib/bedrock/`): Converse with image + text in, strict JSON out, tolerant parsing with fallbacks, results cached by event id, token usage logged per call. If Bedrock is unavailable (our account's Nova Lite quota is currently 0, see the friction log), events get clearly labelled sample captions and the app switches to real captions automatically once calls succeed. Details and costs: [docs/AWS.md](docs/AWS.md).
 
 ## Privacy stance
 

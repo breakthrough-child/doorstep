@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { AlertCard } from "@/components/AlertCard";
-import { CheckIcon, ClockIcon, NoteIcon } from "@/components/icons";
+import { CheckIcon, ClockIcon, NoteIcon, SparkIcon } from "@/components/icons";
 import { useAppState } from "@/components/state";
 import { Timeline } from "@/components/Timeline";
 import type { AppState, VisitStatus } from "@/lib/view";
@@ -41,6 +41,7 @@ export default function TodayPage() {
             </Link>
           )}
         </div>
+        {state.sampleCaptions && <SampleCaptionNote state={state} />}
         <Timeline items={state.timeline} parentName={state.parentName} />
       </section>
 
@@ -118,6 +119,21 @@ function Visits({ visits }: { visits: VisitStatus[] }) {
         })}
       </ul>
     </section>
+  );
+}
+
+function SampleCaptionNote({ state }: { state: AppState }) {
+  const forced = state.bedrock.status === "mock";
+  return (
+    <p role="note" className="mb-3 flex gap-2 rounded-2xl border border-sky/25 bg-sky-soft px-4 py-3 text-sm text-ink">
+      <SparkIcon className="mt-0.5 h-4 w-4 shrink-0 text-sky" />
+      <span>
+        <b>Sample captions.</b>{" "}
+        {forced
+          ? "Bedrock mock mode is on, so these sentences are pre-written samples, not AI output."
+          : "Amazon Bedrock isn’t available on this account yet, so these sentences are pre-written samples. Doorstep keeps retrying and switches to Nova Lite captions automatically."}
+      </span>
+    </p>
   );
 }
 

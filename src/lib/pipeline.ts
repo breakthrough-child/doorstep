@@ -4,8 +4,9 @@
 import fs from "node:fs";
 import path from "node:path";
 import { describeSnapshot } from "./bedrock";
+import { bedrockStatus, recordBedrockFailure, recordBedrockSuccess } from "./bedrock/health";
 import { DATA_DIR, getSetting, setSetting } from "./db";
-import { bedrockMock, getCarePlan, getDataMode, getRingToken, markRingTokenExpired } from "./config";
+import { getCarePlan, getDataMode, getRingToken, markRingTokenExpired } from "./config";
 import { evaluateRules, type RuleEvent } from "./rules/engine";
 import { RingApiError, RingClient, RingTokenExpiredError } from "./ring/client";
 import {
@@ -162,7 +163,10 @@ async function autoDigest(plan: CarePlan): Promise<void> {
   const s = getScenarioState();
   if (!s || s.playing) return;
   const end = scenarioEndMs(loadScenario(s.scenarioId), s.dateKey, plan.timeZone);
-  if (s.simMs < end || getDigest("simulated", s.dateKey)) return;
+  const existing = getDigest("simulated", s.dateKey);
+  if (s.simMs < end) return;
+  // Write once; rewrite a sample digest once real Bedrock is back.
+  if (existing && !(existing.model === "sample" && bedrockStatus() === "ok")) return;
   if (store.eventsNeedingDescription("simulated", s.simMs, 1).length) return; // wait for captions
   await generateDigest("simulated", effectivePlan("SCENARIO"), s.simMs);
 }
@@ -262,68 +266,82 @@ export function safeName(id: string): string {
 }
 
 // --- Bedrock descriptions ------------------------------------------------------
+// Real Bedrock is the default. While it's unavailable (see bedrock/health.ts) events get a
+// clearly labelled sample caption (model "sample"); once a call succeeds, sample captions are
+// re-described with Nova Lite in the background.
 
-const describeFailures = new Map<string, number>();
+export const SAMPLE_MODEL = "sample";
 
 async function describePending(origin: EventOrigin, now: number, plan: CarePlan): Promise<number> {
-  const mock = bedrockMock();
-  const batch = store.eventsNeedingDescription(origin, now, mock ? 50 : 4);
+  const status = bedrockStatus();
+  const fresh = store.eventsNeedingDescription(origin, now, status === "mock" || status === "unavailable" ? 50 : status === "unknown" ? 1 : 4);
+  // When Bedrock is healthy and there's nothing new, upgrade sample captions to real ones.
+  const upgrades = status === "ok" && fresh.length === 0 ? store.eventsWithModel(origin, SAMPLE_MODEL, 3) : [];
   let n = 0;
-  await Promise.all(
-    batch.map(async (e) => {
-      let image: { bytes: Uint8Array; format: "jpeg" | "png" } | null = null;
-      if (e.snapshotPath && e.snapshotStatus === "ok") {
-        const abs = path.resolve(process.cwd(), e.snapshotPath);
-        if (fs.existsSync(abs)) image = { bytes: fs.readFileSync(abs), format: abs.endsWith(".png") ? "png" : "jpeg" };
-      }
-      try {
-        const res = await describeSnapshot(
-          {
-            eventId: e.id,
-            kind: e.kind,
-            timeLabel: clockLabel(e.startMs, plan.timeZone),
-            image,
-            mockHint: e.origin === "simulated" ? scenarioHint(e.id) : null,
-          },
-          mock,
-        );
-        store.saveDescription({
-          eventId: e.id,
-          sentence: res.sentence,
-          tags: res.tags,
-          model: res.usage.model,
-          mock: res.usage.mock,
-          inputTokens: res.usage.inputTokens,
-          outputTokens: res.usage.outputTokens,
-          createdAt: Date.now(),
-        });
-        store.logBedrockUsage({ purpose: "describe", ref: e.id, ...res.usage });
-        n++;
-      } catch (err) {
-        const message = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
-        console.warn(`[bedrock] describe ${e.id} failed: ${message}`);
-        setSetting("bedrock_last_error", { at: Date.now(), message });
-        // After repeated failures, fall back to a plain event-type caption so the day isn't stuck.
-        const fails = (describeFailures.get(e.id) ?? 0) + 1;
-        describeFailures.set(e.id, fails);
-        if (fails >= 3) {
-          const fb = await describeSnapshot({ eventId: e.id, kind: e.kind, timeLabel: clockLabel(e.startMs, plan.timeZone), image: null }, true);
-          store.saveDescription({
-            eventId: e.id,
-            sentence: fb.sentence,
-            tags: fb.tags,
-            model: "bedrock-unavailable",
-            mock: true,
-            inputTokens: 0,
-            outputTokens: 0,
-            createdAt: Date.now(),
-          });
-        }
-      }
-    }),
-  );
+  for (const chunk of [fresh, upgrades]) {
+    await Promise.all(chunk.map(async (e) => (await describeOne(e, plan)) && n++));
+  }
   return n;
 }
+
+async function describeOne(e: store.StoredEvent, plan: CarePlan): Promise<boolean> {
+  const input = {
+    eventId: e.id,
+    kind: e.kind,
+    timeLabel: clockLabel(e.startMs, plan.timeZone),
+    image: readSnapshot(e),
+    mockHint: e.origin === "simulated" ? scenarioHint(e.id) : null,
+  };
+  const status = bedrockStatus();
+  if (status === "mock" || status === "unavailable") {
+    if (status === "unavailable" && store.descriptionsFor([e.id]).has(e.id)) return false; // keep existing sample
+    return saveSample(e.id, input, status === "mock" ? "mock" : SAMPLE_MODEL);
+  }
+  try {
+    const res = await describeSnapshot(input, false);
+    recordBedrockSuccess();
+    store.saveDescription({
+      eventId: e.id,
+      sentence: res.sentence,
+      tags: res.tags,
+      model: res.usage.model,
+      mock: res.usage.mock,
+      inputTokens: res.usage.inputTokens,
+      outputTokens: res.usage.outputTokens,
+      createdAt: Date.now(),
+    });
+    store.logBedrockUsage({ purpose: "describe", ref: e.id, ...res.usage });
+    return true;
+  } catch (err) {
+    const h = recordBedrockFailure(err);
+    console.warn(`[bedrock] describe ${e.id} failed (${h.lastErrorName}); sample captions until ${new Date(h.nextRetryAt).toLocaleTimeString()}: ${h.lastError}`);
+    if (store.descriptionsFor([e.id]).has(e.id)) return false;
+    return saveSample(e.id, input, SAMPLE_MODEL);
+  }
+}
+
+async function saveSample(eventId: string, input: Parameters<typeof describeSnapshot>[0], model: string): Promise<boolean> {
+  const res = await describeSnapshot(input, true);
+  store.saveDescription({
+    eventId,
+    sentence: res.sentence,
+    tags: res.tags,
+    model: input.image ? model : "metadata-only",
+    mock: true,
+    inputTokens: 0,
+    outputTokens: 0,
+    createdAt: Date.now(),
+  });
+  return true;
+}
+
+function readSnapshot(e: store.StoredEvent): { bytes: Uint8Array; format: "jpeg" | "png" } | null {
+  if (!e.snapshotPath || e.snapshotStatus !== "ok") return null;
+  const abs = path.resolve(process.cwd(), e.snapshotPath);
+  if (!fs.existsSync(abs)) return null;
+  return { bytes: fs.readFileSync(abs), format: abs.endsWith(".png") ? "png" : "jpeg" };
+}
+
 
 // --- Rules --------------------------------------------------------------------
 

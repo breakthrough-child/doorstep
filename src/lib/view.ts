@@ -1,6 +1,7 @@
 // Builds the JSON the UI renders. One place decides what "today" means in each data mode.
-import { BEDROCK_MODEL_ID } from "./bedrock";
-import { bedrockMock, getDataMode, getRingToken, isOnboarded, isRingTokenExpired } from "./config";
+import { BEDROCK_MODEL_ID, BEDROCK_REGION } from "./bedrock";
+import { bedrockStatus, getBedrockHealth, type BedrockStatus } from "./bedrock/health";
+import { getDataMode, getRingToken, isOnboarded, isRingTokenExpired } from "./config";
 import { getSetting } from "./db";
 import { listScenarios, loadScenario, scenarioEndMs, scenarioStartMs } from "./data/scenarios";
 import type { ReplayMeta } from "./data/replay";
@@ -61,7 +62,22 @@ export interface AppState {
     startLabel: string;
     endLabel: string;
   };
-  bedrock: { mock: boolean; model: string; calls: number; inputTokens: number; outputTokens: number; lastError: string | null };
+  bedrock: {
+    /** mock = forced by BEDROCK_MOCK; unavailable = real calls failing, sample captions shown. */
+    status: BedrockStatus;
+    mock: boolean;
+    model: string;
+    region: string;
+    calls: number;
+    inputTokens: number;
+    outputTokens: number;
+    lastError: string | null;
+    lastErrorName: string | null;
+    lastOkAt: number | null;
+    nextRetryAt: number | null;
+  };
+  /** True when any caption on screen is a sample (not written by Bedrock). */
+  sampleCaptions: boolean;
   digestReady: boolean;
   devices: Array<{ id: string; name: string; online: boolean | null }>;
 }
@@ -132,7 +148,8 @@ export function buildState(): AppState {
   }
 
   const totals = store.bedrockTotals();
-  const lastErr = getSetting<{ at: number; message: string } | null>("bedrock_last_error", null);
+  const health = getBedrockHealth();
+  const bStatus = bedrockStatus();
 
   return {
     mode,
@@ -168,13 +185,19 @@ export function buildState(): AppState {
     replay: mode === "REPLAY" ? getSetting<ReplayMeta | null>("replay_meta", null) : null,
     scenario,
     bedrock: {
-      mock: bedrockMock(),
+      status: bStatus,
+      mock: bStatus === "mock",
       model: BEDROCK_MODEL_ID,
+      region: BEDROCK_REGION,
       calls: totals.calls,
       inputTokens: totals.inputTokens,
       outputTokens: totals.outputTokens,
-      lastError: lastErr && Date.now() - lastErr.at < 10 * 60_000 ? lastErr.message : null,
+      lastError: health.lastError,
+      lastErrorName: health.lastErrorName,
+      lastOkAt: health.lastOkAt,
+      nextRetryAt: bStatus === "unavailable" ? health.nextRetryAt : null,
     },
+    sampleCaptions: items.some((e) => e.description?.mock && e.description.model !== "metadata-only"),
     digestReady: !!getDigest(origin, dateKey),
     devices: store.listDevices(origin === "simulated" ? "replay" : origin).map((d) => ({ id: d.id, name: d.name, online: d.online })),
   };
@@ -187,7 +210,7 @@ export function scenarioCatalog() {
 function captionSource(d: store.TimelineItem["description"]): string | null {
   if (!d) return null;
   if (!d.mock) return `Amazon Bedrock · ${d.model}`;
-  if (d.model === "metadata-only") return "From Ring event type (no image)";
-  if (d.model === "bedrock-unavailable") return "Bedrock unavailable — event type only";
-  return "Canned caption (Bedrock mock mode)";
+  if (d.model === "metadata-only") return "From the Ring event type (no image)";
+  if (d.model === "sample") return "Sample caption — Amazon Bedrock not available yet";
+  return "Sample caption — Bedrock mock mode";
 }

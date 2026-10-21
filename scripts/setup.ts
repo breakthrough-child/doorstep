@@ -1,4 +1,5 @@
 // One-time setup: create the SQLite database, seed the default care plan and load REPLAY fixtures.
+import "./env";
 // Safe to re-run; pass --reset to wipe ./data first.
 import fs from "node:fs";
 import { DATA_DIR, db, getSetting, setSetting } from "../src/lib/db";

@@ -14,8 +14,9 @@ import {
 import type { DescriptionTags, EventKind } from "../types";
 import { parseDescription, parseDigest, type DigestOutput } from "./parse";
 
-export const BEDROCK_MODEL_ID = process.env.BEDROCK_MODEL_ID ?? "us.amazon.nova-lite-v1:0";
-export const BEDROCK_REGION = process.env.AWS_REGION ?? process.env.BEDROCK_REGION ?? "us-east-1";
+// Default: Amazon Nova Lite through the EU cross-region inference profile, called from Stockholm.
+export const BEDROCK_MODEL_ID = process.env.BEDROCK_MODEL_ID || "eu.amazon.nova-lite-v1:0";
+export const BEDROCK_REGION = process.env.BEDROCK_REGION || process.env.AWS_REGION || "eu-north-1";
 
 export interface Usage {
   inputTokens: number;
@@ -27,7 +28,8 @@ export interface Usage {
 
 let client: BedrockRuntimeClient | null = null;
 function bedrock(): BedrockRuntimeClient {
-  client ??= new BedrockRuntimeClient({ region: BEDROCK_REGION });
+  // Two attempts max: a throttled account shouldn't stall the pipeline for 15 s per call.
+  client ??= new BedrockRuntimeClient({ region: BEDROCK_REGION, maxAttempts: 2 });
   return client;
 }
 
