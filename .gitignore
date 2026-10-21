@@ -1,7 +1,7 @@
 node_modules/
 .next/
 out/
-data/
+/data/
 *.db
 *.db-journal
 .env
@@ -16,3 +16,4 @@ tv/node_modules/
 tv/build/
 .claude/
 SUBMISSION.no-aws.md
+DOORSTEP_PROMPT.md
