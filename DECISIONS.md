@@ -30,10 +30,17 @@ Defaults chosen without asking, and why. Newest at the bottom of each section.
 - **Scenario event ids have no date** (`sim:<scenario>:<n>`), so replaying a scenario reuses cached Bedrock captions instead of paying again.
 - **`late_night_ding` starts at 22:30 with the day's earlier events pre-loaded**, so it doesn't also trip quiet-morning/missed-visit.
 
+- **Absence rules respect coverage.** The Playground only authorizes data from each token's issue time (F-09). "Quiet morning" and "missed visit" never fire for a window that began before Doorstep could see the door. The app shows "watching since 23:43", and visits read "Before Doorstep was watching". LIVE uses the token's JWT `iat`; REPLAY uses the recording's `coverageStartMs` (time-shifted); scenarios are full-day.
+- **Untouched open alerts that rules stop producing are removed** (e.g. after coverage or the care plan changes). Acknowledged or resolved alerts are never removed.
+- **REPLAY uses the real Playground recording only; the hand-written placeholder fixtures were retired.** The Playground's 6 simulated events all arrived as `on_demand` (F-12), so REPLAY shows real Ring frames and the API path, and SCENARIO demonstrates the caretaking rules.
+- **Recorded snapshots carry hand-written sample captions in `fixtures/playground/manifest.json`**, used only while Bedrock is unavailable and labelled "Sample caption" exactly like scenario captions. Real Nova Lite captions replace them automatically.
+- **Replay shift keeps the recording inside today** where possible (just after midnight the default shift would split it across days).
+- **Template digest** (used when Bedrock is unavailable) names actual arrival times and whether a package was brought in, and is labelled "Sample digest from a template".
+
 ## Ring integration
 
 - **LIVE mode polls Event History** (`GET /v1/history/devices/{id}/events`) every 30 s, because the Playground doesn't deliver webhooks. It paginates newest-first until past 24 h (no documented time filter, FRICTION F-01).
-- **Snapshots via `at_timestamp` = event start + 1 s**, JPEG, no resolution set (full size keeps the fixed-size watermark smallest relative to the frame). Images are always shown with `object-contain` so the watermark is never cropped.
+- **Snapshots via `at_timestamp` = event start + 1 s, JPEG, explicitly 1920×1080.** Omitting `resolution` returned 640×360 in the Playground despite the docs (F-10). Full size keeps the fixed-size watermark smallest relative to the frame. Images are always shown with `object-contain` so the watermark is never cropped.
 - **The 303 → pre-signed URL hop is followed manually without the Bearer header** (F-07).
 - **A pasted token beats `RING_ACCESS_TOKEN`.** Playground tokens rotate every 30 min, and pasting in the UI is faster than restarting the server. Tokens are stored server-side in SQLite (in `data/`, git-ignored) and never returned to the browser.
 - **Unknown event subtypes map to generic "motion"**, not dropped.
