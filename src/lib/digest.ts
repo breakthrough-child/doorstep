@@ -79,10 +79,12 @@ export function dayFacts(origin: EventOrigin, plan: CarePlan, now: number): Dige
       .map((v) => {
         const ws = zonedTimeToUtc(dateKey, parseHHMM(v.windowStart), tz) - plan.visitGraceMinutes * 60_000;
         const we = zonedTimeToUtc(dateKey, parseHHMM(v.windowEnd), tz) + plan.visitGraceMinutes * 60_000;
+        const hit = people.find((e) => e.startMs >= ws && e.startMs <= we);
         return {
           name: v.name,
           window: `${v.windowStart}–${v.windowEnd}`,
-          seen: people.some((e) => e.startMs >= ws && e.startMs <= we),
+          seen: !!hit,
+          seenAt: hit ? clockLabel(hit.startMs, tz) : null,
         };
       }),
   };

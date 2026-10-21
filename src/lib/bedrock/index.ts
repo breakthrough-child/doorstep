@@ -138,7 +138,7 @@ export interface DigestFacts {
   dateLabel: string;
   events: Array<{ time: string; kind: EventKind; sentence: string }>;
   alerts: Array<{ title: string; detail: string; status: string; cleared: string | null }>;
-  scheduledVisits: Array<{ name: string; window: string; seen: boolean }>;
+  scheduledVisits: Array<{ name: string; window: string; seen: boolean; seenAt?: string | null }>;
 }
 
 export async function writeDigest(
@@ -162,22 +162,42 @@ export async function writeDigest(
   return { digest: parsed ?? fallback, usage, strict: !!parsed };
 }
 
-/** Deterministic digest used in mock mode and as the fallback when model output won't parse. */
+/** Deterministic digest used in sample/mock mode and when model output won't parse. */
 export function templateDigest(f: DigestFacts): DigestOutput {
-  const people = f.events.filter((e) => e.kind === "person" || e.kind === "ding");
   const packages = f.events.filter((e) => e.kind === "package");
+  const people = f.events.filter((e) => e.kind === "person" || e.kind === "ding");
   const open = f.alerts.filter((a) => !a.cleared && a.status !== "resolved");
-  const parts: string[] = [];
-  for (const v of f.scheduledVisits) parts.push(v.seen ? `${v.name} came during ${v.window}` : `${v.name} wasn't seen (${v.window})`);
-  if (packages.length) parts.push(`${packages.length === 1 ? "a package arrived" : `${packages.length} packages arrived`} at ${packages.map((p) => p.time).join(", ")}`);
-  if (!people.length && !packages.length) parts.push("it was a quiet day at the door");
-  const summary = `${f.parentName}'s day: ${parts.join("; ")}.${
-    open.length ? ` ${open.length === 1 ? "One thing" : `${open.length} things`} may need a look: ${open.map((a) => a.title.toLowerCase()).join("; ")}.` : " Nothing needs your attention."
-  }`;
+  const packageOut = open.some((a) => /package/i.test(a.title));
+  const lower = (name: string) => (/^[A-Z][a-z]/.test(name) ? name.charAt(0).toLowerCase() + name.slice(1) : name);
+
+  const sentences: string[] = [];
+  const seen = f.scheduledVisits.filter((v) => v.seen);
+  const missed = f.scheduledVisits.filter((v) => !v.seen);
+  if (seen.length)
+    sentences.push(
+      `The ${seen.map((v) => `${lower(v.name)} came${v.seenAt ? ` at ${v.seenAt}` : ""}`).join(" and the ")}`,
+    );
+  if (missed.length) sentences.push(`Nobody came during the ${missed.map((v) => `${lower(v.name)}'s ${v.window} window`).join(" or the ")}`);
+  if (packages.length) {
+    const first = packages[0]!.time;
+    sentences.push(packageOut ? `A package arrived at ${first} and still seems to be on the porch` : `A package arrived at ${first} and was brought in`);
+  }
+  if (!people.length && !packages.length) sentences.push("It was a quiet day at the door");
+  const others = open.filter((a) => !/package/i.test(a.title));
+  if (others.length) sentences.push(`Worth a look: ${others.map((a) => a.title.charAt(0).toLowerCase() + a.title.slice(1)).join("; ")}`);
+  if (!open.length) sentences.push("Nothing needs your attention");
+
+  const highlights = [
+    ...open.map((a) => `${a.title}${a.detail ? ` — ${a.detail}` : ""}`),
+    ...f.events.filter((e) => e.kind === "person" || e.kind === "ding" || e.kind === "package").map((e) => `${e.time} — ${e.sentence}`),
+  ].slice(0, 4);
+
   return {
-    headline: open.length ? `${f.parentName}'s day — ${open.length} thing${open.length > 1 ? "s" : ""} to check` : `${f.parentName}'s day looked normal`,
-    summary: capitalize(summary),
-    highlights: f.events.slice(0, 4).map((e) => `${e.time} — ${e.sentence}`),
+    headline: open.length
+      ? `${f.parentName}'s day — ${open.length === 1 ? "1 thing" : `${open.length} things`} to check`
+      : `A normal day for ${f.parentName}`,
+    summary: sentences.map((x) => x.charAt(0).toUpperCase() + x.slice(1)).join(". ") + ".",
+    highlights,
   };
 }
 

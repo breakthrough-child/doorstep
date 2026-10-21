@@ -68,13 +68,27 @@ describe("digest", () => {
       scheduledVisits: [{ name: "Home aide", window: "09:00–10:30", seen: false }],
     });
     expect(d.headline).toContain("1 thing");
-    expect(d.summary).toContain("Home aide wasn't seen");
-    expect(d.summary).toContain("a package arrived at 14:05");
+    expect(d.summary).toContain("Nobody came during the home aide's 09:00–10:30 window");
+    expect(d.summary).toContain("A package arrived at 14:05 and still seems to be on the porch");
   });
 
   it("template digest for a quiet, fine day", () => {
     const d = templateDigest({ parentName: "Grace", dateLabel: "", events: [], alerts: [], scheduledVisits: [] });
-    expect(d.headline).toBe("Grace's day looked normal");
+    expect(d.headline).toBe("A normal day for Grace");
     expect(d.summary).toContain("quiet day");
+  });
+
+  it("template digest names arrival times and a package brought in", () => {
+    const d = templateDigest({
+      parentName: "Grace",
+      dateLabel: "",
+      events: [
+        { time: "9:12", kind: "ding", sentence: "A visitor rings the doorbell." },
+        { time: "14:05", kind: "package", sentence: "A courier leaves a package." },
+      ],
+      alerts: [],
+      scheduledVisits: [{ name: "Home aide", window: "09:00–10:30", seen: true, seenAt: "9:12" }],
+    });
+    expect(d.summary).toBe("The home aide came at 9:12. A package arrived at 14:05 and was brought in. Nothing needs your attention.");
   });
 });

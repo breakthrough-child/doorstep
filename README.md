@@ -11,7 +11,17 @@ Doorstep turns raw Ring front-door events into calm, plain-language information 
 - **Daily digest.** A short, warm Bedrock-written note on the parent's day at the door.
 - **Visual doorbell for the living room.** A full-screen, high-contrast "someone is at the door" page (`/tv`), for deaf or hard-of-hearing residents who can't hear the chime. It runs in any big-screen browser. (A native Fire TV app was planned; we dropped it, see friction log F-14.)
 
-<!-- SCREENSHOTS -->
+| Ada's phone when something's off (simulated day, driven from `/demo`) | A day with a package left out |
+|---|---|
+| ![Demo panel with phone preview showing a missed-visit alert](docs/screenshots/demo-panel.png) | ![Today screen with a package-left-out alert and timeline](docs/screenshots/package-today.png) |
+| **Real Ring Developer Playground data** in REPLAY: watermarked 1080p snapshots | **Daily digest** |
+| ![Today screen with replayed Ring Playground snapshots](docs/screenshots/replay-today.png) | ![Daily digest](docs/screenshots/digest.png) |
+
+**Visual doorbell** (`/tv`) for residents who can't hear the chime:
+
+![Full-screen visual doorbell: someone is at the door](docs/screenshots/tv-doorbell.png)
+
+> Captions in these screenshots are labelled **sample captions**. Our AWS account's Nova Lite quota is still 0 (see [FRICTION_LOG F-08](FRICTION_LOG.md)). The Bedrock path is built and switches on automatically once calls succeed. Scenario images are drawn illustrations stamped "SIMULATED SCENE"; the REPLAY images are real Ring Playground frames.
 
 ## Run it (under 5 commands)
 
