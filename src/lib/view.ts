@@ -224,5 +224,5 @@ function captionSource(d: store.TimelineItem["description"]): string | null {
   if (!d.mock) return `Amazon Bedrock · ${d.model}`;
   if (d.model === "metadata-only") return "From the Ring event type (no image)";
   if (d.model === "sample") return "Sample caption — Amazon Bedrock not available yet";
-  return "Sample caption — Bedrock mock mode";
+  return "Sample caption — Bedrock not configured";
 }

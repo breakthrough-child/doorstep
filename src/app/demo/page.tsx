@@ -85,7 +85,7 @@ export default function DemoPanel() {
                     s.bedrock.status === "ok"
                       ? "REAL · working"
                       : s.bedrock.status === "mock"
-                        ? "MOCK (BEDROCK_MOCK=1)"
+                        ? "OFF · no AWS credentials or BEDROCK_MOCK=1 · sample captions"
                         : s.bedrock.status === "unavailable"
                           ? `UNAVAILABLE · sample captions · retry ${s.bedrock.nextRetryAt ? new Date(s.bedrock.nextRetryAt).toLocaleTimeString() : "soon"}`
                           : "REAL · not called yet"

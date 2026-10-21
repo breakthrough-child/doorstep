@@ -132,7 +132,7 @@ function SampleCaptionNote({ state }: { state: AppState }) {
       <span>
         <b>Sample captions.</b>{" "}
         {forced
-          ? "Bedrock mock mode is on, so these sentences are pre-written samples, not AI output."
+          ? "Amazon Bedrock isn’t configured here (no AWS credentials, or BEDROCK_MOCK=1), so these sentences are pre-written samples, not AI output."
           : "Amazon Bedrock isn’t available on this account yet, so these sentences are pre-written samples. Doorstep keeps retrying and switches to Nova Lite captions automatically."}
       </span>
     </p>
