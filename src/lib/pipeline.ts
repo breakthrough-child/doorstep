@@ -132,6 +132,9 @@ export function startScenario(scenarioId: string, speed: number): ScenarioState 
   const plan = getCarePlan();
   const scenario = loadScenario(scenarioId);
   store.clearOrigin("simulated");
+  // Sample captions are free to regenerate and may be stale if the scenario file changed;
+  // real Bedrock captions stay cached (never pay twice).
+  store.deleteSampleDescriptions(`sim:${scenarioId}:`);
   const dateKey = localDateKey(Date.now(), plan.timeZone);
   const state: ScenarioState = {
     scenarioId,

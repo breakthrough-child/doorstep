@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { resetBedrockHealth } from "@/lib/bedrock/health";
-import { setDataMode } from "@/lib/config";
-import { db } from "@/lib/db";
+import { DEFAULT_PLAN, DEFAULT_VISITORS, replaceVisitors, setDataMode } from "@/lib/config";
+import { db, setSetting } from "@/lib/db";
 import { SCENARIO_IDS } from "@/lib/data/scenarios";
 import { forceLivePoll, reloadReplay, startScenario, stopScenario, tick, updateScenario } from "@/lib/pipeline";
 import { clearOrigin, recentApiLog } from "@/lib/store";
@@ -26,6 +26,7 @@ const action = z.discriminatedUnion("action", [
   z.object({ action: z.literal("reload-replay") }),
   z.object({ action: z.literal("poll-live") }),
   z.object({ action: z.literal("retry-bedrock") }),
+  z.object({ action: z.literal("reset-recording") }),
 ]);
 
 export async function POST(req: Request) {
@@ -73,6 +74,20 @@ export async function POST(req: Request) {
       forceLivePoll();
       break;
     case "retry-bedrock":
+      resetBedrockHealth();
+      break;
+    case "reset-recording":
+      // Known starting state for a take: default care plan and contacts, onboarded, SCENARIO mode
+      // with nothing playing, replay data reloaded, no alerts/actions/digests, Bedrock re-probed.
+      stopScenario();
+      clearOrigin("replay");
+      clearOrigin("live");
+      db().prepare("DELETE FROM api_log").run();
+      setSetting("care_plan", DEFAULT_PLAN);
+      replaceVisitors(DEFAULT_VISITORS);
+      setSetting("onboarded", true);
+      setDataMode("SCENARIO");
+      reloadReplay();
       resetBedrockHealth();
       break;
   }

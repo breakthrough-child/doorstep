@@ -32,6 +32,8 @@ export interface TimelineView {
   /** True when the caption isn't from Bedrock (sample, or event-type only). */
   captionIsSample: boolean;
   hasSnapshot: boolean;
+  /** The image is genuine Ring media (live, recorded, or a recorded frame reused by a scenario). */
+  realRingFrame: boolean;
   snapshotNote: string | null;
   tags: DescriptionTags | null;
 }
@@ -232,6 +234,7 @@ export function toEventView(e: store.TimelineItem, tz: string): TimelineView {
     captionSource: captionSource(e.description),
     captionIsSample: !!e.description && e.description.mock,
     hasSnapshot: e.snapshotStatus === "ok" && !!e.snapshotPath,
+    realRingFrame: e.origin === "live" || (!!e.snapshotPath && e.snapshotPath.startsWith("fixtures")),
     snapshotNote: e.snapshotStatus === "missing" ? e.snapshotNote : null,
     tags: e.description?.tags ?? null,
   };

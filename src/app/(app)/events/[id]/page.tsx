@@ -67,7 +67,7 @@ export default function EventDetailPage() {
       {back}
       <header>
         <p className="flex flex-wrap items-center gap-2 text-sm text-ink-soft">
-          {d.dateLabel} <OriginChip origin={e.origin} />
+          {d.dateLabel} <OriginChip origin={e.origin} realFrame={e.realRingFrame} />
         </p>
         <h1 id="ev-title" className="font-display mt-1 flex items-center gap-3 text-3xl sm:text-4xl">
           <span className="tabular-nums">{e.time}</span>
@@ -80,7 +80,7 @@ export default function EventDetailPage() {
       <Snapshot e={e} priority />
       <p className="text-xl leading-snug">{e.sentence ?? "Describing what the camera saw…"}</p>
       <CaptionSource e={e} />
-      <SnapshotNote origin={e.origin} />
+      <SnapshotNote origin={e.origin} realFrame={e.realRingFrame} />
 
       {d.alerts.length > 0 && (
         <section aria-label="Alerts about this event" className="space-y-2">

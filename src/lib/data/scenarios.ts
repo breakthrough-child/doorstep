@@ -68,7 +68,20 @@ export function listScenarios(): Scenario[] {
   return SCENARIO_IDS.map(loadScenario);
 }
 
+/**
+ * Scenario frames are drawn illustrations (`porch_empty`) or, with a `ring:` prefix, a real frame
+ * recorded from the Ring Developer Playground (`ring:<part of the recorded event id>`), which keeps
+ * Ring's watermark. Real frames are labelled as such in the UI.
+ */
 export function scenarioImagePath(image: string): string {
+  if (image.startsWith("ring:")) {
+    const key = image.slice(5);
+    if (!/^[A-Z0-9]{6,}$/.test(key)) throw new Error("Bad Ring frame key");
+    const dir = path.join("fixtures", "playground", "snapshots");
+    const file = fs.existsSync(dir) ? fs.readdirSync(dir).find((f) => f.includes(key)) : undefined;
+    if (!file) throw new Error(`Recorded Ring frame ${key} not found`);
+    return path.join(dir, file);
+  }
   if (!/^[a-z0-9_]+$/.test(image)) throw new Error("Bad image name");
   return path.join("scenarios", "images", `${image}.jpg`);
 }

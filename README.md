@@ -26,7 +26,7 @@ Doorstep turns raw Ring front-door events into calm, plain-language information 
 ## Run it (under 5 commands)
 
 ```bash
-git clone https://github.com/<you>/doorstep.git && cd doorstep
+git clone https://github.com/breakthrough-child/doorstep.git && cd doorstep
 npm install
 npm run setup
 npm run dev

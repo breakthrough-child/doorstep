@@ -186,6 +186,10 @@ export function saveDescription(d: EventDescription): void {
     .run(d.eventId, d.sentence, JSON.stringify(d.tags), d.model, d.mock ? 1 : 0, d.inputTokens, d.outputTokens, d.createdAt);
 }
 
+export function deleteSampleDescriptions(eventIdPrefix: string): void {
+  db().prepare("DELETE FROM descriptions WHERE mock = 1 AND event_id LIKE ? || '%'").run(eventIdPrefix);
+}
+
 export function descriptionsFor(eventIds: string[]): Map<string, EventDescription> {
   const out = new Map<string, EventDescription>();
   if (!eventIds.length) return out;

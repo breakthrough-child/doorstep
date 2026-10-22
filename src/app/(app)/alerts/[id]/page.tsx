@@ -103,11 +103,11 @@ export default function AlertDetailPage() {
           <div className="flex flex-wrap items-center gap-2 text-sm text-ink-soft">
             <span className="font-display text-base font-semibold text-ink">{main.time}</span>
             <span>{KIND_LABEL[main.kind] ?? main.kind}</span>
-            <OriginChip origin={main.origin} />
+            <OriginChip origin={main.origin} realFrame={main.realRingFrame} />
           </div>
           <p className="text-lg leading-snug">{main.sentence ?? "Describing what the camera saw…"}</p>
           <CaptionSource e={main} />
-          <SnapshotNote origin={main.origin} />
+          <SnapshotNote origin={main.origin} realFrame={main.realRingFrame} />
           {d.events.length > 1 && (
             <p className="text-sm text-ink-soft">
               {d.events.length} events are part of this alert; they&rsquo;re highlighted below.

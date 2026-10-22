@@ -1,7 +1,7 @@
 {
   "id": "package_left_out",
   "title": "A package left out",
-  "summary": "A courier drops a parcel at 13:15 and nobody brings it in. Doorstep flags it after 3 hours and it's still out after dark.",
+  "summary": "A parcel is left on the front steps at 13:15 and nobody brings it in. Doorstep flags it after 3 hours, and it's still out after dark. The parcel frames are real images recorded from the Ring Developer Playground.",
   "startTime": "06:30",
   "endTime": "20:30",
   "events": [
@@ -72,21 +72,19 @@
     {
       "at": "13:15",
       "kind": "package",
-      "image": "courier_package",
-      "sentence": "A courier in a high-visibility vest leaves a package on the step.",
+      "image": "ring:YALR234VMEKNYH24",
+      "sentence": "A cardboard parcel has been left on the snowy front steps.",
       "tags": {
-        "people": 1,
+        "people": 0,
         "packageVisible": true,
-        "roles": [
-          "courier"
-        ]
+        "roles": []
       }
     },
     {
       "at": "13:16",
       "kind": "motion",
-      "image": "package_on_porch",
-      "sentence": "A package sits on the porch step; nobody is around.",
+      "image": "ring:YALR234VMEKNYH24",
+      "sentence": "The parcel is still on the front steps; nobody is around.",
       "tags": {
         "people": 0,
         "packageVisible": true
@@ -105,8 +103,8 @@
     {
       "at": "17:05",
       "kind": "motion",
-      "image": "package_on_porch_dusk",
-      "sentence": "The package is still on the porch step as evening falls.",
+      "image": "ring:YALR234VMEKNYH24",
+      "sentence": "The parcel is still sitting on the front steps as evening comes.",
       "tags": {
         "people": 0,
         "packageVisible": true
@@ -115,8 +113,8 @@
     {
       "at": "19:20",
       "kind": "motion",
-      "image": "package_on_porch_night",
-      "sentence": "In the dark, the package is still sitting on the step under the porch light.",
+      "image": "ring:YALR234VMEKNYH24",
+      "sentence": "After dark, the parcel is still on the front steps.",
       "tags": {
         "people": 0,
         "packageVisible": true

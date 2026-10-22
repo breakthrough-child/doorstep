@@ -58,7 +58,7 @@ function TimelineRow({ e }: { e: TimelineView }) {
               <Icon className="h-3.5 w-3.5" />
               {KIND_LABEL[e.kind] ?? e.kind}
             </span>
-            <OriginChip origin={e.origin} />
+            <OriginChip origin={e.origin} realFrame={e.realRingFrame} />
           </p>
           <p className="mt-1 leading-snug text-ink">
             {e.sentence ?? <span className="italic text-ink-soft">Describing what the camera saw…</span>}

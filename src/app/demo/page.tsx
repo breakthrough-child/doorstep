@@ -53,10 +53,23 @@ export default function DemoPanel() {
               <p className="text-xs font-bold uppercase tracking-widest text-ink-soft">Doorstep · demo control panel</p>
               <h1 className="font-display text-3xl">Drive the demo</h1>
             </div>
-            <a href="/" className="rounded-full border border-line bg-card px-4 py-2 text-sm font-bold">
-              Open app ↗
-            </a>
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => act("reset-recording", { action: "reset-recording" })}
+                disabled={!!busy}
+                className="rounded-full bg-ink px-4 py-2 text-sm font-bold text-paper disabled:opacity-50"
+              >
+                {busy === "reset-recording" ? "Resetting…" : "Reset for recording"}
+              </button>
+              <a href="/" className="rounded-full border border-line bg-card px-4 py-2 text-sm font-bold">
+                Open app ↗
+              </a>
+            </div>
           </header>
+          <p className="-mt-3 text-sm text-ink-soft">
+            Reset for recording: default care plan and contacts, simulated mode with nothing playing, recorded Ring data reloaded, all
+            alerts, actions and digests cleared.
+          </p>
 
           {error && <p role="alert" className="rounded-xl bg-rose-soft px-4 py-2 text-rose">{error}</p>}
 

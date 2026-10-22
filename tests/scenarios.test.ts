@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { advanceClock, listScenarios, materialize, scenarioStartMs, type ScenarioState } from "@/lib/data/scenarios";
+import { advanceClock, listScenarios, materialize, scenarioImagePath, scenarioStartMs, type ScenarioState } from "@/lib/data/scenarios";
 import { evaluateRules } from "@/lib/rules/engine";
 import { scenarioEndMs } from "@/lib/data/scenarios";
 import type { CarePlan } from "@/lib/types";
@@ -46,7 +46,7 @@ describe("scenarios", () => {
     const all = listScenarios();
     expect(all.map((s) => s.id)).toHaveLength(5);
     for (const s of all)
-      for (const e of s.events) expect(fs.existsSync(path.join("scenarios/images", `${e.image}.jpg`)), e.image).toBe(true);
+      for (const e of s.events) expect(fs.existsSync(scenarioImagePath(e.image)), e.image).toBe(true);
   });
 
   it("produce exactly the alerts they're designed to demonstrate", () => {
