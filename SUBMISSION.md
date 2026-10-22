@@ -3,6 +3,8 @@
 Ready-to-paste answers for "Build, Ship, Shape: Amazon Developer Hackathon".
 
 > **If Amazon Bedrock is still blocked on Thursday evening:** delete every block between `<!-- AWS-BUILDER:START -->` and `<!-- AWS-BUILDER:END -->` (there are 6), delete the one table row tagged `<!-- AWS-BUILDER -->`, and un-comment the "without AWS" variant marked `<!-- NO-AWS -->`. Or run `npm run submission:no-aws`, which does exactly that into `SUBMISSION-no-aws.md`. Nothing else references the AWS Builder track. The Bedrock friction entry (F-08) stays in the friction log either way: it's genuine product feedback.
+>
+> **Open Source:** keep the two `OPEN-SOURCE` blocks only if the pull request to `AmazonAppDev/ring-api-helloworld` was actually opened. Otherwise delete them.
 
 ---
 
@@ -17,6 +19,9 @@ Calm, plain-language updates from a parent's front door. Doorstep tells you when
 ## Tracks
 
 - **Ring** (primary)
+<!-- OPEN-SOURCE:START -->
+- **Open Source mini challenge**: pull request to `AmazonAppDev/ring-api-helloworld` (see "Open Source contribution" below)
+<!-- OPEN-SOURCE:END -->
 <!-- AWS-BUILDER:START -->
 - **AWS Builder mini challenge**: Amazon Bedrock (Nova Lite)
 <!-- AWS-BUILDER:END -->
@@ -38,6 +43,13 @@ Millions of adult children look after a parent who lives alone, often from anoth
   - **Package left out**: still on the porch after 3 hours, or after dark.
   - **Late-night door activity**: someone at the door between 23:00 and 05:00.
   - **Unanswered doorbell**: a best-effort heuristic, labelled as such.
+- **Every alert explains itself.** Opening an alert shows:
+  - the full-size snapshot, with Ring's watermark intact;
+  - the caption;
+  - a plain-language reason tied to the family's own care plan, e.g. "Doorbell at 23:41 — outside Grace's usual hours (05:00–23:00)";
+  - what else happened at the door within ±10 minutes.
+- **Caretaker actions, not just notifications.** **Call Grace** or **Call the aide/neighbour** (one tap, from the care plan's contacts), **That was expected** (and optionally add the visitor to the schedule), or **Remind me in 30 min**. Each alert keeps a history of what was done.
+- **Gentle escalation.** An urgent late-night alert that nobody acknowledges for 15 minutes is marked as escalated to a second family member, in-app.
 - **Daily digest**: a short, warm note on the parent's day at the door.
 - **A care plan** where the family describes a normal day: visitors' windows, quiet-morning time, night hours, package threshold.
 - **Visual doorbell for the living room**: a full-screen, high-contrast "someone is at the door" web page for a TV or tablet, with the description. Dismiss with OK/Enter; it clears itself after a minute. Built for residents who can't hear the chime.
@@ -52,7 +64,7 @@ Millions of adult children look after a parent who lives alone, often from anoth
   - `POST /v1/devices/{id}/media/image/download` (`at_timestamp`). It follows the 303 to the pre-signed URL manually, without forwarding the Bearer token.
   - Exponential backoff honouring `Retry-After` on 429/5xx. A 401 becomes a "token expired — paste a new Playground token" flow in the UI.
 - **Polling instead of webhooks.** The Playground doesn't deliver webhooks, so a background poller reads Event History in LIVE mode, or advances a simulated clock in SCENARIO mode. It then runs snapshot → description → rules → alerts.
-- **A pure rules engine** (`src/lib/rules/engine.ts`) evaluated in the parent's time zone, with deterministic alert ids so "I'm on it" survives re-evaluation. It's covered by Vitest, including DST spring-forward and fall-back days.
+- **A pure rules engine** (`src/lib/rules/engine.ts`) evaluated in the parent's time zone, with deterministic alert ids so a family's actions survive re-evaluation. A pure `explainAlert` turns each alert into a care-plan-specific "why". It's covered by Vitest, including DST spring-forward and fall-back days.
 - **SQLite** (better-sqlite3) for local-first, zero-setup storage: `npm install && npm run setup && npm run dev`.
 - **A fixture recorder** (`npm run record`) captures real Playground responses and snapshots for REPLAY. It refuses to write any file containing the token.
 <!-- AWS-BUILDER:START -->
@@ -92,6 +104,26 @@ The most valuable caretaking signals are absences and timing, and those need rul
 - Sensor support (Ring Alarm contact sensors) to tell "door opened" from "someone walked past".
 
 ---
+
+<!-- OPEN-SOURCE:START -->
+## Open Source contribution
+
+- **Contribution URL:** [PR URL — fill in once opened]
+- **Our project repository:** https://github.com/breakthrough-child/doorstep
+- **GitHub username:** breakthrough-child
+- **What it does:** Adds `scripts/image_snapshot.py` to Amazon's official Ring sample (`ring-api-helloworld`), plus README entries. It downloads a snapshot from a Ring device at an event's time (`--from-history`) or the latest frame.
+- **How it works:**
+  - It calls `POST /v1/devices/{id}/media/image/download` with `image_options.resolution` set to 1920×1080 explicitly.
+  - It follows the `303` to the pre-signed URL itself, without forwarding the Bearer token.
+  - It turns `TIME_RANGE_NOT_AUTHORIZED`, `MEDIA_NOT_FOUND` and `RECORDING_NOT_READY` (including errors from the pre-signed host) into plain hints.
+  - It was tested against the Ring Developer Playground on Oct 22, 2026.
+- **Why it matters:** The sample had no snapshot example. The three behaviours that cost us the most time aren't in the docs:
+  - omitting `resolution` silently returns 640×360, so the watermark covers far more of the frame;
+  - a fresh Playground token has no media before its issue time;
+  - errors can arrive on the second, pre-signed hop.
+
+  The next developer gets a working, documented snapshot call in one command.
+<!-- OPEN-SOURCE:END -->
 
 ## Product feedback (required)
 
@@ -178,6 +210,6 @@ All calls are server-side, cached by event id / day so nothing is paid for twice
 
 ## Links
 
-- Repository: [fill in]
+- Repository: https://github.com/breakthrough-child/doorstep (public, MIT)
 - Demo video: [fill in]
 - Friction log: `FRICTION_LOG.md` in the repo
