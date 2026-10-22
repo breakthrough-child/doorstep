@@ -123,7 +123,7 @@ export default function AlertDetailPage() {
         </p>
       )}
 
-      <section aria-labelledby="act-title" className="rounded-3xl border border-line bg-card p-5">
+      <section aria-labelledby="act-title" className="rounded-2xl border border-line bg-card p-5">
         <h2 id="act-title" className="font-display text-xl">
           What would you like to do?
         </h2>

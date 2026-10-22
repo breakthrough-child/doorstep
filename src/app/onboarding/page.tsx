@@ -42,7 +42,7 @@ export default function Onboarding() {
   return (
     <main id="main" className="mx-auto min-h-dvh max-w-2xl px-4 py-8 sm:py-14">
       <div className="flex items-center gap-2.5">
-        <span className="grid h-9 w-9 place-items-center rounded-xl bg-sage text-paper">
+        <span className="grid h-9 w-9 place-items-center rounded-xl bg-hero text-accent ring-1 ring-line">
           <DoorIcon className="h-5 w-5" />
         </span>
         <span className="font-display text-2xl">Doorstep</span>
@@ -51,7 +51,7 @@ export default function Onboarding() {
       <ol className="mt-8 flex gap-2" aria-label="Setup progress">
         {STEPS.map((s, i) => (
           <li key={s} className="flex-1" aria-current={i === step ? "step" : undefined}>
-            <div className={`h-1.5 rounded-full ${i <= step ? "bg-sage" : "bg-line"}`} />
+            <div className={`h-1.5 rounded-full ${i <= step ? "bg-brand" : "bg-line"}`} />
             <p className={`mt-1.5 text-xs ${i === step ? "font-bold text-ink" : "text-ink-soft"}`}>{s}</p>
           </li>
         ))}
@@ -87,7 +87,7 @@ export default function Onboarding() {
       {step === 1 && (
         <section className="animate-rise mt-10 space-y-6">
           <h1 className="font-display text-4xl">Connect Ring</h1>
-          <div className="rounded-3xl border border-line bg-card p-5 sm:p-6">
+          <div className="rounded-2xl border border-line bg-card p-5 sm:p-6">
             <h2 className="font-bold">Developer Playground token</h2>
             <p className="mt-1 text-ink-soft">
               For this hackathon build, paste a token from the Ring Developer Playground. It lasts about 30 minutes; Doorstep checks it
@@ -133,7 +133,7 @@ export default function Onboarding() {
             )}
           </div>
 
-          <details className="rounded-3xl border border-line bg-card p-5 sm:p-6">
+          <details className="rounded-2xl border border-line bg-card p-5 sm:p-6">
             <summary className="cursor-pointer font-bold">How this works in production</summary>
             <p className="mt-2 text-ink-soft">
               A shipped Doorstep would use Ring&rsquo;s OAuth account linking: the family member taps &ldquo;Log in with Ring&rdquo;, signs

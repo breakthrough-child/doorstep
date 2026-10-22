@@ -104,7 +104,7 @@ export function LookNow() {
   };
 
   return (
-    <section aria-labelledby="look-title" className="rounded-3xl border border-line bg-card p-5">
+    <section aria-labelledby="look-title" className="rounded-2xl border border-line bg-card p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 id="look-title" className="font-display text-xl">

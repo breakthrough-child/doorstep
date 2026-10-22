@@ -62,7 +62,7 @@ export function CallSheet({ contact, onClose, onLogged }: { contact: Contact; on
       onClose={onClose}
       onClick={(e) => e.target === ref.current && onClose()}
       aria-labelledby="call-sheet-title"
-      className="m-auto w-[min(420px,92vw)] rounded-3xl bg-card p-0 text-ink shadow-2xl backdrop:bg-black/50"
+      className="m-auto w-[min(420px,92vw)] rounded-2xl bg-card p-0 text-ink shadow-2xl backdrop:bg-black/50"
     >
       <div className="p-6">
         <p className="text-sm text-ink-soft">{ROLE[contact.role]}</p>

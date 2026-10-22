@@ -56,7 +56,7 @@ export default function DigestPage() {
       )}
 
       {digests === null ? (
-        <div className="h-40 rounded-3xl bg-line/40" aria-busy="true" />
+        <div className="h-40 rounded-2xl bg-line/40" aria-busy="true" />
       ) : !digests.length ? (
         <p className="rounded-2xl border border-dashed border-line px-5 py-10 text-center text-ink-soft">
           No digests yet. They&rsquo;re written at the end of each day — or tap the button for one now.
@@ -82,7 +82,7 @@ function DigestCard({ d, featured = false, timeZone }: { d: Digest; featured?: b
   const [y, m, day] = d.dateKey.split("-").map(Number) as [number, number, number];
   const date = new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" }).format(Date.UTC(y, m - 1, day));
   return (
-    <article className={`animate-rise rounded-3xl border border-line bg-card ${featured ? "p-6 sm:p-8" : "p-5"}`}>
+    <article className={`animate-rise rounded-2xl border border-line bg-card ${featured ? "p-6 sm:p-8" : "p-5"}`}>
       <p className="text-sm text-ink-soft">
         {date}
         {d.origin === "simulated" && " · example day"}
@@ -94,7 +94,7 @@ function DigestCard({ d, featured = false, timeZone }: { d: Digest; featured?: b
         <ul className="mt-5 space-y-1.5 border-t border-line pt-4 text-ink-soft">
           {d.highlights.map((h, i) => (
             <li key={i} className="flex gap-2">
-              <span aria-hidden className="text-sage">•</span>
+              <span aria-hidden className="text-brand">•</span>
               {h}
             </li>
           ))}

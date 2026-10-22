@@ -1,61 +1,82 @@
 @import "tailwindcss";
 
-/* Doorstep palette: warm paper, soft ink, sage for "all is well", amber for "worth a look",
-   rose only for genuine late-night concerns. All text pairs meet WCAG AA (checked in docs/DESIGN.md). */
+/* Doorstep brand: clean white and dark-navy surfaces, one teal accent, clear status colours
+   (green = normal, amber = worth a look, red = urgent; blue = information/honesty labels).
+   All text pairs meet WCAG AA in light and dark (see docs/DESIGN.md). */
 :root {
-  --paper: #f6f1e9;
-  --card: #fffdf9;
-  --ink: #2a2622;
-  --ink-soft: #5b5249;
-  --line: #e4dbcd;
-  --sage: #3f6343;
-  --sage-soft: #e1eadc;
-  --amber: #8a4f0c;
-  --amber-soft: #f6e5cb;
-  --rose: #9c3434;
-  --rose-soft: #f6dcd8;
-  --sky: #2f5d7c;
-  --sky-soft: #dde8f0;
-  --focus: #1f5fa8;
-  --accent: #5eead4;
+  --paper: #f4f6fa;
+  --card: #ffffff;
+  --ink: #0f1b2d;
+  --ink-soft: #475569;
+  --line: #dce3ec;
+  --sage: #166534;
+  --sage-soft: #dcfce7;
+  --amber: #92400e;
+  --amber-soft: #fef3c7;
+  --rose: #b91c1c;
+  --rose-soft: #fee2e2;
+  --sky: #1d4ed8;
+  --sky-soft: #dbeafe;
+  --brand: #0f766e;
+  --brand-soft: #ccfbf1;
+  --accent: #2dd4bf;
+  --on-accent: #0b1220;
+  --hero: #0f1b2d;
+  --on-hero: #f1f5f9;
+  --focus: #2563eb;
+  --shadow: 0 1px 2px rgb(15 27 45 / 0.06), 0 1px 3px rgb(15 27 45 / 0.04);
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --paper: #1b1916;
-    --card: #25221e;
-    --ink: #f1ebe2;
-    --ink-soft: #c2b8ab;
-    --line: #3a342d;
-    --sage: #a5c9a7;
-    --sage-soft: #263427;
-    --amber: #eab676;
-    --amber-soft: #3b2c18;
-    --rose: #f2a39b;
-    --rose-soft: #40221f;
-    --sky: #a7cbe6;
-    --sky-soft: #1f2f3b;
-    --focus: #8ab8f0;
+    --paper: #0b1220;
+    --card: #121b2d;
+    --ink: #e8eef7;
+    --ink-soft: #a7b4c8;
+    --line: #22314a;
+    --sage: #4ade80;
+    --sage-soft: #0f2e1d;
+    --amber: #fbbf24;
+    --amber-soft: #33260a;
+    --rose: #f87171;
+    --rose-soft: #3a1414;
+    --sky: #93c5fd;
+    --sky-soft: #14254a;
+    --brand: #2dd4bf;
+    --brand-soft: #0d2f2c;
+    --accent: #2dd4bf;
+    --on-accent: #0b1220;
+    --hero: #16213a;
+    --on-hero: #f1f5f9;
+    --focus: #60a5fa;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.4);
     color-scheme: dark;
   }
 }
 
 :root[data-theme="dark"] {
-  --paper: #1b1916;
-  --card: #25221e;
-  --ink: #f1ebe2;
-  --ink-soft: #c2b8ab;
-  --line: #3a342d;
-  --sage: #a5c9a7;
-  --sage-soft: #263427;
-  --amber: #eab676;
-  --amber-soft: #3b2c18;
-  --rose: #f2a39b;
-  --rose-soft: #40221f;
-  --sky: #a7cbe6;
-  --sky-soft: #1f2f3b;
-  --focus: #8ab8f0;
+  --paper: #0b1220;
+  --card: #121b2d;
+  --ink: #e8eef7;
+  --ink-soft: #a7b4c8;
+  --line: #22314a;
+  --sage: #4ade80;
+  --sage-soft: #0f2e1d;
+  --amber: #fbbf24;
+  --amber-soft: #33260a;
+  --rose: #f87171;
+  --rose-soft: #3a1414;
+  --sky: #93c5fd;
+  --sky-soft: #14254a;
+  --brand: #2dd4bf;
+  --brand-soft: #0d2f2c;
+  --accent: #2dd4bf;
+  --on-accent: #0b1220;
+  --hero: #16213a;
+  --on-hero: #f1f5f9;
+  --focus: #60a5fa;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.4);
   color-scheme: dark;
 }
 
@@ -74,8 +95,13 @@
   --color-sky: var(--sky);
   --color-sky-soft: var(--sky-soft);
   --color-accent: var(--accent);
-  --font-serif: "Fraunces", "Iowan Old Style", Georgia, serif;
-  --font-sans: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --color-on-accent: var(--on-accent);
+  --color-brand: var(--brand);
+  --color-brand-soft: var(--brand-soft);
+  --color-hero: var(--hero);
+  --color-on-hero: var(--on-hero);
+  --font-serif: "Manrope", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
 html {
@@ -99,10 +125,21 @@ body {
   border-radius: 6px;
 }
 
-.font-display {
+/* Headings: Manrope, tight and modern. */
+.font-display,
+h1,
+h2 {
   font-family: var(--font-serif);
-  font-optical-sizing: auto;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
+}
+
+/* Crisp cards: white surface, hairline border, soft shadow. */
+.bg-card {
+  box-shadow: var(--shadow);
+}
+
+body {
+  font-feature-settings: "cv11", "ss01";
 }
 
 .skip-link {

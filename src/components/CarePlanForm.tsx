@@ -36,7 +36,7 @@ export function CarePlanForm({ onSaved, submitLabel = "Save care plan" }: { onSa
       });
   }, []);
 
-  if (!plan) return <div className="h-96 rounded-3xl bg-line/40" aria-busy="true" />;
+  if (!plan) return <div className="h-96 rounded-2xl bg-line/40" aria-busy="true" />;
 
   const set = <K extends keyof CarePlan>(k: K, v: CarePlan[K]) => setPlan({ ...plan, [k]: v });
   const setContact = (i: number, c: Partial<Contact>) =>
@@ -259,7 +259,7 @@ const input = "w-full rounded-xl border border-line bg-card px-3 py-2 text-ink";
 
 function Fieldset({ legend, children }: { legend: string; children: React.ReactNode }) {
   return (
-    <fieldset className="rounded-3xl border border-line bg-card p-5 sm:p-6">
+    <fieldset className="rounded-2xl border border-line bg-card p-5 sm:p-6">
       <legend className="font-display px-1 text-xl">{legend}</legend>
       <div className="mt-3">{children}</div>
     </fieldset>

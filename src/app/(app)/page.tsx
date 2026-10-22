@@ -38,7 +38,7 @@ export default function TodayPage() {
             At the door today
           </h2>
           {state.digestReady && (
-            <Link href="/digest" className="inline-flex items-center gap-1.5 text-sm font-bold text-sage underline-offset-2 hover:underline">
+            <Link href="/digest" className="inline-flex items-center gap-1.5 text-sm font-bold text-brand underline-offset-2 hover:underline">
               <NoteIcon className="h-4 w-4" /> Today&rsquo;s digest
             </Link>
           )}

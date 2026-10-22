@@ -48,7 +48,7 @@ export function Explainer({ parentName, onLoaded }: { parentName: string; onLoad
   ];
 
   return (
-    <section aria-labelledby="intro-title" className="animate-rise mb-8 overflow-hidden rounded-3xl bg-ink text-paper">
+    <section aria-labelledby="intro-title" className="animate-rise mb-8 overflow-hidden rounded-2xl bg-hero text-on-hero">
       <div className="p-6 sm:p-8">
         <h2 id="intro-title" className="text-2xl font-bold leading-tight sm:text-3xl">
           Doorstep watches your parent&rsquo;s front door through Ring, and tells you only when something&rsquo;s wrong.
@@ -56,16 +56,16 @@ export function Explainer({ parentName, onLoaded }: { parentName: string; onLoad
         <ol className="mt-6 grid gap-4 sm:grid-cols-3">
           {steps.map((s) => (
             <li key={s.n} className="flex gap-3 sm:block">
-              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent text-sm font-bold text-ink">{s.n}</span>
+              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent text-sm font-bold text-on-accent">{s.n}</span>
               <span className="sm:mt-3 sm:block">
                 <span className="block font-bold">{s.title}</span>
-                <span className="block text-sm text-paper/75">{s.text}</span>
+                <span className="block text-sm text-on-hero/80">{s.text}</span>
               </span>
             </li>
           ))}
         </ol>
         <div className="mt-6 flex flex-wrap items-center gap-3">
-          <button onClick={seeDay} disabled={busy} className="rounded-full bg-accent px-6 py-3 font-bold text-ink disabled:opacity-60">
+          <button onClick={seeDay} disabled={busy} className="rounded-full bg-accent px-6 py-3 font-bold text-on-accent disabled:opacity-60">
             {busy ? "Loading…" : `See ${parentName}’s day`}
           </button>
           <button
@@ -73,11 +73,11 @@ export function Explainer({ parentName, onLoaded }: { parentName: string; onLoad
               writeFlag(SEEN_KEY);
               setShow(false);
             }}
-            className="text-sm font-bold text-paper/80 underline underline-offset-2"
+            className="text-sm font-bold text-on-hero/85 underline underline-offset-2"
           >
             Skip intro
           </button>
-          <a href="/onboarding" className="text-sm font-bold text-paper/80 underline underline-offset-2">
+          <a href="/onboarding" className="text-sm font-bold text-on-hero/85 underline underline-offset-2">
             Set it up for your family
           </a>
         </div>

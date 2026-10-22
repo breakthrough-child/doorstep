@@ -84,7 +84,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <Link
                 href={href}
                 aria-current={active(href) ? "page" : undefined}
-                className={`relative flex flex-col items-center gap-0.5 py-2.5 text-xs ${active(href) ? "text-sage" : "text-ink-soft"}`}
+                className={`relative flex flex-col items-center gap-0.5 py-2.5 text-xs ${active(href) ? "text-brand" : "text-ink-soft"}`}
               >
                 <Icon className="h-6 w-6" />
                 <span className={active(href) ? "font-bold" : ""}>{label}</span>
@@ -118,7 +118,7 @@ function Count({ n, urgent }: { n: number; urgent: boolean }) {
 function Brand({ compact = false }: { compact?: boolean }) {
   return (
     <Link href="/" className="flex items-center gap-2.5 rounded-lg" aria-label="Doorstep home">
-      <span className="grid h-9 w-9 place-items-center rounded-xl bg-sage text-paper">
+      <span className="grid h-9 w-9 place-items-center rounded-xl bg-hero text-accent ring-1 ring-line">
         <DoorIcon className="h-5 w-5" />
       </span>
       <span className={`font-display ${compact ? "text-xl" : "text-2xl"} text-ink`}>Doorstep</span>

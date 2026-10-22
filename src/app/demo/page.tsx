@@ -234,7 +234,7 @@ export default function DemoPanel() {
 
 function Panel({ title, note, children }: { title: string; note?: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-3xl border border-line bg-card p-5">
+    <section className="rounded-2xl border border-line bg-card p-5">
       <h2 className="font-bold">{title}</h2>
       {note && <p className="mb-3 text-sm text-ink-soft">{note}</p>}
       <div className={note ? "" : "mt-3"}>{children}</div>
