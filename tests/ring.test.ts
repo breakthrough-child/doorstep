@@ -268,6 +268,27 @@ describe("RingClient", () => {
     expect(err.code).toBe("GRECO_NO_VALID_KEY");
   });
 
+  it("starts a WHEP live view with an SDP offer and parses the session id; ends it with DELETE", async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockResolvedValueOnce(
+        new Response("v=0\r\nanswer", { status: 201, headers: { "content-type": "application/sdp", location: "/v1/devices/d/media/streaming/whep/sessions/sess-1" } }),
+      )
+      .mockResolvedValueOnce(new Response(null, { status: 204 }));
+    const c = new RingClient({ token: "tok", fetchImpl });
+    const s = await c.startLiveView("d", "v=0\r\noffer");
+    expect(s).toMatchObject({ answerSdp: "v=0\r\nanswer", sessionId: "sess-1" });
+    const [url, init] = fetchImpl.mock.calls[0]!;
+    expect(String(url)).toBe("https://api.amazonvision.com/v1/devices/d/media/streaming/whep/sessions");
+    expect(init.method).toBe("POST");
+    expect(init.body).toBe("v=0\r\noffer");
+    expect(init.headers["Content-Type"]).toBe("application/sdp");
+    expect(init.headers.Authorization).toBe("Bearer tok");
+    await c.endLiveView("d", "sess-1");
+    expect(fetchImpl.mock.calls[1]![1].method).toBe("DELETE");
+    expect(String(fetchImpl.mock.calls[1]![0])).toContain("/whep/sessions/sess-1");
+  });
+
   it("maps snapshot 416 MEDIA_NOT_FOUND to a RingApiError", async () => {
     const fetchImpl = vi.fn(async () => json(416, { errors: [{ code: "MEDIA_NOT_FOUND", detail: "No media found in time range." }] }));
     const c = new RingClient({ token: "t", fetchImpl: fetchImpl as never });

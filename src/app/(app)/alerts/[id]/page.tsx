@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { alertTone, RULE_ICON, RULE_LABEL } from "@/components/AlertCard";
 import { CaretakerActions } from "@/components/CaretakerActions";
+import { LookNow } from "@/components/LookNow";
 import { CaptionSource, MiniTimeline, OriginChip, Snapshot, SnapshotNote } from "@/components/EventFigure";
 import { ArrowLeftIcon, CheckIcon, ClockIcon, KIND_LABEL } from "@/components/icons";
 import { postJson, useAppState } from "@/components/state";
@@ -13,7 +14,7 @@ import type { AlertDetail } from "@/lib/alerts";
 export default function AlertDetailPage() {
   const params = useParams<{ id: string }>();
   const id = decodeURIComponent(params.id);
-  const { refresh: refreshState } = useAppState();
+  const { state: appState, refresh: refreshState } = useAppState();
   const [d, setD] = useState<AlertDetail | null>(null);
   const [missing, setMissing] = useState(false);
 
@@ -163,6 +164,8 @@ export default function AlertDetailPage() {
           ))}
         </ol>
       </section>
+
+      {appState?.ring.hasToken && !appState.ring.expired && <LookNow />}
 
       <section aria-labelledby="rel-title">
         <h2 id="rel-title" className="font-display mb-3 text-xl">

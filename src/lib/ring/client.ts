@@ -79,7 +79,7 @@ export class RingClient {
   }
 
   /** Low-level request with retry/backoff. Returns the raw Response (caller reads the body). */
-  async request(method: "GET" | "POST", path: string, body?: unknown, extra?: RequestInit): Promise<Response> {
+  async request(method: "GET" | "POST" | "DELETE", path: string, body?: unknown, extra?: RequestInit): Promise<Response> {
     let attempt = 0;
     for (;;) {
       const started = Date.now();
@@ -162,6 +162,29 @@ export class RingClient {
   }
 
   /**
+   * WebRTC live view (WHEP): POST the browser's SDP offer, return Ring's SDP answer. Runs on the
+   * server so the Bearer token never reaches the browser.
+   */
+  async startLiveView(deviceId: string, offerSdp: string, componentId?: string): Promise<WhepSession> {
+    const qs = componentId ? `?component_id=${encodeURIComponent(componentId)}` : "";
+    const path = `/v1/devices/${encodeURIComponent(deviceId)}/media/streaming/whep/sessions${qs}`;
+    const res = await this.request("POST", path, undefined, {
+      body: offerSdp,
+      headers: { Authorization: `Bearer ${this.token}`, "Content-Type": "application/sdp", Accept: "application/sdp" },
+    });
+    if (!res.ok) throw await toError(res, path);
+    const location = res.headers.get("location");
+    const sessionId = location ? decodeURIComponent(location.split("?")[0]!.split("/").filter(Boolean).pop() ?? "") || null : null;
+    return { answerSdp: await res.text(), sessionId, location };
+  }
+
+  async endLiveView(deviceId: string, sessionId: string): Promise<void> {
+    const path = `/v1/devices/${encodeURIComponent(deviceId)}/media/streaming/whep/sessions/${encodeURIComponent(sessionId)}`;
+    const res = await this.request("DELETE", path);
+    if (!res.ok && res.status !== 404) throw await toError(res, path);
+  }
+
+  /**
    * Download a JPEG snapshot at (or near) a timestamp. The API answers 303 with a pre-signed
    * Location; we follow it manually and without the Bearer header (FRICTION_LOG F-07).
    */
@@ -201,6 +224,13 @@ export class RingClient {
       mediaOrigin: media.headers.get("x-media-origin") ?? res.headers.get("x-media-origin"),
     };
   }
+}
+
+export interface WhepSession {
+  answerSdp: string;
+  /** Session id parsed from the Location header (needed to close the session). */
+  sessionId: string | null;
+  location: string | null;
 }
 
 async function toError(res: Response, path: string): Promise<RingApiError> {
