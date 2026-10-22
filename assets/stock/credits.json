@@ -1,0 +1,22 @@
+[
+  {
+    "scene": "porch_empty",
+    "file": "front-door-newton-syms.jpg",
+    "title": "New front door",
+    "author": "Timo Newton-Syms",
+    "source": "https://commons.wikimedia.org/wiki/File:New_front_door_(5220796607).jpg",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "night": false
+  },
+  {
+    "scene": "porch_empty_night",
+    "file": "front-door-newton-syms.jpg",
+    "title": "New front door (darkened to a night view)",
+    "author": "Timo Newton-Syms",
+    "source": "https://commons.wikimedia.org/wiki/File:New_front_door_(5220796607).jpg",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+    "night": true
+  }
+]

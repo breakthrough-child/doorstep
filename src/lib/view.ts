@@ -34,6 +34,8 @@ export interface TimelineView {
   hasSnapshot: boolean;
   /** The image is genuine Ring media (live, recorded, or a recorded frame reused by a scenario). */
   realRingFrame: boolean;
+  /** Where the picture comes from, for honest labels on example events. */
+  imageSource: "ring" | "stock" | "illustration" | null;
   snapshotNote: string | null;
   tags: DescriptionTags | null;
 }
@@ -235,6 +237,13 @@ export function toEventView(e: store.TimelineItem, tz: string): TimelineView {
     captionIsSample: !!e.description && e.description.mock,
     hasSnapshot: e.snapshotStatus === "ok" && !!e.snapshotPath,
     realRingFrame: e.origin === "live" || (!!e.snapshotPath && e.snapshotPath.startsWith("fixtures")),
+    imageSource: !e.snapshotPath
+      ? null
+      : e.origin !== "simulated" || e.snapshotPath.startsWith("fixtures")
+        ? "ring"
+        : e.snapshotPath.includes("/stock/")
+          ? "stock"
+          : "illustration",
     snapshotNote: e.snapshotStatus === "missing" ? e.snapshotNote : null,
     tags: e.description?.tags ?? null,
   };

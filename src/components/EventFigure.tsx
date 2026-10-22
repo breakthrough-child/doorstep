@@ -10,11 +10,13 @@ const ORIGIN_CHIP: Record<string, string> = {
   simulated: "Example event",
 };
 
-export function OriginChip({ origin, realFrame = false }: { origin: string; realFrame?: boolean }) {
+const IMAGE_SUFFIX: Record<string, string> = { ring: " · real Ring photo", stock: " · stock photo", illustration: " · illustration" };
+
+export function OriginChip({ origin, source = null }: { origin: string; source?: TimelineView["imageSource"] }) {
   return (
     <span className={`rounded-full px-2 py-px text-xs font-bold ${origin === "live" ? "bg-sage-soft text-sage" : "bg-sky-soft text-sky"}`}>
       {ORIGIN_CHIP[origin] ?? origin}
-      {origin === "simulated" && realFrame ? " · real Ring photo" : ""}
+      {origin === "simulated" && source ? IMAGE_SUFFIX[source] : ""}
     </span>
   );
 }
@@ -46,14 +48,16 @@ export function Snapshot({ e, priority = false }: { e: TimelineView; priority?: 
   );
 }
 
-export function SnapshotNote({ origin, realFrame = false }: { origin: string; realFrame?: boolean }) {
+export function SnapshotNote({ origin, source = null }: { origin: string; source?: TimelineView["imageSource"] }) {
   return (
     <p className="text-xs text-ink-soft">
-      {origin === "simulated"
-        ? realFrame
+      {origin !== "simulated"
+        ? "Ring snapshot shown uncropped, with Ring’s mandatory watermark."
+        : source === "ring"
           ? "Example event using a real photo recorded from a Ring camera (Ring Developer Playground), shown uncropped with Ring’s watermark."
-          : "Example event for the demo: an illustration, not a Ring camera image."
-        : "Ring snapshot shown uncropped, with Ring’s mandatory watermark."}{" "}
+          : source === "stock"
+            ? "Example event illustrated with a free-licence stock photo (see credits), not Ring media."
+            : "Example event for the demo: an illustration, not a Ring camera image."}{" "}
       Doorstep describes what happens; it never identifies people.
     </p>
   );

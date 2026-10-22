@@ -83,6 +83,9 @@ export function scenarioImagePath(image: string): string {
     return path.join(dir, file);
   }
   if (!/^[a-z0-9_]+$/.test(image)) throw new Error("Bad image name");
+  // A processed free-licence stock photo (scripts/stockify.py) beats the illustration when present.
+  const stock = path.join("scenarios", "images", "stock", `${image}.jpg`);
+  if (fs.existsSync(stock)) return stock;
   return path.join("scenarios", "images", `${image}.jpg`);
 }
 

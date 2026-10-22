@@ -60,8 +60,8 @@
     {
       "at": "11:30",
       "kind": "vehicle",
-      "image": "car_passing",
-      "sentence": "A car passes on the street beyond the garden.",
+      "image": "ring:NQQC73LYXUCUSVH6",
+      "sentence": "A car is parked across the road; nobody is at the door.",
       "tags": {
         "people": 0,
         "vehicle": true
@@ -92,8 +92,8 @@
     {
       "at": "16:05",
       "kind": "animal",
-      "image": "cat_on_porch",
-      "sentence": "A cat wanders across the porch.",
+      "image": "ring:D33G5LUPFCYFI75V",
+      "sentence": "A woodpecker is feeding at the bird feeder by the door.",
       "tags": {
         "people": 0
       }
