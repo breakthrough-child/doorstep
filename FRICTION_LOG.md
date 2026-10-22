@@ -139,6 +139,7 @@ Environment: Ubuntu laptop, Node 22.22, no Ring hardware, no Fire TV hardware. D
 - **Expected:** The latest frame in the range, or a documented error.
 - **Actual:** An internal-sounding decryption error from the second hop that isn't in the docs, and nothing a partner can act on.
 - **Severity:** Low/Medium. We use `at_timestamp`, but `latest_in_range` is the natural call for "what does the porch look like now?".
+- **Update (Thu Oct 22):** The same `latest_in_range` call (last 10 minutes, just after a live-view session) **succeeded**: 303, then a 1920×1080 JPEG. So the failure is intermittent, which is harder to handle than a consistent one.
 - **Workaround:** Use `at_timestamp` (event start + 1 s).
 - **Suggestion:** Fix or document `latest_in_range` in the Playground, and translate internal errors into documented codes.
 
