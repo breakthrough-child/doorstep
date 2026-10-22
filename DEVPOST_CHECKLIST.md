@@ -15,11 +15,11 @@ The repository is **public with an MIT license** (GitHub detects it), so no coll
 | **Image gallery** | `docs/screenshots/demo-panel.png`, `package-today.png`, `replay-today.png`, `digest.png`, `tv-doorbell.png`. Optionally re-shoot the alert detail page with the real Ring frame from the app | repo |
 | **Track: Ring** | ✅ Always | — |
 | **Track: AWS Builder mini challenge** | ✅ **Only if** `npm run check:bedrock` succeeded and the app shows real Nova Lite captions | — |
-| **Track: Open Source mini challenge** | ✅ **Only if** the PR to `AmazonAppDev/ring-api-helloworld` was opened | SUBMISSION.md → Open Source contribution |
+| **Track: Open Source mini challenge** | ✅ Select: PR opened at https://github.com/AmazonAppDev/ring-api-helloworld/pull/45 | SUBMISSION.md → Open Source contribution |
 | **Track: Fire TV** | ❌ Don't select (dropped; see FRICTION_LOG F-14) | — |
 | **Product feedback, each tool** (use, what worked, what needs work, onboarding, would you use it again) | Ring Partner API; Ring Developer Playground; Ring sample app; Amazon Bedrock + Nova Lite (if AWS track); Next.js / Node / better-sqlite3 | SUBMISSION.md → Product feedback |
 | **AWS services used** (AWS track only) | "AWS services description" section | SUBMISSION.md |
-| **Open Source fields** (OS track only) | Contribution URL, our repo URL, GitHub username `breakthrough-child`, what / how / why | SUBMISSION.md → Open Source contribution |
+| **Open Source fields** | Contribution URL `https://github.com/AmazonAppDev/ring-api-helloworld/pull/45`; our repo `https://github.com/breakthrough-child/doorstep`; GitHub username `breakthrough-child`; what / how / why | SUBMISSION.md → Open Source contribution |
 | **Feature requests with priority** | The Critical / Important / Nice-to-have table | SUBMISSION.md → Feature requests |
 | **Friction log** | Link: `https://github.com/breakthrough-child/doorstep/blob/main/FRICTION_LOG.md`. If there's a text box, paste the summary below | FRICTION_LOG.md |
 
@@ -47,9 +47,7 @@ The repository is **public with an MIT license** (GitHub detects it), so no coll
 | Bedrock at 17:30 | PR opened? | Use |
 |---|---|---|
 | ✅ working | ✅ | `SUBMISSION.md` as is. Tracks: Ring + AWS Builder + Open Source |
-| ✅ working | ❌ | `SUBMISSION.md`, deleting the two `OPEN-SOURCE` blocks. Tracks: Ring + AWS Builder |
 | ❌ blocked | ✅ | `SUBMISSION-no-aws.md`. Tracks: Ring + Open Source |
-| ❌ blocked | ❌ | `SUBMISSION-no-aws.md`, deleting the two `OPEN-SOURCE` blocks. Tracks: Ring |
 
 ## Final clicks
 

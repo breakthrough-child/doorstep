@@ -4,7 +4,7 @@ Ready-to-paste answers for "Build, Ship, Shape: Amazon Developer Hackathon".
 
 > **If Amazon Bedrock is still blocked on Thursday evening:** delete every block between `<!-- AWS-BUILDER:START -->` and `<!-- AWS-BUILDER:END -->` (there are 6), delete the one table row tagged `<!-- AWS-BUILDER -->`, and un-comment the "without AWS" variant marked `<!-- NO-AWS -->`. Or run `npm run submission:no-aws`, which does exactly that into `SUBMISSION-no-aws.md`. Nothing else references the AWS Builder track. The Bedrock friction entry (F-08) stays in the friction log either way: it's genuine product feedback.
 >
-> **Open Source:** keep the two `OPEN-SOURCE` blocks only if the pull request to `AmazonAppDev/ring-api-helloworld` was actually opened. Otherwise delete them.
+> **Open Source:** the pull request is open (AmazonAppDev/ring-api-helloworld#45), so keep the two `OPEN-SOURCE` blocks.
 
 ---
 
@@ -20,7 +20,7 @@ Calm, plain-language updates from a parent's front door. Doorstep tells you when
 
 - **Ring** (primary)
 <!-- OPEN-SOURCE:START -->
-- **Open Source mini challenge**: pull request to `AmazonAppDev/ring-api-helloworld` (see "Open Source contribution" below)
+- **Open Source mini challenge**: pull request https://github.com/AmazonAppDev/ring-api-helloworld/pull/45 (see "Open Source contribution" below)
 <!-- OPEN-SOURCE:END -->
 <!-- AWS-BUILDER:START -->
 - **AWS Builder mini challenge**: Amazon Bedrock (Nova Lite)
@@ -110,7 +110,7 @@ The most valuable caretaking signals are absences and timing, and those need rul
 <!-- OPEN-SOURCE:START -->
 ## Open Source contribution
 
-- **Contribution URL:** [PR URL — fill in once opened]
+- **Contribution URL:** https://github.com/AmazonAppDev/ring-api-helloworld/pull/45 (opened Oct 22, 2026, from the fork https://github.com/breakthrough-child/ring-api-helloworld)
 - **Our project repository:** https://github.com/breakthrough-child/doorstep
 - **GitHub username:** breakthrough-child
 - **What it does:** Adds `scripts/image_snapshot.py` to Amazon's official Ring sample (`ring-api-helloworld`), plus README entries. It downloads a snapshot from a Ring device at an event's time (`--from-history`) or the latest frame.
