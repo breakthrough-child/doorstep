@@ -1,30 +1,28 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import type { TimelineView } from "@/lib/view";
-import { CloseIcon, KIND_ICON, KIND_LABEL, SparkIcon } from "./icons";
+import { OriginChip } from "./EventFigure";
+import { ChevronRightIcon, KIND_ICON, KIND_LABEL, SparkIcon } from "./icons";
 
-export function Timeline({ items, parentName }: { items: TimelineView[]; parentName: string }) {
-  const [open, setOpen] = useState<TimelineView | null>(null);
+export function Timeline({ items, parentName, emptyHint }: { items: TimelineView[]; parentName: string; emptyHint?: string }) {
   if (!items.length)
     return (
-      <p className="rounded-2xl border border-dashed border-line px-5 py-8 text-center text-ink-soft">
-        Nothing at {parentName}&rsquo;s door yet today.
-      </p>
+      <div className="rounded-2xl border border-dashed border-line px-5 py-8 text-center text-ink-soft">
+        <p>Nothing at {parentName}&rsquo;s door yet today.</p>
+        {emptyHint && <p className="mt-1 text-sm">{emptyHint}</p>}
+      </div>
     );
   return (
-    <>
-      <ol className="space-y-3">
-        {items.map((e) => (
-          <TimelineRow key={e.id} e={e} onOpen={() => setOpen(e)} />
-        ))}
-      </ol>
-      {open && <SnapshotDialog e={open} onClose={() => setOpen(null)} />}
-    </>
+    <ol className="space-y-3">
+      {items.map((e) => (
+        <TimelineRow key={e.id} e={e} />
+      ))}
+    </ol>
   );
 }
 
-function TimelineRow({ e, onOpen }: { e: TimelineView; onOpen: () => void }) {
+function TimelineRow({ e }: { e: TimelineView }) {
   const Icon = KIND_ICON[e.kind] ?? KIND_ICON.motion!;
   return (
     <li className="animate-rise grid grid-cols-[3rem_1fr] gap-2.5 sm:grid-cols-[3.5rem_1fr] sm:gap-4">
@@ -33,21 +31,19 @@ function TimelineRow({ e, onOpen }: { e: TimelineView; onOpen: () => void }) {
           {e.time}
         </time>
       </div>
-      <div className="flex flex-col gap-3 rounded-2xl border border-line bg-card p-3 sm:flex-row sm:items-start sm:p-3.5">
+      <Link
+        href={`/events/${encodeURIComponent(e.id)}`}
+        className="group flex flex-col gap-3 rounded-2xl border border-line bg-card p-3 transition-colors hover:border-ink-soft sm:flex-row sm:items-start sm:p-3.5"
+        aria-label={`${KIND_LABEL[e.kind] ?? e.kind} at ${e.time}: ${e.sentence ?? "being described"}. Open details.`}
+      >
         {e.hasSnapshot ? (
-          <button
-            onClick={onOpen}
-            className="group relative aspect-video w-full shrink-0 overflow-hidden rounded-xl bg-paper ring-1 ring-line sm:w-40"
-            aria-label={`Open snapshot from ${e.time}`}
-          >
-            {/* object-contain: never crop — the Ring watermark must stay fully visible. */}
-            <img
-              src={`/api/snapshots/${encodeURIComponent(e.id)}`}
-              alt={e.sentence ? `Snapshot: ${e.sentence}` : `Front door snapshot at ${e.time}`}
-              loading="lazy"
-              className="h-full w-full object-contain transition-transform group-hover:scale-[1.02]"
-            />
-          </button>
+          // object-contain: never crop — the Ring watermark must stay fully visible.
+          <img
+            src={`/api/snapshots/${encodeURIComponent(e.id)}`}
+            alt=""
+            loading="lazy"
+            className="aspect-video w-full shrink-0 rounded-xl bg-black object-contain ring-1 ring-line sm:w-40"
+          />
         ) : (
           <div
             className="grid aspect-[4/1] w-full shrink-0 place-items-center rounded-xl bg-paper text-center text-xs leading-tight text-ink-soft ring-1 ring-line sm:aspect-video sm:w-40"
@@ -62,61 +58,19 @@ function TimelineRow({ e, onOpen }: { e: TimelineView; onOpen: () => void }) {
               <Icon className="h-3.5 w-3.5" />
               {KIND_LABEL[e.kind] ?? e.kind}
             </span>
-            {e.origin !== "live" && (
-              <span className="rounded-full bg-sky-soft px-2 py-px font-bold text-sky">{e.origin === "simulated" ? "Simulated" : "Replayed"}</span>
-            )}
+            <OriginChip origin={e.origin} />
           </p>
           <p className="mt-1 leading-snug text-ink">
-            {e.sentence ?? <span className="text-ink-soft italic">Describing what the camera saw…</span>}
+            {e.sentence ?? <span className="italic text-ink-soft">Describing what the camera saw…</span>}
           </p>
           {e.captionSource && (
-            <p className={`mt-1.5 inline-flex items-center gap-1 text-[0.72rem] ${e.captionSource.startsWith("Sample") ? "font-bold text-sky" : "text-ink-soft"}`}>
+            <p className={`mt-1.5 inline-flex items-center gap-1 text-[0.72rem] ${e.captionIsSample ? "font-bold text-sky" : "text-ink-soft"}`}>
               <SparkIcon className="h-3 w-3" /> {e.captionSource}
             </p>
           )}
         </div>
-      </div>
+        <ChevronRightIcon className="hidden h-5 w-5 shrink-0 self-center text-ink-soft transition-transform group-hover:translate-x-0.5 sm:block" />
+      </Link>
     </li>
-  );
-}
-
-function SnapshotDialog({ e, onClose }: { e: TimelineView; onClose: () => void }) {
-  const ref = useRef<HTMLDialogElement>(null);
-  useEffect(() => {
-    const d = ref.current;
-    d?.showModal();
-    return () => d?.close();
-  }, []);
-  return (
-    <dialog
-      ref={ref}
-      onClose={onClose}
-      onClick={(ev) => ev.target === ref.current && onClose()}
-      className="m-auto w-[min(960px,94vw)] rounded-2xl bg-card p-0 text-ink backdrop:bg-black/60"
-      aria-labelledby="snap-title"
-    >
-      <div className="flex items-center justify-between gap-3 px-4 py-3">
-        <h2 id="snap-title" className="font-bold">
-          {KIND_LABEL[e.kind]} at {e.time}
-        </h2>
-        <button onClick={onClose} className="rounded-full p-1.5 hover:bg-paper" aria-label="Close">
-          <CloseIcon />
-        </button>
-      </div>
-      <img
-        src={`/api/snapshots/${encodeURIComponent(e.id)}`}
-        alt={e.sentence ?? "Front door snapshot"}
-        className="block max-h-[70vh] w-full bg-black object-contain"
-      />
-      <div className="px-4 py-3">
-        <p>{e.sentence}</p>
-        <p className="mt-1 text-xs text-ink-soft">
-          {e.origin === "simulated"
-            ? "Simulated scene for the demo — an illustration, not a Ring camera image."
-            : "Ring snapshot shown uncropped with its mandatory watermark."}{" "}
-          Doorstep describes what happens; it never identifies people.
-        </p>
-      </div>
-    </dialog>
   );
 }

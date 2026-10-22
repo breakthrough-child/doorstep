@@ -26,6 +26,7 @@ const plan = (over: Partial<CarePlan> = {}): CarePlan => ({
   doorbellAnswerMinutes: 3,
   visitGraceMinutes: 15,
   deviceId: null,
+  contacts: [],
   visitors: [{ id: "aide", name: "Home aide", days: [0, 1, 2, 3, 4, 5, 6], windowStart: "09:00", windowEnd: "10:30" }],
   ...over,
 });

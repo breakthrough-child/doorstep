@@ -78,6 +78,7 @@ export interface CarePlan {
   visitors: Visitor[];
   /** Ring device id of the front-door camera. */
   deviceId: string | null;
+  contacts: Contact[];
 }
 
 export type AlertRule =
@@ -112,4 +113,33 @@ export interface Alert extends AlertCandidate {
   status: AlertStatus;
   origin: EventOrigin;
   updatedAt: number;
+  /** App-time (simulated in SCENARIO) until which the family asked to be reminded later. */
+  snoozedUntil: number | null;
+  /** In-app escalation of an unacknowledged urgent alert to the second family contact. */
+  escalatedAt: number | null;
+  escalatedTo: string | null;
+}
+
+export type AlertActionKind = "call" | "expected" | "remind" | "reminder_due" | "escalated" | "resolved" | "reopened" | "acknowledged";
+
+export interface AlertAction {
+  id: number;
+  alertId: string;
+  action: AlertActionKind;
+  label: string;
+  /** Real wall time of the action. */
+  at: number;
+  /** App time (simulated clock in SCENARIO). */
+  appAt: number;
+}
+
+export type ContactRole = "parent" | "aide" | "neighbour" | "family" | "other";
+
+export interface Contact {
+  id: string;
+  name: string;
+  role: ContactRole;
+  phone: string;
+  /** The "second family contact" urgent alerts escalate to when nobody acknowledges them. */
+  escalation: boolean;
 }

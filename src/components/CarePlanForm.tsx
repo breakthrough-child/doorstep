@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useState } from "react";
-import type { CarePlan, Visitor } from "@/lib/types";
+import type { CarePlan, Contact, Visitor } from "@/lib/types";
 import { postJson } from "./state";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -39,6 +39,11 @@ export function CarePlanForm({ onSaved, submitLabel = "Save care plan" }: { onSa
   if (!plan) return <div className="h-96 rounded-3xl bg-line/40" aria-busy="true" />;
 
   const set = <K extends keyof CarePlan>(k: K, v: CarePlan[K]) => setPlan({ ...plan, [k]: v });
+  const setContact = (i: number, c: Partial<Contact>) =>
+    set(
+      "contacts",
+      plan.contacts.map((x, j) => (j === i ? { ...x, ...c } : c.escalation ? { ...x, escalation: false } : x)),
+    );
   const setVisitor = (i: number, v: Partial<Visitor>) =>
     set("visitors", plan.visitors.map((x, j) => (j === i ? { ...x, ...v } : x)));
   const err = (p: string) => issues.find((x) => x.path === p)?.message;
@@ -121,6 +126,63 @@ export function CarePlanForm({ onSaved, submitLabel = "Save care plan" }: { onSa
             )}
           </Field>
         </div>
+      </Fieldset>
+
+      <Fieldset legend="Contacts">
+        <p className="-mt-2 mb-4 text-sm text-ink-soft">
+          People you can call straight from an alert. Pick one <b>second family contact</b>: if an urgent alert goes unacknowledged for 15
+          minutes, Doorstep marks it as escalated to them (shown in the app; Doorstep doesn&rsquo;t send texts or emails).
+        </p>
+        <ul className="space-y-3">
+          {plan.contacts.map((c, i) => (
+            <li key={c.id} className="rounded-2xl border border-line bg-paper p-4">
+              <div className="grid gap-3 sm:grid-cols-[1.3fr_1fr_auto]">
+                <Field label="Name" error={err(`contacts.${i}.name`)}>
+                  {(id) => <input id={id} className={input} value={c.name} onChange={(e) => setContact(i, { name: e.target.value })} />}
+                </Field>
+                <Field label="Phone" error={err(`contacts.${i}.phone`)}>
+                  {(id) => (
+                    <input id={id} type="tel" inputMode="tel" className={input} value={c.phone} onChange={(e) => setContact(i, { phone: e.target.value })} />
+                  )}
+                </Field>
+                <Field label="Role">
+                  {(id) => (
+                    <select id={id} className={input} value={c.role} onChange={(e) => setContact(i, { role: e.target.value as Contact["role"] })}>
+                      <option value="parent">{plan.parentName} (parent)</option>
+                      <option value="aide">Aide / carer</option>
+                      <option value="neighbour">Neighbour</option>
+                      <option value="family">Family</option>
+                      <option value="other">Other</option>
+                    </select>
+                  )}
+                </Field>
+              </div>
+              <div className="mt-3 flex flex-wrap items-center gap-3">
+                <label className="inline-flex items-center gap-2 text-sm">
+                  <input
+                    type="radio"
+                    name="escalation"
+                    checked={c.escalation}
+                    onChange={() => setContact(i, { escalation: true })}
+                    className="h-4 w-4 accent-[var(--sage)]"
+                  />
+                  Second family contact (urgent alerts escalate here)
+                </label>
+                <button type="button" onClick={() => set("contacts", plan.contacts.filter((_, j) => j !== i))} className="ml-auto text-sm text-ink-soft underline underline-offset-2">
+                  Remove
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+        {err("contacts") && <p className="mt-2 text-sm text-rose">{err("contacts")}</p>}
+        <button
+          type="button"
+          onClick={() => set("contacts", [...plan.contacts, { id: `c${Date.now().toString(36)}`, name: "", role: "other", phone: "", escalation: false }])}
+          className="mt-3 rounded-full border border-dashed border-ink-soft px-4 py-2 text-sm font-bold text-ink"
+        >
+          + Add a contact
+        </button>
       </Fieldset>
 
       <Fieldset legend="Scheduled visitors">

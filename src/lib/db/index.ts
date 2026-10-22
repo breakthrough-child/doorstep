@@ -96,6 +96,15 @@ CREATE TABLE IF NOT EXISTS bedrock_usage (
   ms INTEGER NOT NULL,
   created_at INTEGER NOT NULL
 );
+CREATE TABLE IF NOT EXISTS alert_actions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  alert_id TEXT NOT NULL,
+  action TEXT NOT NULL,
+  label TEXT NOT NULL,
+  at INTEGER NOT NULL,
+  app_at INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS alert_actions_alert ON alert_actions (alert_id, id);
 CREATE TABLE IF NOT EXISTS api_log (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   method TEXT NOT NULL,
@@ -119,9 +128,21 @@ export function db(): Database.Database {
     conn.pragma("journal_mode = WAL");
     conn.pragma("busy_timeout = 3000");
     conn.exec(SCHEMA);
+    migrate(conn);
     globalThis.__doorstepDb = conn;
   }
   return globalThis.__doorstepDb;
+}
+
+/** Additive column migrations for databases created by earlier versions. */
+function migrate(conn: Database.Database): void {
+  const cols = new Set((conn.prepare("PRAGMA table_info(alerts)").all() as Array<{ name: string }>).map((c) => c.name));
+  const add = (name: string, type: string) => {
+    if (!cols.has(name)) conn.exec(`ALTER TABLE alerts ADD COLUMN ${name} ${type}`);
+  };
+  add("snoozed_until", "INTEGER");
+  add("escalated_at", "INTEGER");
+  add("escalated_to", "TEXT");
 }
 
 export function getSetting<T>(key: string, fallback: T): T {

@@ -162,6 +162,24 @@ export const PauseIcon = (p: P) => (
   </Svg>
 );
 
+export const PhoneIcon = (p: P) => (
+  <Svg {...p}>
+    <path d="M5 4h3.5l1.5 4-2 1.5a11 11 0 0 0 6.5 6.5l1.5-2 4 1.5V19a1.5 1.5 0 0 1-1.6 1.5A16.5 16.5 0 0 1 3.5 5.6 1.5 1.5 0 0 1 5 4Z" />
+  </Svg>
+);
+
+export const ArrowLeftIcon = (p: P) => (
+  <Svg {...p}>
+    <path d="M19 12H5M11 6l-6 6 6 6" />
+  </Svg>
+);
+
+export const ChevronRightIcon = (p: P) => (
+  <Svg {...p}>
+    <path d="m9 6 6 6-6 6" />
+  </Svg>
+);
+
 export const KIND_ICON: Record<string, (p: P) => React.ReactElement> = {
   person: PersonIcon,
   ding: BellIcon,

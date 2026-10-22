@@ -19,6 +19,24 @@ Defaults chosen without asking, and why. Newest at the bottom of each section.
 - **Rules wait for in-flight descriptions** (up to 5 minutes). Tags decide pickups and answers, so we don't judge the day past an event whose caption is still coming.
 - **Alert actions are "I'm on it" (acknowledge) and "All sorted" (resolve)**: warmer wording for the same state machine.
 
+## Alert experience (Thu Oct 22)
+
+- **Every alert has a detail page** (`/alerts/[id]`) with:
+  - the full-size snapshot of the *first* cited event (e.g. the first ring), uncropped;
+  - its caption, labelled "Sample caption" when not from Bedrock;
+  - a "why Doorstep flagged this" sentence generated from the care plan (pure `explainAlert`, unit-tested);
+  - the action history;
+  - door events within ±10 minutes as a mini timeline with thumbnails.
+- **Caretaker actions replace "I'm on it / All sorted":** **Call [parent]**, **Call [helper]**, **That was expected**, **Remind me in 30 min**, plus a quiet "It's sorted" link.
+  - Calls are `tel:` links; tapping one logs "Called Grace" and acknowledges the alert.
+  - "That was expected" resolves the alert. When the alert cites a person or doorbell event, it optionally adds a visitor to the schedule for that weekday, ±30 minutes around the event (editable).
+- **Call order:** the parent first; for a missed visit, the aide next; then the neighbour. The second family contact isn't offered as a call target, because they're who alerts escalate *to*.
+- **In-app escalation only.** An **urgent** (late-night) alert that is still `open`, not snoozed and not acted on 15 minutes (app time) after it fired is marked "Escalated to [second family contact]". This is shown in rose on the card and the detail page and recorded in the history. No SMS or email is sent.
+- **App time for reminders and escalation.** In SCENARIO mode, "Remind me in 30 min" and the 15-minute escalation run on the simulated clock (30 s and 15 s at 60×), so they can be demonstrated. A reminder can't come due after a scenario's end time.
+- **Snoozed alerts don't count toward "needs your attention".** The hero says "1 reminder set for later" instead.
+- **Default contacts use fictional numbers** from Ofcom's range reserved for drama (+44 7700 900xxx): Grace, Ngozi (home aide), Mr Bello (neighbour), Chidi (Ada's brother, the second family contact).
+- **Every timeline item opens an event page** (`/events/[id]`) showing the snapshot, time, Ring event type, data-source label ("Live from Ring" / "Recorded from Ring Playground" / "Simulated"), caption source, and any alerts citing it. The old lightbox dialog was removed.
+
 ## Data modes
 
 - **Default data mode is REPLAY.** A fresh clone shows real-shaped Ring data with no credentials.

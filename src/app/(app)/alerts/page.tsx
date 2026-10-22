@@ -43,7 +43,7 @@ export default function AlertsPage() {
 
       <section className="space-y-3" aria-live="polite">
         {shown.length ? (
-          shown.map((a) => <AlertCard key={a.id} alert={a} timeZone={state.timeZone} />)
+          shown.map((a) => <AlertCard key={a.id} alert={a} timeZone={state.timeZone} contacts={state.contacts} />)
         ) : (
           <p className="rounded-2xl border border-dashed border-line px-5 py-10 text-center text-ink-soft">
             {filter === "active" ? `Nothing needs you right now. ${state.parentName}'s day looks normal.` : "No alerts today."}

@@ -3,6 +3,7 @@ import { db } from "./db";
 import type { Device } from "./ring/normalize";
 import type {
   Alert,
+  AlertAction,
   AlertCandidate,
   AlertStatus,
   DescriptionTags,
@@ -216,6 +217,9 @@ type AlertRow = {
   cleared_reason: string | null;
   status: AlertStatus;
   updated_at: number;
+  snoozed_until: number | null;
+  escalated_at: number | null;
+  escalated_to: string | null;
 };
 
 function toAlert(r: AlertRow): Alert {
@@ -233,6 +237,9 @@ function toAlert(r: AlertRow): Alert {
     clearedReason: r.cleared_reason,
     status: r.status,
     updatedAt: r.updated_at,
+    snoozedUntil: r.snoozed_until ?? null,
+    escalatedAt: r.escalated_at ?? null,
+    escalatedTo: r.escalated_to ?? null,
   };
 }
 
@@ -283,7 +290,11 @@ export function upsertAlerts(candidates: AlertCandidate[], origin: EventOrigin):
 export function pruneAlerts(origin: EventOrigin, keepIds: string[], fromMs: number, toMs: number): number {
   const keep = new Set(keepIds.map((id) => `${origin}:${id}`));
   const rows = db()
-    .prepare("SELECT id FROM alerts WHERE origin = ? AND status = 'open' AND triggered_at >= ? AND triggered_at <= ?")
+    .prepare(
+      `SELECT id FROM alerts a WHERE origin = ? AND status = 'open' AND triggered_at >= ? AND triggered_at <= ?
+       AND snoozed_until IS NULL AND escalated_at IS NULL
+       AND NOT EXISTS (SELECT 1 FROM alert_actions x WHERE x.alert_id = a.id)`,
+    )
     .all(origin, fromMs, toMs) as Array<{ id: string }>;
   const del = db().prepare("DELETE FROM alerts WHERE id = ?");
   let n = 0;
@@ -300,6 +311,38 @@ export function listAlerts(origin: EventOrigin, sinceMs = 0, upToMs = Number.MAX
 
 export function setAlertStatus(id: string, status: AlertStatus): boolean {
   return db().prepare("UPDATE alerts SET status = ?, updated_at = ? WHERE id = ?").run(status, Date.now(), id).changes > 0;
+}
+
+export function getAlert(id: string): Alert | null {
+  const r = db().prepare("SELECT * FROM alerts WHERE id = ?").get(id) as AlertRow | undefined;
+  return r ? toAlert(r) : null;
+}
+
+export function setAlertSnooze(id: string, until: number | null): void {
+  db().prepare("UPDATE alerts SET snoozed_until = ?, updated_at = ? WHERE id = ?").run(until, Date.now(), id);
+}
+
+export function setAlertEscalated(id: string, at: number, to: string | null): void {
+  db().prepare("UPDATE alerts SET escalated_at = ?, escalated_to = ?, updated_at = ? WHERE id = ?").run(at, to, Date.now(), id);
+}
+
+type ActionRow = { id: number; alert_id: string; action: AlertAction["action"]; label: string; at: number; app_at: number };
+
+export function addAlertAction(alertId: string, action: AlertAction["action"], label: string, appAt: number): void {
+  db()
+    .prepare("INSERT INTO alert_actions (alert_id, action, label, at, app_at) VALUES (?, ?, ?, ?, ?)")
+    .run(alertId, action, label, Date.now(), appAt);
+}
+
+export function alertActions(alertId: string): AlertAction[] {
+  return (db().prepare("SELECT * FROM alert_actions WHERE alert_id = ? ORDER BY id").all(alertId) as ActionRow[]).map((r) => ({
+    id: r.id,
+    alertId: r.alert_id,
+    action: r.action,
+    label: r.label,
+    at: r.at,
+    appAt: r.app_at,
+  }));
 }
 
 export function logBedrockUsage(u: {
@@ -341,6 +384,7 @@ export function clearOrigin(origin: EventOrigin): void {
   conn.transaction(() => {
     // Descriptions are deliberately kept: they're the Bedrock cache, keyed by event id.
     conn.prepare("DELETE FROM events WHERE origin = ?").run(origin);
+    conn.prepare("DELETE FROM alert_actions WHERE alert_id IN (SELECT id FROM alerts WHERE origin = ?)").run(origin);
     conn.prepare("DELETE FROM alerts WHERE origin = ?").run(origin);
     conn.prepare("DELETE FROM digests WHERE origin = ?").run(origin);
   })();

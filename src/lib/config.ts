@@ -63,6 +63,17 @@ export const visitorSchema = z
     path: ["windowEnd"],
   });
 
+export const contactSchema = z.object({
+  id: z.string().min(1).max(64),
+  name: z.string().trim().min(1, "Add a name").max(60),
+  role: z.enum(["parent", "aide", "neighbour", "family", "other"]),
+  phone: z
+    .string()
+    .trim()
+    .regex(/^\+?[0-9 ()-]{6,24}$/, "Use a phone number like +44 7700 900123"),
+  escalation: z.boolean(),
+});
+
 export const carePlanSchema = z.object({
   parentName: z.string().trim().min(1).max(40),
   familyName: z.string().trim().min(1).max(40),
@@ -82,6 +93,11 @@ export const carePlanSchema = z.object({
   doorbellAnswerMinutes: z.number().int().min(1).max(30),
   visitGraceMinutes: z.number().int().min(0).max(120),
   deviceId: z.string().nullable(),
+  contacts: z
+    .array(contactSchema)
+    .max(10)
+    .refine((cs) => cs.filter((c) => c.escalation).length <= 1, "Choose at most one second family contact")
+    .default([]),
 });
 
 export type CarePlanInput = z.infer<typeof carePlanSchema>;
@@ -98,6 +114,13 @@ export const DEFAULT_PLAN: Omit<CarePlan, "visitors"> = {
   doorbellAnswerMinutes: 3,
   visitGraceMinutes: 15,
   deviceId: null,
+  // Phone numbers are from Ofcom's range reserved for drama (+44 7700 900xxx): clearly fictional.
+  contacts: [
+    { id: "grace", name: "Grace", role: "parent", phone: "+44 7700 900461", escalation: false },
+    { id: "ngozi", name: "Ngozi (home aide)", role: "aide", phone: "+44 7700 900118", escalation: false },
+    { id: "bello", name: "Mr Bello (neighbour)", role: "neighbour", phone: "+44 7700 900275", escalation: false },
+    { id: "chidi", name: "Chidi (Ada's brother)", role: "family", phone: "+44 7700 900389", escalation: true },
+  ],
 };
 
 export const DEFAULT_VISITORS: Visitor[] = [

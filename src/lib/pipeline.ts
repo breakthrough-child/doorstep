@@ -21,6 +21,7 @@ import {
 } from "./data/scenarios";
 import { loadReplay, readManifest, type ReplayMeta } from "./data/replay";
 import { tokenIssuedAtMs } from "./ring/token";
+import { processAlertTimers } from "./alerts";
 import { generateDigest, getDigest } from "./digest";
 import * as store from "./store";
 import { clockLabel, localDateKey, startOfLocalDay } from "./time";
@@ -106,6 +107,7 @@ async function runTick(): Promise<TickResult> {
   if (mode === "LIVE") await fetchLiveSnapshots();
   const described = await describePending(origin, now, plan);
   const newAlerts = runRules(origin, now, effectivePlan(mode));
+  processAlertTimers(origin, now);
   if (mode === "SCENARIO") await autoDigest(plan);
   return { mode, now, newEvents, described, newAlerts, error };
 }

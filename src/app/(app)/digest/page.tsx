@@ -86,7 +86,7 @@ function DigestCard({ d, featured = false, timeZone }: { d: Digest; featured?: b
       <p className="text-sm text-ink-soft">
         {date}
         {d.origin === "simulated" && " · simulated day"}
-        {d.origin === "replay" && " · replayed data"}
+        {d.origin === "replay" && " · recorded from Ring Playground"}
       </p>
       <h2 className={`font-display mt-1 ${featured ? "text-3xl" : "text-xl"}`}>{d.headline}</h2>
       <p className={`mt-3 ${featured ? "text-lg" : ""} leading-relaxed`}>{d.summary}</p>

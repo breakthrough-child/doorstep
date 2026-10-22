@@ -21,6 +21,7 @@ const plan: CarePlan = {
   doorbellAnswerMinutes: 3,
   visitGraceMinutes: 15,
   deviceId: null,
+  contacts: [],
   visitors: [
     { id: "aide", name: "Home aide", days: [0, 1, 2, 3, 4, 5, 6], windowStart: "09:00", windowEnd: "10:30" },
     { id: "meals", name: "Meal delivery", days: [1, 2, 3, 4, 5], windowStart: "12:00", windowEnd: "13:00" },

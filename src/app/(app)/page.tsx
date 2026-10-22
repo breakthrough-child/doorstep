@@ -23,7 +23,7 @@ export default function TodayPage() {
             Needs your attention
           </h2>
           {pinned.map((a) => (
-            <AlertCard key={a.id} alert={a} timeZone={state.timeZone} />
+            <AlertCard key={a.id} alert={a} timeZone={state.timeZone} contacts={state.contacts} />
           ))}
         </section>
       )}
@@ -51,7 +51,7 @@ export default function TodayPage() {
             Settled today
           </h2>
           {settled.map((a) => (
-            <AlertCard key={a.id} alert={a} timeZone={state.timeZone} compact />
+            <AlertCard key={a.id} alert={a} timeZone={state.timeZone} contacts={state.contacts} compact />
           ))}
         </section>
       )}
