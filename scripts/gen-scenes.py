@@ -103,7 +103,7 @@ def finish(img, name, out_dir, night=False):
     img = img.filter(ImageFilter.GaussianBlur(1.2))  # soften to camera-ish
     d = ImageDraw.Draw(img)
     f = font(22)
-    label = "SIMULATED SCENE · illustration, not a Ring camera image"
+    label = "Example event · illustration (not a Ring camera image)"
     tw = d.textlength(label, font=f)
     d.rectangle([16, H - 52, 32 + tw, H - 16], fill=(0, 0, 0))
     d.text((24, H - 47), label, fill=(255, 255, 255), font=f)
