@@ -19,7 +19,8 @@
     "lint": "tsc --noEmit",
     "check:bedrock": "tsx scripts/check-bedrock.ts",
     "submission:no-aws": "node scripts/submission-no-aws.mjs",
-    "stock": "python3 -I scripts/stockify.py"
+    "stock": "python3 -I scripts/stockify.py",
+    "warm:captions": "tsx scripts/warm-captions.ts"
   },
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "^3.700.0",

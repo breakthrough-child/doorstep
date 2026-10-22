@@ -2,7 +2,7 @@
 
 Ready-to-paste answers for "Build, Ship, Shape: Amazon Developer Hackathon".
 
-> **If Amazon Bedrock is still blocked on Thursday evening:** delete every block between `<!-- AWS-BUILDER:START -->` and `<!-- AWS-BUILDER:END -->` (there are 6), delete the one table row tagged `<!-- AWS-BUILDER -->`, and un-comment the "without AWS" variant marked `<!-- NO-AWS -->`. Or run `npm run submission:no-aws`, which does exactly that into `SUBMISSION-no-aws.md`. Nothing else references the AWS Builder track. The Bedrock friction entry (F-08) stays in the friction log either way: it's genuine product feedback.
+> **Bedrock is live (unlocked Thu Oct 22 ~15:27 WAT), so submit this file as is, with the AWS Builder track.** Kept for reference: if Bedrock is ever unavailable, delete every block between `<!-- AWS-BUILDER:START -->` and `<!-- AWS-BUILDER:END -->` (there are 6), delete the one table row tagged `<!-- AWS-BUILDER -->`, and un-comment the "without AWS" variant marked `<!-- NO-AWS -->`. Or run `npm run submission:no-aws`, which does exactly that into `SUBMISSION-no-aws.md`. Nothing else references the AWS Builder track. The Bedrock friction entry (F-08) stays in the friction log either way: it's genuine product feedback.
 >
 > **Open Source:** the pull request is open (AmazonAppDev/ring-api-helloworld#45), so keep the two `OPEN-SOURCE` blocks.
 
@@ -85,7 +85,7 @@ No face recognition, no biometric matching, no identification of anyone. This is
 - **Playground data access starts at each token's issue time.** Fresh tokens see empty history and get undocumented 403s for earlier media (F-09). That led to a real product insight: Doorstep never claims "nobody came" for time it couldn't see. Absence-based alerts respect when coverage began, and the app says "watching since 23:43".
 - **The official sample app's device normalization doesn't match the documented schema** (F-03, F-04).
 <!-- AWS-BUILDER:START -->
-- **Amazon Bedrock was blocked by account quotas.** Every Nova Lite quota in eu-north-1 was applied at 0 (tokens per day: 0 vs a 5.76B default), and most are "Not adjustable". The runtime error is a retryable `ThrottlingException: Too many tokens per day` on the very first call. We built a fallback: real Bedrock stays the default, failures show clearly labelled sample captions, and the app switches to Nova Lite automatically the moment a call succeeds (F-08).
+- **Amazon Bedrock was blocked by account quotas for two days.** Every Nova Lite quota in eu-north-1 was applied at 0 (tokens per day: 0 vs a 5.76B default), and most are "Not adjustable". The runtime error is a retryable `ThrottlingException: Too many tokens per day` on the very first call. We built a fallback: real Bedrock stays the default, failures show clearly labelled sample captions, and the app switches to Nova Lite automatically the moment a call succeeds. That's exactly what happened when the quota was lifted on Oct 22 after a support case (F-08). Calls then took 4–25 s from eu-north-1, so captioning now runs entirely in the background and never blocks the UI.
 <!-- AWS-BUILDER:END -->
 
 ## Accomplishments we're proud of
@@ -171,10 +171,18 @@ The most valuable caretaking signals are absences and timing, and those need rul
   - The Converse API's single request shape across models; swapping models is an env-var change.
   - Passing JPEG bytes directly in an `image` block, with no S3 staging.
   - The JS SDK's typed errors with request ids.
-- **What needs work:** See F-08. A new account had every Nova Lite quota in eu-north-1 applied at 0, mostly "Not adjustable". The runtime signal is a retryable `ThrottlingException: Too many tokens per day` on the very first call. That reads as "slow down", and SDKs retry it automatically, when it really means "this account can't use this model".
+- **Real results:**
+  - Nova Lite captioned 40+ Ring and example frames.
+  - A typical caption is ~2,350 input and ~45 output tokens.
+  - A digest is ~500 input and ~130 output tokens.
+  - JSON output parsed strictly every time.
+  - Captions describe actions and objects without identifying anyone (e.g. "A package rests on the porch covered in snow.", "A bird eats from a bird feeder.").
+- **What needs work:**
+  - See F-08. A new account had every Nova Lite quota in eu-north-1 applied at 0, mostly "Not adjustable". The runtime signal is a retryable `ThrottlingException: Too many tokens per day` on the very first call. That reads as "slow down", and SDKs retry it automatically, when it really means "this account can't use this model".
   - Return a non-retryable, explicit error for zero quotas.
   - Surface zero-quota state in the console.
   - Give new accounts a self-service path that doesn't need a support case.
+  - Latency from eu-north-1 via the EU profile varied from 4 to 25 s per image call, with occasional stream timeouts. Fine in the background, but far from interactive.
 - **Onboarding:** IAM user and keys took minutes. Diagnosing the 0 quota took most of an evening, because nothing pointed at Service Quotas.
 - **Would we build with it again?** Yes. Nova Lite is the right price/capability point for captioning. But we'd verify account quotas on day one.
 

@@ -379,10 +379,13 @@ async function describeOne(e: store.StoredEvent, plan: CarePlan, forceReal = fal
   try {
     const res = await describeSnapshot(input, false);
     recordBedrockSuccess();
+    // Example (scenario) events: Bedrock writes the sentence, but the scripted tags stay
+    // authoritative for the rules, so a scripted day always produces the alerts it demonstrates.
+    const tags = e.origin === "simulated" && input.mockHint?.tags ? { ...res.tags, ...input.mockHint.tags } : res.tags;
     store.saveDescription({
       eventId: e.id,
       sentence: res.sentence,
-      tags: res.tags,
+      tags,
       model: res.usage.model,
       mock: res.usage.mock,
       inputTokens: res.usage.inputTokens,

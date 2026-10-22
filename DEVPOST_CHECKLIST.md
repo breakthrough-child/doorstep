@@ -49,6 +49,8 @@ The repository is **public with an MIT license** (GitHub detects it), so no coll
 | ✅ working | ✅ | `SUBMISSION.md` as is. Tracks: Ring + AWS Builder + Open Source |
 | ❌ blocked | ✅ | `SUBMISSION-no-aws.md`. Tracks: Ring + Open Source |
 
+**Current answer (Thu 15:55): Bedrock works and the PR is open, so use `SUBMISSION.md` with tracks Ring + AWS Builder + Open Source.**
+
 ## Final clicks
 
 - [ ] Video uploaded to YouTube as **Public**; link pasted.

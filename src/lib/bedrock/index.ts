@@ -32,7 +32,8 @@ function bedrock(): BedrockRuntimeClient {
   client ??= new BedrockRuntimeClient({
     region: BEDROCK_REGION,
     maxAttempts: 2,
-    requestHandler: { requestTimeout: 8_000, connectionTimeout: 4_000 },
+    // Captions run in the background, so allow slow responses (we measured 4–20 s from eu-north-1).
+    requestHandler: { requestTimeout: 25_000, connectionTimeout: 5_000 },
   });
   return client;
 }

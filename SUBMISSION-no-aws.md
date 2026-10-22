@@ -2,6 +2,10 @@
 
 Ready-to-paste answers for "Build, Ship, Shape: Amazon Developer Hackathon".
 
+> **Bedrock is live (unlocked Thu Oct 22 ~15:27 WAT), so submit this file as is, with the AWS Builder track.** Kept for reference: if Bedrock is ever unavailable, delete every block between `` (there are 6), delete the one table row tagged `<!-- AWS-BUILDER -->`, and un-comment the "without AWS" variant marked `<!-- NO-AWS -->`. Or run `npm run submission:no-aws`, which does exactly that into `SUBMISSION-no-aws.md`. Nothing else references the AWS Builder track. The Bedrock friction entry (F-08) stays in the friction log either way: it's genuine product feedback.
+>
+> **Open Source:** the pull request is open (AmazonAppDev/ring-api-helloworld#45), so keep the two `OPEN-SOURCE` blocks.
+
 ---
 
 ## Project name

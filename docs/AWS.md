@@ -1,6 +1,9 @@
 # AWS integration — Amazon Bedrock
 
-> **Status (Wed Oct 21):** the integration is complete, but the hackathon AWS account's Nova Lite quotas in eu-north-1 are applied at **0** (tokens per day: 0 vs a 5.76B default). Every call fails with `ThrottlingException: Too many tokens per day`. A quota increase and a support case are open (FRICTION_LOG F-08). Until calls succeed, the app shows **labelled sample captions** and retries automatically. Run `npm run check:bedrock` to test the account with one real call.
+> **Status (Thu Oct 22): live.**
+> - The account's Nova Lite quotas were 0 until about 15:27 WAT on Oct 22, when the quota request and support case 179260552100186 came through (FRICTION_LOG F-08).
+> - Every recorded Ring frame and example event now has a real Nova Lite caption, cached in SQLite.
+> - Run `npm run check:bedrock` to test an account with one real call, and `npm run warm:captions` to pre-caption all events.
 
 Doorstep uses **Amazon Bedrock** (Converse API, `@aws-sdk/client-bedrock-runtime`) with **Amazon Nova Lite** for the two jobs where a model beats rules: describing what a Ring snapshot shows, and writing a warm daily summary. The caretaking alerts are a deterministic rules engine, not AI.
 
@@ -66,12 +69,14 @@ Nova Lite on-demand pricing (check the current Bedrock pricing page for your reg
 
 | Call | Typical tokens | Approx. cost |
 |---|---|---|
-| Snapshot caption | ~1,500 in / ~60 out | ~$0.0001 |
-| Daily digest | ~900 in / ~150 out | ~$0.0001 |
-| A busy day (40 events + digest) | | **< $0.01** |
-| Whole hackathon build + demo recording | | **cents** |
+| Call (measured Oct 22, eu-north-1) | Tokens | Latency | Approx. cost |
+|---|---|---|---|
+| Snapshot caption (1080p JPEG + prompt) | ~2,350 in / ~45 out | 4–25 s (avg ~14 s) | ~$0.00015 |
+| Daily digest (day's facts as JSON) | ~510 in / ~130 out | ~5 s | ~$0.00006 |
+| Captioning every recorded and example event (47 calls) | 110,308 in / 2,122 out | — | **≈ $0.007** |
+| A busy real day (40 events + digest) | ~95k in / ~2k out | — | **< $0.01** |
 
-(Measured numbers from real runs are in the friction log / submission once recorded.)
+Latency is why captions run in the background: the UI shows the event immediately, and the caption fills in when Bedrock answers.
 
 ## Setup
 
