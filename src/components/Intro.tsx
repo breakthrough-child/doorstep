@@ -7,6 +7,12 @@ const SEEN_KEY = "doorstep.intro.dismissed";
 const BANNER_KEY = "doorstep.story.dismissed";
 
 function readFlag(key: string): boolean {
+  // `?intro=off` hides the intro and banner (handy for recording and screenshots) and remembers it.
+  if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("intro") === "off") {
+    writeFlag(SEEN_KEY);
+    writeFlag(BANNER_KEY);
+    return true;
+  }
   try {
     return localStorage.getItem(key) === "1";
   } catch {

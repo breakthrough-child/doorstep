@@ -3,8 +3,9 @@
 ## 30 minutes before
 
 - [ ] `git pull` and `npm run dev` from the repo. Wait for "Ready", then open <http://localhost:3000/demo> once so every page compiles before you record. The first load of each page in dev mode is slow.
-- [ ] Run `npm run check:bedrock` and note the result. It decides the ★ (real) or ☆ (sample) voice-over lines in `DEMO_SCRIPT.md`.
-- [ ] If real Bedrock works, pre-warm captions: in `/demo` play each scenario once at **300×**, so every caption is cached and appears instantly on camera. Then **Reset for recording**.
+- [ ] Run `npm run check:bedrock`. It should print ✓ (Bedrock is live since Thu 15:27).
+- [ ] Run `npm run warm:captions`. Every recorded and example event then has a cached Nova Lite caption, so captions appear instantly on camera. It takes a few minutes and costs well under a cent. Rerun it if any show "Sample caption".
+- [ ] **Never run `npm run setup -- --reset`** before recording: it deletes the caption cache. Use **Reset for recording** in `/demo`.
 - [ ] Close Slack, email and messaging. Turn on Do Not Disturb (Ubuntu: Settings → Notifications → Do Not Disturb).
 - [ ] Charger plugged in. Close heavy apps (the dev server and OBS need CPU).
 
@@ -33,6 +34,8 @@
    - no alerts, actions or digests.
 2. Do the shot's **pre-roll** from `DEMO_SCRIPT.md`, then record.
 3. **Between takes:** **Reset for recording** again. You don't need to restart the server.
+4. **The intro explainer** shows only until it's dismissed (remembered per browser). To film it again, use a private window. To hide it and the story banner for close-ups, open any page with `?intro=off`. If the explainer is gone, an empty Today screen has its own **See Grace's day** link.
+5. **Call sheet:** on a computer, tap **Copy number**, not **Call now** (Call now opens whatever app handles phone links).
 
 ## OBS settings for 1080p
 
