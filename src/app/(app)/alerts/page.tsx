@@ -21,8 +21,8 @@ export default function AlertsPage() {
       <header>
         <h1 className="font-display text-4xl">Alerts</h1>
         <p className="mt-2 text-ink-soft">
-          Doorstep stays quiet unless something looks off. Mark an alert &ldquo;I&rsquo;m on it&rdquo; while you check, and &ldquo;All
-          sorted&rdquo; when it&rsquo;s handled.
+          Doorstep stays quiet unless something looks off. Open an alert to see what the camera saw and why it was flagged, then call
+          someone, mark it as expected, or ask to be reminded later.
         </p>
       </header>
 

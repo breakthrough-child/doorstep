@@ -107,8 +107,7 @@ function DigestCard({ d, featured = false, timeZone }: { d: Digest; featured?: b
           : d.model === "sample"
             ? "Sample digest from a template — Amazon Bedrock not available yet"
             : "Sample digest from a template — Bedrock not configured"}{" "}
-        ·{" "}
-        {new Intl.DateTimeFormat("en-GB", { hour: "numeric", minute: "2-digit", timeZone }).format(d.createdAt)}
+        · written {new Intl.DateTimeFormat("en-GB", { hour: "numeric", minute: "2-digit", timeZone }).format(d.createdAt)}
       </p>
     </article>
   );

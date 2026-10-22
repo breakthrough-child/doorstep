@@ -103,7 +103,7 @@ export default function EventDetailPage() {
       <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 rounded-2xl border border-line bg-card p-4 text-sm">
         <dt className="text-ink-soft">Data source</dt>
         <dd>{d.originLabel}</dd>
-        <dt className="text-ink-soft">Ring event type</dt>
+        <dt className="text-ink-soft">{e.origin === "simulated" ? "Event type (simulated)" : "Ring event type"}</dt>
         <dd>
           <code>{d.rawType}</code>
           {d.rawSubType ? (
