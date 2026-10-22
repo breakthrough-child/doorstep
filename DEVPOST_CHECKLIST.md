@@ -10,7 +10,7 @@ The repository is **public with an MIT license** (GitHub detects it), so no coll
 | **Elevator pitch / tagline** (≤200 chars) | `Calm, plain-language updates from a parent's front door. Doorstep tells you when something's off and leaves you alone when it isn't.` (132 chars) | SUBMISSION.md → Tagline |
 | **About the project** (Markdown) | Paste these sections in order: *Inspiration*, *What it does*, *How we built it*, *Privacy*, *Challenges we ran into*, *Accomplishments*, *What we learned*, *What's next* | SUBMISSION.md |
 | **Built with** (tags) | `ring-partner-api`, `ring-developer-playground`, `next.js`, `react`, `typescript`, `tailwindcss`, `sqlite`, `better-sqlite3`, `node.js`, `vitest`, `webrtc`, `zod`. **Add** `amazon-bedrock`, `amazon-nova`, `aws` **only if Bedrock is live** | — |
-| **"Try it out" links** | `https://github.com/breakthrough-child/doorstep` | — |
+| **"Try it out" links** | `https://github.com/breakthrough-child/doorstep`, plus the public demo URL if you deploy it (Render → New → Blueprint → this repo; read-only, recorded Ring data) | README → Public read-only demo |
 | **Video demo link** | YouTube URL, **Public**, under 2:50: `[paste after upload]` | DEMO_SCRIPT.md |
 | **Image gallery** | `docs/screenshots/demo-panel.png`, `package-today.png`, `replay-today.png`, `digest.png`, `tv-doorbell.png`. Optionally re-shoot the alert detail page with the real Ring frame from the app | repo |
 | **Track: Ring** | ✅ Always | — |
