@@ -5,6 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { BEDROCK_MODEL_ID, BEDROCK_REGION, describeSnapshot } from "../src/lib/bedrock";
 import { errorMessage, errorName } from "../src/lib/bedrock/health";
+import { loadCheckImage } from "./check-image";
 
 const HINTS: Record<string, string> = {
   ServiceQuotaExceededException:
@@ -28,11 +29,12 @@ async function main() {
   console.log(`  model:        ${BEDROCK_MODEL_ID}`);
   console.log(`  credentials:  ${key ? `access key …${key.slice(-4)}` : process.env.AWS_PROFILE ? `profile ${process.env.AWS_PROFILE}` : "default provider chain"}`);
 
-  const imgPath = path.join("scenarios", "images", "courier_package.jpg");
+  const img = loadCheckImage();
+  console.log(`  image:        ${img.path ?? "generated 64×36 PNG (no recorded Ring frame found)"}`);
   const started = Date.now();
   try {
     const res = await describeSnapshot(
-      { eventId: "check", kind: "package", timeLabel: "14:05", image: { bytes: fs.readFileSync(imgPath), format: "jpeg" } },
+      { eventId: "check", kind: "package", timeLabel: "14:05", image: { bytes: img.bytes, format: img.format } },
       false,
     );
     console.log(`\n✓ Success in ${Date.now() - started} ms`);

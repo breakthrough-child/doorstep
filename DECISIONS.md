@@ -57,7 +57,7 @@ Defaults chosen without asking, and why. Newest at the bottom of each section.
 
 - **Default data mode is REPLAY.** A fresh clone shows real-shaped Ring data with no credentials.
 - **Replay time-shift.** Recorded events are shifted so the newest lands 10 minutes before "now", keeping their spacing. Otherwise a recording from Tuesday would show an empty "today" on Friday. The badge and the demo panel show the recording date.
-- **Placeholder fixtures.** Until a Playground token was available, `fixtures/placeholder/` held hand-written responses shaped exactly per the published schema, with Doorstep illustrations as images. `manifest.json` has `"synthetic": true` and the UI badge says "Placeholder fixtures". Real recordings go to `fixtures/playground/` and take precedence automatically.
+- **Placeholder fixtures (retired Oct 21).** Until a Playground token was available, a hand-written placeholder set (shaped per the published schema, with illustrations as images) stood in for REPLAY, flagged `"synthetic": true` and badged in the UI. It was deleted once real recordings existed in `fixtures/playground/`.
 - **Scenario images are drawn illustrations** (`scripts/gen-scenes.py`) stamped "SIMULATED SCENE · illustration, not a Ring camera image". We deliberately don't imitate the Ring watermark.
 - **Scenario speeds: 1×, 10×, 60×, plus 300×.** 300× isn't in the brief, but a 15-hour day at 60× takes 15 minutes. At 300× it takes 3, which fits a 2:50 video. The panel also has "+30 min" / "+2 h" skips.
 - **Scenarios may pin their own visitor schedule** (`quiet_morning` pins none, as a Sunday). That keeps them reproducible whatever the care plan says.

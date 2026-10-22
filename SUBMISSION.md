@@ -113,7 +113,7 @@ The most valuable caretaking signals are absences and timing, and those need rul
 - **Contribution URL:** https://github.com/AmazonAppDev/ring-api-helloworld/pull/45 (opened Oct 22, 2026, from the fork https://github.com/breakthrough-child/ring-api-helloworld)
 - **Our project repository:** https://github.com/breakthrough-child/doorstep
 - **GitHub username:** breakthrough-child
-- **What it does:** Adds `scripts/image_snapshot.py` to Amazon's official Ring sample (`ring-api-helloworld`), plus README entries. It downloads a snapshot from a Ring device at an event's time (`--from-history`) or the latest frame.
+- **What it does:** Adds `ring-api-helloworld/scripts/image_snapshot.py` to Amazon's official Ring sample (`ring-api-helloworld`), plus README entries. It downloads a snapshot from a Ring device at an event's time (`--from-history`) or the latest frame.
 - **How it works:**
   - It calls `POST /v1/devices/{id}/media/image/download` with `image_options.resolution` set to 1920×1080 explicitly.
   - It follows the `303` to the pre-signed URL itself, without forwarding the Bearer token.

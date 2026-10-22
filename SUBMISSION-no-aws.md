@@ -2,10 +2,6 @@
 
 Ready-to-paste answers for "Build, Ship, Shape: Amazon Developer Hackathon".
 
-> **Bedrock is live (unlocked Thu Oct 22 ~15:27 WAT), so submit this file as is, with the AWS Builder track.** Kept for reference: if Bedrock is ever unavailable, delete every block between `` (there are 6), delete the one table row tagged `<!-- AWS-BUILDER -->`, and un-comment the "without AWS" variant marked `<!-- NO-AWS -->`. Or run `npm run submission:no-aws`, which does exactly that into `SUBMISSION-no-aws.md`. Nothing else references the AWS Builder track. The Bedrock friction entry (F-08) stays in the friction log either way: it's genuine product feedback.
->
-> **Open Source:** the pull request is open (AmazonAppDev/ring-api-helloworld#45), so keep the two `OPEN-SOURCE` blocks.
-
 ---
 
 ## Project name
@@ -100,7 +96,7 @@ The most valuable caretaking signals are absences and timing, and those need rul
 - **Contribution URL:** https://github.com/AmazonAppDev/ring-api-helloworld/pull/45 (opened Oct 22, 2026, from the fork https://github.com/breakthrough-child/ring-api-helloworld)
 - **Our project repository:** https://github.com/breakthrough-child/doorstep
 - **GitHub username:** breakthrough-child
-- **What it does:** Adds `scripts/image_snapshot.py` to Amazon's official Ring sample (`ring-api-helloworld`), plus README entries. It downloads a snapshot from a Ring device at an event's time (`--from-history`) or the latest frame.
+- **What it does:** Adds `ring-api-helloworld/scripts/image_snapshot.py` to Amazon's official Ring sample (`ring-api-helloworld`), plus README entries. It downloads a snapshot from a Ring device at an event's time (`--from-history`) or the latest frame.
 - **How it works:**
   - It calls `POST /v1/devices/{id}/media/image/download` with `image_options.resolution` set to 1920×1080 explicitly.
   - It follows the `303` to the pre-signed URL itself, without forwarding the Bearer token.

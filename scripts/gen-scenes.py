@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Generate the illustrated porch scenes used by SCENARIO mode.
+"""Generate the illustrated porch scenes used by SCENARIO mode (scenes not covered by real Ring
+frames or stock photos).
 
 These are deliberately drawn illustrations, labelled "SIMULATED SCENE", so nobody mistakes
 them for Ring camera footage (and so we never imitate the Ring watermark). Real Ring
@@ -126,29 +127,9 @@ def main(out_dir):
     @scene("porch_empty_night", night=True)
     def _(d): door(d, night=True)
 
-    @scene("courier_package")
-    def _(d):
-        door(d); parcel(d, 560, 590, 130, 80); person(d, 330, vest=True, coat=(60, 60, 70))
-
-    @scene("package_on_porch")
-    def _(d):
-        door(d); parcel(d, 560, 590, 130, 80)
-
-    @scene("package_on_porch_dusk", dusk=True)
-    def _(d):
-        door(d); parcel(d, 560, 590, 130, 80)
-
-    @scene("package_on_porch_night", night=True)
-    def _(d):
-        door(d, night=True); parcel(d, 560, 590, 130, 80)
-
     @scene("package_brought_in")
     def _(d):
         door(d, open_=True); person(d, 640, y=320, coat=(150, 90, 110), box=True)
-
-    @scene("visitor_ding")
-    def _(d):
-        door(d); person(d, 400, coat=(90, 110, 90))
 
     @scene("visitor_ding_night", night=True)
     def _(d):
@@ -173,14 +154,6 @@ def main(out_dir):
     @scene("resident_steps_out")
     def _(d):
         door(d, open_=True); person(d, 640, y=330, coat=(150, 90, 110))
-
-    @scene("car_passing")
-    def _(d):
-        door(d); car(d)
-
-    @scene("cat_on_porch")
-    def _(d):
-        door(d); cat(d)
 
     @scene("person_night", night=True)
     def _(d):
