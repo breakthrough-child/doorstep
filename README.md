@@ -6,12 +6,12 @@
 
 Doorstep turns raw Ring front-door events into calm, plain-language information a family member actually wants:
 
-- **AI event descriptions.** Each Ring snapshot is described by Amazon Bedrock (Nova Lite) in one plain sentence: *"A courier in a high-visibility vest leaves a package on the step."* It describes what happens and **never identifies people**.
+- **AI event descriptions.** Each Ring snapshot is sent to Amazon Bedrock (Nova Lite) to be described in one plain sentence, e.g. *"A parcel is on the front steps and nobody is around."* It describes what happens and **never identifies people**. Our AWS account's Nova Lite quota is currently 0 (FRICTION_LOG F-08), so the app shows clearly labelled **sample captions** until Bedrock calls succeed, then switches over automatically.
 - **Caretaking alerts** from a deterministic, unit-tested rules engine: quiet morning, missed visit, package left out, late-night door activity, unanswered doorbell (best-effort).
 - **Alerts that explain themselves.** Each alert opens to the full snapshot, its caption, and a care-plan-specific reason ("Doorbell at 23:41 — outside Grace's usual hours, 05:00–23:00"), plus what else happened at the door within ±10 minutes.
 - **Caretaker actions.** Call Grace or the aide/neighbour (`tel:` links from the care plan's contacts), **That was expected** (optionally add the visitor to the schedule), or **Remind me in 30 min**, with a per-alert history. Unacknowledged urgent alerts escalate in-app to a second family contact after 15 minutes.
-- **Look now** (experimental): a WebRTC live view of the Ring camera via the Partner API's WHEP endpoint, proxied server-side so the token never reaches the browser.
-- **Daily digest.** A short, warm Bedrock-written note on the parent's day at the door.
+- **Look now** (experimental, LIVE mode only): a WebRTC live view of the Ring camera via the Partner API's WHEP endpoint, proxied server-side so the token never reaches the browser. Not yet verified end to end against the Playground.
+- **Daily digest.** A short, warm note on the parent's day at the door, written by Bedrock (or, while Bedrock is unavailable, a labelled template).
 - **Visual doorbell for the living room.** A full-screen, high-contrast "someone is at the door" page (`/tv`), for deaf or hard-of-hearing residents who can't hear the chime. It runs in any big-screen browser. (A native Fire TV app was planned; we dropped it, see friction log F-14.)
 
 | Ada's phone when something's off (simulated day, driven from `/demo`) | A day with a package left out |
