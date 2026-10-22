@@ -34,7 +34,8 @@ export async function POST(req: Request) {
     const s = await client().startLiveView(id, offer);
     return new Response(s.answerSdp, {
       status: 201,
-      headers: { "Content-Type": "application/sdp", "X-Session-Id": s.sessionId ?? "", "X-Device-Id": id },
+      // The Location (with its query string) is what Ring needs to close the session later.
+      headers: { "Content-Type": "application/sdp", "X-Session-Id": s.location ?? s.sessionId ?? "", "X-Device-Id": id },
     });
   } catch (e) {
     return fail(e);

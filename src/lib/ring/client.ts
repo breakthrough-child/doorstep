@@ -178,8 +178,18 @@ export class RingClient {
     return { answerSdp: await res.text(), sessionId, location };
   }
 
-  async endLiveView(deviceId: string, sessionId: string): Promise<void> {
-    const path = `/v1/devices/${encodeURIComponent(deviceId)}/media/streaming/whep/sessions/${encodeURIComponent(sessionId)}`;
+  /**
+   * Close a live view. Pass the session's `location` from startLiveView: Ring requires the
+   * Location's query string (e.g. `?location=…`) on the DELETE (FRICTION F-15).
+   */
+  async endLiveView(deviceId: string, sessionIdOrLocation: string): Promise<void> {
+    const base = `/v1/devices/${encodeURIComponent(deviceId)}/media/streaming/whep/sessions/`;
+    let path = `${base}${encodeURIComponent(sessionIdOrLocation)}`;
+    if (sessionIdOrLocation.startsWith("/") || sessionIdOrLocation.startsWith("http")) {
+      const u = new URL(sessionIdOrLocation, this.base);
+      if (!u.pathname.includes("/media/streaming/whep/sessions/")) throw new RingApiError("Not a WHEP session location", 400, null, sessionIdOrLocation);
+      path = `${u.pathname}${u.search}`;
+    }
     const res = await this.request("DELETE", path);
     if (!res.ok && res.status !== 404) throw await toError(res, path);
   }

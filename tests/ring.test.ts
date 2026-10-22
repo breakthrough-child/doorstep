@@ -284,9 +284,10 @@ describe("RingClient", () => {
     expect(init.body).toBe("v=0\r\noffer");
     expect(init.headers["Content-Type"]).toBe("application/sdp");
     expect(init.headers.Authorization).toBe("Bearer tok");
-    await c.endLiveView("d", "sess-1");
+    await c.endLiveView("d", "/v1/devices/d/media/streaming/whep/sessions/sess-1?location=us-east-1");
     expect(fetchImpl.mock.calls[1]![1].method).toBe("DELETE");
-    expect(String(fetchImpl.mock.calls[1]![0])).toContain("/whep/sessions/sess-1");
+    // Ring requires the Location's query string on DELETE.
+    expect(String(fetchImpl.mock.calls[1]![0])).toBe("https://api.amazonvision.com/v1/devices/d/media/streaming/whep/sessions/sess-1?location=us-east-1");
   });
 
   it("maps snapshot 416 MEDIA_NOT_FOUND to a RingApiError", async () => {

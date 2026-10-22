@@ -37,6 +37,8 @@ Defaults chosen without asking, and why. Newest at the bottom of each section.
 - **Default contacts use fictional numbers** from Ofcom's range reserved for drama (+44 7700 900xxx): Grace, Ngozi (home aide), Mr Bello (neighbour), Chidi (Ada's brother, the second family contact).
 - **Every timeline item opens an event page** (`/events/[id]`) showing the snapshot, time, Ring event type, data-source label ("Live from Ring" / "Recorded from Ring Playground" / "Simulated"), caption source, and any alerts citing it. The old lightbox dialog was removed.
 
+- **Look now = WHEP live view, proxied.** The browser creates a recv-only `RTCPeerConnection` (non-trickle: waits up to 2.5 s for ICE gathering), and `/api/ring/live` forwards the SDP to Ring with the token. The session is closed by DELETE on Ring's returned `Location` including its query string (F-15). The "Live" indicator sits *below* the video so it never covers Ring's watermark. Shown on alert pages whenever a valid Ring token is connected, in any data mode, labelled "Ring camera (Developer Playground)".
+
 ## Data modes
 
 - **Default data mode is REPLAY.** A fresh clone shows real-shaped Ring data with no credentials.

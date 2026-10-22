@@ -184,3 +184,19 @@ Environment: Ubuntu laptop, Node 22.22, no Ring hardware, no Fire TV hardware. D
 - **Severity:** High (for us). It blocked an entire track; we deliberately didn't attempt it.
 - **Workaround:** Shipped the visual doorbell as an accessible web screen (`/tv`): 10-foot type, OK/Enter dismisses, auto-clears after 60 s. We don't claim the Fire TV track.
 - **Suggestions:** Explain *why* curl must be reinstalled (or remove the step). Bundle Python/lz4 in the SDK instead of requiring a deadsnakes PPA. Offer a Docker/devcontainer image with the VVD. Document a non-interactive CLI path (`vega project create …`).
+
+## F-15 · WHEP live view: closing a session needs an undocumented `location` query parameter
+
+- **Area:** Ring Partner API — `DELETE /v1/devices/{device_id}/media/streaming/whep/sessions/{session_id}`
+- **Date:** Thu Oct 22, ~12:15 UTC, Ring Developer Playground
+- **Task attempted:** "Look now" in Doorstep: open a WebRTC live view from an alert page (browser makes a recv-only SDP offer; our server POSTs it to the WHEP endpoint with the token), then close it.
+- **Steps:**
+  1. `POST …/whep/sessions` with `Content-Type: application/sdp` → **201**, SDP answer, and a `Location` header pointing at the session, *with a query string*.
+  2. 1280×720 video started playing about 10 s after the request.
+  3. `DELETE …/whep/sessions/{session_id}` (path only, as documented) → **400**: "WHEP session requests must include location query parameter".
+  4. `DELETE` on the exact `Location` path *plus its query string* → **200**.
+- **Expected:** The documented DELETE path closes the session, or the docs say to DELETE the returned `Location` verbatim (standard WHEP practice).
+- **Actual:** The query parameter is required but undocumented. Clients that build the DELETE URL from a session id leak sessions until they time out.
+- **Severity:** Medium. Leaked live-view sessions keep streaming in the background, which costs bandwidth and may count against session limits.
+- **Workaround:** Doorstep keeps the full `Location` (path + query) from the POST and DELETEs exactly that (`src/lib/ring/client.ts` → `endLiveView`, with a unit test).
+- **Suggestion:** Document "DELETE the `Location` returned by POST, including its query string" in the Live Video section, or accept the bare session-id path.

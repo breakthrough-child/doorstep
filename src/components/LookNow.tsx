@@ -117,10 +117,13 @@ export function LookNow() {
               Connecting to Ring…
             </p>
           )}
-          {phase === "live" && (
-            <span className="absolute left-3 top-3 rounded-full bg-rose px-2 py-0.5 text-xs font-bold text-card">LIVE</span>
-          )}
         </div>
+      )}
+      {phase === "live" && (
+        // Outside the frame, so it never covers Ring's watermark.
+        <p className="mt-2 inline-flex items-center gap-1.5 text-sm font-bold text-rose">
+          <span className="h-2 w-2 animate-pulse rounded-full bg-rose" aria-hidden /> Live from the Ring camera
+        </p>
       )}
       {error && (
         <p role="alert" className="mt-3 text-sm text-rose">
