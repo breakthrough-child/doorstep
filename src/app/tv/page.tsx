@@ -77,7 +77,7 @@ export default function TvScreen() {
               <p className="flex items-center gap-[1vw] text-[2.2vw] font-bold uppercase tracking-[0.2em] text-[#ffd27a]">
                 <span className="inline-block h-[1.6vw] w-[1.6vw] animate-pulse rounded-full bg-[#ffd27a]" aria-hidden />
                 Front door · {alert.time}
-                {alert.simulated && <span className="rounded-full bg-[#2c3e4c] px-[1vw] text-[1.4vw] tracking-normal text-[#bcd9ee]">simulated</span>}
+                {alert.simulated && <span className="rounded-full bg-[#2c3e4c] px-[1vw] text-[1.4vw] tracking-normal text-[#bcd9ee]">example</span>}
               </p>
               <h1 id="tv-title" className="mt-[2vh] font-display text-[6vw] leading-[1.05]">
                 {KIND_TITLE[alert.kind] ?? "Activity at the door"}
@@ -117,7 +117,7 @@ function Idle({ feed }: { feed: TvFeed | null }) {
       <p className="flex items-center gap-[1vw] text-[2.2vw]">
         <span className={`inline-block h-[1.4vw] w-[1.4vw] rounded-full ${calm ? "bg-[#a5c9a7]" : "bg-[#eab676]"}`} aria-hidden />
         {calm ? "All quiet at the door" : "Doorstep has a note for the family"}
-        {feed?.mode === "SCENARIO" && <span className="text-[1.6vw] text-[#b9ad9b]">· simulated day</span>}
+        {feed?.mode === "SCENARIO" && <span className="text-[1.6vw] text-[#b9ad9b]">· example day</span>}
       </p>
     </section>
   );

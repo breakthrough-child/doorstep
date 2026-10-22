@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { DoorIcon, HeartIcon, ListIcon, NoteIcon, SunIcon } from "./icons";
 import { ModeBadge } from "./ModeBadge";
 import { useAppState } from "./state";
+import { StoryBanner } from "./Intro";
 import { TokenBanner } from "./TokenBanner";
 
 const NAV = [
@@ -17,12 +17,8 @@ const NAV = [
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
   const { state, error } = useAppState();
 
-  useEffect(() => {
-    if (state && !state.onboarded) router.replace("/onboarding");
-  }, [state, router]);
 
   const active = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
 
@@ -67,6 +63,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {state && <ModeBadge state={state} compact />}
         </header>
 
+        {state && <StoryBanner parentName={state.parentName} familyName={state.familyName} />}
         <TokenBanner />
         {error && (
           <p role="status" className="mx-4 mt-3 rounded-xl bg-amber-soft px-4 py-2 text-sm text-amber md:mx-10">

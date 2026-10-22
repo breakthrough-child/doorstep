@@ -24,7 +24,7 @@ import { tokenIssuedAtMs } from "./ring/token";
 import { processAlertTimers } from "./alerts";
 import { generateDigest, getDigest } from "./digest";
 import * as store from "./store";
-import { clockLabel, localDateKey, startOfLocalDay } from "./time";
+import { clockLabel, localDateKey, parseHHMM, startOfLocalDay, zonedTimeToUtc } from "./time";
 import type { CarePlan, DataMode, DescriptionTags, EventOrigin } from "./types";
 
 export const ORIGIN_FOR_MODE: Record<DataMode, EventOrigin> = {
@@ -51,7 +51,7 @@ declare global {
   // eslint-disable-next-line no-var
   var __doorstepLastTick: TickResult | undefined;
   // eslint-disable-next-line no-var
-  var __doorstepDescribing: Promise<number> | undefined;
+  var __doorstepDescribing: Map<EventOrigin, Promise<number>> | undefined;
 }
 
 /** Single-flight: concurrent callers share the in-progress tick. */
@@ -128,12 +128,14 @@ async function runTick(): Promise<TickResult> {
   // Captions run in the background (their own single-flight) so a slow or failing Bedrock call
   // never holds up the scenario clock, Ring polling, rules or any page request.
   const described = 0;
-  if (!globalThis.__doorstepDescribing) {
-    globalThis.__doorstepDescribing = describePending(origin, now, plan)
-      .catch(() => 0)
-      .finally(() => {
-        globalThis.__doorstepDescribing = undefined;
-      });
+  const describing = (globalThis.__doorstepDescribing ??= new Map());
+  if (!describing.has(origin)) {
+    describing.set(
+      origin,
+      describePending(origin, now, plan)
+        .catch(() => 0)
+        .finally(() => describing.delete(origin)),
+    );
   }
   const newAlerts = runRules(origin, now, effectivePlan(mode));
   processAlertTimers(origin, now);
@@ -184,6 +186,20 @@ export function updateScenario(patch: Partial<Pick<ScenarioState, "speed" | "pla
   const plan = getCarePlan();
   const advanced = advanceClock(s, loadScenario(s.scenarioId), plan.timeZone, Date.now());
   const next = { ...advanced, ...patch, lastRealMs: Date.now() };
+  setSetting("scenario_state", next);
+  return next;
+}
+
+/**
+ * "See Grace's day": an example day that's instantly meaningful. Loads the package scenario
+ * (which uses a real recorded Ring frame) paused at 17:00, with a package alert active and
+ * the morning's visits done. Events, sample captions and rules settle within a couple of ticks.
+ */
+export function startShowcase(): ScenarioState {
+  const s = startScenario("package_left_out", 60);
+  const plan = getCarePlan();
+  const simMs = zonedTimeToUtc(s.dateKey, parseHHMM("17:00"), plan.timeZone);
+  const next = { ...s, simMs, playing: false, lastRealMs: Date.now() };
   setSetting("scenario_state", next);
   return next;
 }
@@ -320,7 +336,24 @@ export const SAMPLE_MODEL = "sample";
 
 async function describePending(origin: EventOrigin, now: number, plan: CarePlan): Promise<number> {
   const status = bedrockStatus();
-  const fresh = store.eventsNeedingDescription(origin, now, status === "mock" || status === "unavailable" ? 50 : status === "unknown" ? 1 : 4);
+  const fresh = store.eventsNeedingDescription(origin, now, status === "mock" || status === "unavailable" ? 50 : status === "unknown" ? 50 : 4);
+  if (status === "unknown" && fresh.length > 1) {
+    // Probe Bedrock with one event; caption the rest straight away with labelled samples so the
+    // screen never waits on the probe. Samples are upgraded automatically if Bedrock works.
+    const probe = fresh[fresh.length - 1]!;
+    await Promise.all(
+      fresh.map((e) =>
+        saveSample(
+          e.id,
+          { eventId: e.id, kind: e.kind, timeLabel: clockLabel(e.startMs, plan.timeZone), image: readSnapshot(e), mockHint: hintFor(e) },
+          SAMPLE_MODEL,
+        ),
+      ),
+    );
+    // describeOne keeps the sample on failure and replaces it on success (then upgrades follow).
+    await describeOne(probe, plan, true);
+    return fresh.length;
+  }
   // When Bedrock is healthy and there's nothing new, upgrade sample captions to real ones.
   const upgrades = status === "ok" && fresh.length === 0 ? store.eventsWithModel(origin, SAMPLE_MODEL, 3) : [];
   let n = 0;
@@ -330,16 +363,16 @@ async function describePending(origin: EventOrigin, now: number, plan: CarePlan)
   return n;
 }
 
-async function describeOne(e: store.StoredEvent, plan: CarePlan): Promise<boolean> {
+async function describeOne(e: store.StoredEvent, plan: CarePlan, forceReal = false): Promise<boolean> {
   const input = {
     eventId: e.id,
     kind: e.kind,
     timeLabel: clockLabel(e.startMs, plan.timeZone),
     image: readSnapshot(e),
-    mockHint: e.origin === "simulated" ? scenarioHint(e.id) : e.origin === "replay" ? replayHint(e.id) : null,
+    mockHint: hintFor(e),
   };
   const status = bedrockStatus();
-  if (status === "mock" || status === "unavailable") {
+  if (!forceReal && (status === "mock" || status === "unavailable")) {
     if (status === "unavailable" && store.descriptionsFor([e.id]).has(e.id)) return false; // keep existing sample
     return saveSample(e.id, input, status === "mock" ? "mock" : SAMPLE_MODEL);
   }
@@ -364,6 +397,10 @@ async function describeOne(e: store.StoredEvent, plan: CarePlan): Promise<boolea
     if (store.descriptionsFor([e.id]).has(e.id)) return false;
     return saveSample(e.id, input, SAMPLE_MODEL);
   }
+}
+
+function hintFor(e: store.StoredEvent) {
+  return e.origin === "simulated" ? scenarioHint(e.id) : e.origin === "replay" ? replayHint(e.id) : null;
 }
 
 async function saveSample(eventId: string, input: Parameters<typeof describeSnapshot>[0], model: string): Promise<boolean> {

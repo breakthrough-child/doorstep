@@ -73,6 +73,7 @@ export default function AlertDetailPage() {
         <h1 id="alert-title" className={`font-display mt-2 text-3xl leading-tight sm:text-4xl ${quiet ? "text-ink-soft" : "text-ink"}`}>
           {alert.title}
         </h1>
+        <p className="mt-2 text-ink-soft">What Doorstep noticed, why it flagged it, and what you can do now.</p>
       </header>
 
       {alert.escalatedAt && !quiet && (
@@ -147,7 +148,7 @@ export default function AlertDetailPage() {
         {alert.snoozedUntil && alert.status !== "resolved" && (
           <p className="mt-3 inline-flex items-center gap-1.5 text-sm text-ink-soft">
             <ClockIcon className="h-4 w-4" /> Doorstep will remind you at {d.snoozeLabel}
-            {alert.origin === "simulated" ? " (simulated time)" : ""}.
+            {alert.origin === "simulated" ? " (example-day time)" : ""}.
           </p>
         )}
 

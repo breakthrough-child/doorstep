@@ -110,7 +110,7 @@ export function LookNow() {
           <h2 id="look-title" className="font-display text-xl">
             Look now
           </h2>
-          <p className="text-sm text-ink-soft">Open a live view of the Ring camera (Developer Playground).</p>
+          <p className="text-sm text-ink-soft">Open a live view from the Ring camera to check the door right now.</p>
         </div>
         {phase === "idle" || phase === "error" ? (
           <button onClick={start} className="inline-flex items-center gap-1.5 rounded-full bg-ink px-4 py-2 text-sm font-bold text-paper">

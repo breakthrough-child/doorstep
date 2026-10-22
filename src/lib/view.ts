@@ -243,14 +243,14 @@ export function toEventView(e: store.TimelineItem, tz: string): TimelineView {
 /** Honest data-source label shown on every event. */
 export const ORIGIN_LABEL: Record<EventOrigin, string> = {
   live: "Live from Ring",
-  replay: "Recorded from Ring Playground",
-  simulated: "Simulated",
+  replay: "Recorded from a Ring camera (Ring Developer Playground)",
+  simulated: "Example event (not a real visit)",
 };
 
 function captionSource(d: store.TimelineItem["description"]): string | null {
   if (!d) return null;
   if (!d.mock) return `Amazon Bedrock · ${d.model}`;
-  if (d.model === "metadata-only") return "From the Ring event type (no image)";
-  if (d.model === "sample") return "Sample caption — Amazon Bedrock not available yet";
-  return "Sample caption — Bedrock not configured";
+  if (d.model === "metadata-only") return "Described from the event type (no picture)";
+  if (d.model === "sample") return "Sample caption · AI captions (Amazon Bedrock) not available yet";
+  return "Sample caption · AI captions not switched on";
 }

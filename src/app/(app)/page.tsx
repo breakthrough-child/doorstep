@@ -3,19 +3,21 @@
 import Link from "next/link";
 import { AlertCard } from "@/components/AlertCard";
 import { CheckIcon, ClockIcon, NoteIcon, SparkIcon } from "@/components/icons";
-import { useAppState } from "@/components/state";
+import { Explainer } from "@/components/Intro";
+import { postJson, useAppState } from "@/components/state";
 import { Timeline } from "@/components/Timeline";
 import type { AppState, VisitStatus } from "@/lib/view";
 
 export default function TodayPage() {
-  const { state } = useAppState();
+  const { state, refresh } = useAppState();
   if (!state) return <Loading />;
   const pinned = state.alerts.filter((a) => a.status !== "resolved" && a.clearedAt === null);
   const settled = state.alerts.filter((a) => !(a.status !== "resolved" && a.clearedAt === null));
 
   return (
     <div className="space-y-8">
-      <StatusHero state={state} />
+      <Explainer parentName={state.parentName} onLoaded={refresh} />
+      <StatusHero state={state} onRefresh={refresh} />
 
       {pinned.length > 0 && (
         <section aria-labelledby="needs-title" className="space-y-3">
@@ -42,7 +44,15 @@ export default function TodayPage() {
           )}
         </div>
         {state.sampleCaptions && <SampleCaptionNote state={state} />}
-        <Timeline items={state.timeline} parentName={state.parentName} />
+        <Timeline
+          items={state.timeline}
+          parentName={state.parentName}
+          emptyHint={
+            state.mode === "SCENARIO" && !state.scenario
+              ? `Load an example day with “See ${state.parentName}’s day” above, or from the demo controls.`
+              : `Visitors, deliveries and doorbell presses will appear here as the Ring camera sees them.`
+          }
+        />
       </section>
 
       {settled.length > 0 && (
@@ -61,24 +71,36 @@ export default function TodayPage() {
   );
 }
 
-function StatusHero({ state }: { state: AppState }) {
+function StatusHero({ state, onRefresh }: { state: AppState; onRefresh: () => Promise<void> }) {
   const { level, headline, sub } = state.status;
   const ring = level === "calm" ? "bg-sage" : level === "urgent" ? "bg-rose" : "bg-amber";
   const text = level === "calm" ? "text-sage" : level === "urgent" ? "text-rose" : "text-amber";
   return (
     <section aria-live="polite" aria-atomic="true" className="pt-2">
+      <p className="mb-3 text-sm text-ink-soft">
+        Today at {state.parentName}&rsquo;s front door: what happened, and anything that needs you.
+      </p>
       <p className="flex items-center gap-2 text-sm text-ink-soft">
         <span className="relative inline-flex h-3 w-3">
           <span className={`absolute inset-0 rounded-full ${ring} ${level === "calm" ? "animate-breathe" : ""}`} aria-hidden />
           <span className={`relative h-3 w-3 rounded-full ${ring}`} aria-hidden />
         </span>
-        {state.dateLabel} · {state.mode === "SCENARIO" ? `simulated time ${state.nowLabel}` : state.nowLabel}
+        {state.dateLabel} · {state.mode === "SCENARIO" ? `example day, ${state.nowLabel}` : state.nowLabel}
       </p>
       <h1 className={`font-display mt-2 text-[2.1rem] leading-[1.1] sm:text-5xl ${level === "calm" ? "text-ink" : text}`}>{headline}</h1>
       <p className="mt-3 text-ink-soft">{sub}</p>
       {state.mode === "SCENARIO" && !state.scenario && (
         <p className="mt-3 text-sm text-ink-soft">
-          Simulation mode is on but no scenario is running. <Link href="/demo" className="font-bold text-sky underline">Open the demo panel</Link>.
+          No example day is loaded yet.{" "}
+          <button
+            onClick={async () => {
+              await postJson("/api/demo", { action: "showcase" });
+              await onRefresh();
+            }}
+            className="font-bold text-sky underline"
+          >
+            See {state.parentName}&rsquo;s day
+          </button>
         </p>
       )}
     </section>

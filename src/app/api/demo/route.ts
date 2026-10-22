@@ -4,7 +4,7 @@ import { resetBedrockHealth } from "@/lib/bedrock/health";
 import { DEFAULT_PLAN, DEFAULT_VISITORS, replaceVisitors, setDataMode } from "@/lib/config";
 import { db, setSetting } from "@/lib/db";
 import { SCENARIO_IDS } from "@/lib/data/scenarios";
-import { forceLivePoll, reloadReplay, startScenario, stopScenario, nudgeTick, updateScenario } from "@/lib/pipeline";
+import { forceLivePoll, reloadReplay, startScenario, startShowcase, stopScenario, nudgeTick, updateScenario } from "@/lib/pipeline";
 import { clearOrigin, recentApiLog } from "@/lib/store";
 import { buildState, scenarioCatalog } from "@/lib/view";
 
@@ -27,6 +27,7 @@ const action = z.discriminatedUnion("action", [
   z.object({ action: z.literal("poll-live") }),
   z.object({ action: z.literal("retry-bedrock") }),
   z.object({ action: z.literal("reset-recording") }),
+  z.object({ action: z.literal("showcase") }),
 ]);
 
 export async function POST(req: Request) {
@@ -75,6 +76,11 @@ export async function POST(req: Request) {
       break;
     case "retry-bedrock":
       resetBedrockHealth();
+      break;
+    case "showcase":
+      setSetting("onboarded", true);
+      setDataMode("SCENARIO");
+      startShowcase();
       break;
     case "reset-recording":
       // Known starting state for a take: default care plan and contacts, onboarded, SCENARIO mode

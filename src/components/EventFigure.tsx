@@ -6,15 +6,15 @@ import { KIND_ICON, KIND_LABEL, SparkIcon } from "./icons";
 
 const ORIGIN_CHIP: Record<string, string> = {
   live: "Live from Ring",
-  replay: "Recorded from Ring Playground",
-  simulated: "Simulated",
+  replay: "Recorded from a Ring camera",
+  simulated: "Example event",
 };
 
 export function OriginChip({ origin, realFrame = false }: { origin: string; realFrame?: boolean }) {
   return (
     <span className={`rounded-full px-2 py-px text-xs font-bold ${origin === "live" ? "bg-sage-soft text-sage" : "bg-sky-soft text-sky"}`}>
       {ORIGIN_CHIP[origin] ?? origin}
-      {origin === "simulated" && realFrame ? " · real Ring frame" : ""}
+      {origin === "simulated" && realFrame ? " · real Ring photo" : ""}
     </span>
   );
 }
@@ -51,8 +51,8 @@ export function SnapshotNote({ origin, realFrame = false }: { origin: string; re
     <p className="text-xs text-ink-soft">
       {origin === "simulated"
         ? realFrame
-          ? "Simulated event using a real frame recorded from the Ring Developer Playground, shown uncropped with Ring’s watermark."
-          : "Simulated scene for the demo: an illustration, not a Ring camera image."
+          ? "Example event using a real photo recorded from a Ring camera (Ring Developer Playground), shown uncropped with Ring’s watermark."
+          : "Example event for the demo: an illustration, not a Ring camera image."
         : "Ring snapshot shown uncropped, with Ring’s mandatory watermark."}{" "}
       Doorstep describes what happens; it never identifies people.
     </p>

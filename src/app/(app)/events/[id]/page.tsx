@@ -75,6 +75,7 @@ export default function EventDetailPage() {
             <Icon className="h-6 w-6" /> {KIND_LABEL[e.kind] ?? e.kind}
           </span>
         </h1>
+        <p className="mt-2 text-ink-soft">One moment at the front door, as the camera saw it.</p>
       </header>
 
       <Snapshot e={e} priority />
@@ -101,26 +102,29 @@ export default function EventDetailPage() {
       )}
 
       <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 rounded-2xl border border-line bg-card p-4 text-sm">
-        <dt className="text-ink-soft">Data source</dt>
+        <dt className="text-ink-soft">Where this is from</dt>
         <dd>{d.originLabel}</dd>
-        <dt className="text-ink-soft">{e.origin === "simulated" ? "Event type (simulated)" : "Ring event type"}</dt>
+        <dt className="text-ink-soft">Time</dt>
         <dd>
-          <code>{d.rawType}</code>
+          {e.time}
+          {d.endLabel && d.endLabel !== e.time ? `–${d.endLabel}` : ""}
+        </dd>
+        <dt className="text-ink-soft">Description</dt>
+        <dd>{e.captionSource ?? "Not described yet"}</dd>
+      </dl>
+      <details className="rounded-2xl border border-line bg-card p-4 text-sm text-ink-soft">
+        <summary className="cursor-pointer font-bold text-ink">Technical details</summary>
+        <p className="mt-2">
+          {e.origin === "simulated" ? "Event type (example)" : "Ring event type"}: <code>{d.rawType}</code>
           {d.rawSubType ? (
             <>
               {" "}
               / <code>{d.rawSubType}</code>
             </>
           ) : null}
-        </dd>
-        <dt className="text-ink-soft">Time</dt>
-        <dd>
-          {e.time}
-          {d.endLabel && d.endLabel !== e.time ? `–${d.endLabel}` : ""}
-        </dd>
-        <dt className="text-ink-soft">Caption</dt>
-        <dd>{e.captionSource ?? "Not described yet"}</dd>
-      </dl>
+        </p>
+        {d.model && <p className="mt-1">Caption model: <code>{d.model}</code></p>}
+      </details>
     </article>
   );
 }

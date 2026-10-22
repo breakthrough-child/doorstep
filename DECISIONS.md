@@ -40,6 +40,13 @@ Defaults chosen without asking, and why. Newest at the bottom of each section.
 
 - **Look now = WHEP live view, proxied.** The browser creates a recv-only `RTCPeerConnection` (non-trickle: waits up to 2.5 s for ICE gathering), and `/api/ring/live` forwards the SDP to Ring with the token. The session is closed by DELETE on Ring's returned `Location` including its query string (F-15). The "Live" indicator sits *below* the video so it never covers Ring's watermark. Shown on alert pages whenever a valid Ring token is connected, in any data mode, labelled "Ring camera (Developer Playground)".
 
+## Self-explanatory first visit (Thu Oct 22)
+
+- **First visit shows an explainer above Today** rather than forcing onboarding: a one-line headline, a 3-step "how it works", and **See Grace's day**. That button loads the package example day paused at 17:00, with the morning's visits done, a parcel alert active and a real recorded Ring photo. It's meaningful in under a second. Onboarding is still reachable ("Set it up for your family").
+- **A slim, dismissible story banner** explains the demo persona. Dismissal is stored in `localStorage`.
+- **Plain words in the main UI.** "Live from Ring", "Recorded from a Ring camera" and "Example day / Example event" replace LIVE/REPLAY/SCENARIO/"simulated". Raw Ring event types such as `on_demand` sit under "Technical details". The mode names remain only in `/demo`.
+- **Captions never block the screen.** When Bedrock's status is unknown, every new event gets a labelled sample caption immediately, and one event is probed against Bedrock in the background. Samples are upgraded automatically if Bedrock works. Captioning runs per data source, in the background.
+
 ## Data modes
 
 - **Default data mode is REPLAY.** A fresh clone shows real-shaped Ring data with no credentials.

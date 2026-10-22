@@ -59,7 +59,7 @@ export function AlertCard({
           <p className={`text-xs font-bold uppercase tracking-wide ${accent}`}>
             {RULE_LABEL[alert.rule]} · {fmt(alert.triggeredAt)}
             {alert.bestEffort && <span className="ml-1 font-normal normal-case tracking-normal">(best-effort guess)</span>}
-            {alert.origin === "simulated" && <span className="ml-1 font-normal normal-case tracking-normal">· simulated</span>}
+            {alert.origin === "simulated" && <span className="ml-1 font-normal normal-case tracking-normal">· example</span>}
           </p>
           <h3 id={`alert-${alert.id}`} className={`mt-0.5 text-lg font-bold leading-snug ${quiet ? "text-ink-soft" : "text-ink"}`}>
             <Link href={href} className="rounded hover:underline underline-offset-4">

@@ -17,6 +17,7 @@
   --sky: #2f5d7c;
   --sky-soft: #dde8f0;
   --focus: #1f5fa8;
+  --accent: #5eead4;
   color-scheme: light;
 }
 
@@ -72,6 +73,7 @@
   --color-rose-soft: var(--rose-soft);
   --color-sky: var(--sky);
   --color-sky-soft: var(--sky-soft);
+  --color-accent: var(--accent);
   --font-serif: "Fraunces", "Iowan Old Style", Georgia, serif;
   --font-sans: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, sans-serif;
 }
