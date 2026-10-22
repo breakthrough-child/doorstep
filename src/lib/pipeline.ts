@@ -48,16 +48,36 @@ export interface TickResult {
 declare global {
   // eslint-disable-next-line no-var
   var __doorstepTick: Promise<TickResult> | undefined;
+  // eslint-disable-next-line no-var
+  var __doorstepLastTick: TickResult | undefined;
+  // eslint-disable-next-line no-var
+  var __doorstepDescribing: Promise<number> | undefined;
 }
 
 /** Single-flight: concurrent callers share the in-progress tick. */
 export function tick(): Promise<TickResult> {
   if (!globalThis.__doorstepTick) {
-    globalThis.__doorstepTick = runTick().finally(() => {
-      globalThis.__doorstepTick = undefined;
-    });
+    globalThis.__doorstepTick = runTick()
+      .then((r) => {
+        globalThis.__doorstepLastTick = r;
+        return r;
+      })
+      .finally(() => {
+        globalThis.__doorstepTick = undefined;
+      });
   }
   return globalThis.__doorstepTick;
+}
+
+/**
+ * For request handlers: start a tick but never make the user wait on slow work (Ring or
+ * Bedrock calls). Waits at most `maxWaitMs`, then returns whatever state is current.
+ */
+export async function nudgeTick(maxWaitMs = 300): Promise<TickResult | null> {
+  const t = tick().catch(() => null);
+  return Promise.race([t, new Promise<null>((r) => setTimeout(() => r(null), maxWaitMs))]).then(
+    (r) => r ?? globalThis.__doorstepLastTick ?? null,
+  );
 }
 
 export function getScenarioState(): ScenarioState | null {
@@ -105,7 +125,16 @@ async function runTick(): Promise<TickResult> {
 
   const now = currentNow(mode);
   if (mode === "LIVE") await fetchLiveSnapshots();
-  const described = await describePending(origin, now, plan);
+  // Captions run in the background (their own single-flight) so a slow or failing Bedrock call
+  // never holds up the scenario clock, Ring polling, rules or any page request.
+  const described = 0;
+  if (!globalThis.__doorstepDescribing) {
+    globalThis.__doorstepDescribing = describePending(origin, now, plan)
+      .catch(() => 0)
+      .finally(() => {
+        globalThis.__doorstepDescribing = undefined;
+      });
+  }
   const newAlerts = runRules(origin, now, effectivePlan(mode));
   processAlertTimers(origin, now);
   if (mode === "SCENARIO") await autoDigest(plan);

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { tick } from "@/lib/pipeline";
+import { nudgeTick } from "@/lib/pipeline";
 import { buildState } from "@/lib/view";
 
 export const dynamic = "force-dynamic";
@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
  * here: at 60x a scenario minute lasts one second.
  */
 export async function GET() {
-  await tick();
+  await nudgeTick();
   const s = buildState();
   const recent = s.timeline.find((e) => {
     if (e.kind !== "ding" && e.kind !== "person" && e.kind !== "package") return false;

@@ -28,8 +28,12 @@ export interface Usage {
 
 let client: BedrockRuntimeClient | null = null;
 function bedrock(): BedrockRuntimeClient {
-  // Two attempts max: a throttled account shouldn't stall the pipeline for 15 s per call.
-  client ??= new BedrockRuntimeClient({ region: BEDROCK_REGION, maxAttempts: 2 });
+  // Two attempts max and a hard per-request timeout: a throttled account mustn't stall anything.
+  client ??= new BedrockRuntimeClient({
+    region: BEDROCK_REGION,
+    maxAttempts: 2,
+    requestHandler: { requestTimeout: 8_000, connectionTimeout: 4_000 },
+  });
   return client;
 }
 

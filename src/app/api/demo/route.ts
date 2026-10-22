@@ -4,7 +4,7 @@ import { resetBedrockHealth } from "@/lib/bedrock/health";
 import { DEFAULT_PLAN, DEFAULT_VISITORS, replaceVisitors, setDataMode } from "@/lib/config";
 import { db, setSetting } from "@/lib/db";
 import { SCENARIO_IDS } from "@/lib/data/scenarios";
-import { forceLivePoll, reloadReplay, startScenario, stopScenario, tick, updateScenario } from "@/lib/pipeline";
+import { forceLivePoll, reloadReplay, startScenario, stopScenario, nudgeTick, updateScenario } from "@/lib/pipeline";
 import { clearOrigin, recentApiLog } from "@/lib/store";
 import { buildState, scenarioCatalog } from "@/lib/view";
 
@@ -91,6 +91,6 @@ export async function POST(req: Request) {
       resetBedrockHealth();
       break;
   }
-  await tick();
+  await nudgeTick(600);
   return NextResponse.json({ ok: true, state: buildState() });
 }

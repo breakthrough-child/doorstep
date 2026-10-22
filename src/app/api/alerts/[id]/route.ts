@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { actionSchema, alertDetail, performAlertAction } from "@/lib/alerts";
-import { tick } from "@/lib/pipeline";
+import { nudgeTick } from "@/lib/pipeline";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(_req: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
-  await tick();
+  await nudgeTick();
   const detail = alertDetail(decodeURIComponent(id));
   if (!detail) return NextResponse.json({ error: "Alert not found" }, { status: 404 });
   return NextResponse.json(detail);

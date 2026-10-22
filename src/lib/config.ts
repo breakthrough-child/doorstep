@@ -4,6 +4,7 @@ import path from "node:path";
 import { z } from "zod";
 import { db, getSetting, setSetting } from "./db";
 import type { CarePlan, DataMode, Visitor } from "./types";
+import { tokenExpiresAtMs } from "./ring/token";
 import { parseHHMM } from "./time";
 
 export function envDataMode(): DataMode {
@@ -38,7 +39,11 @@ export function markRingTokenExpired(expired: boolean): void {
 }
 
 export function isRingTokenExpired(): boolean {
-  return getSetting("ring_token_expired", false);
+  if (getSetting("ring_token_expired", false)) return true;
+  // Don't wait for a 401: Playground JWTs carry their own expiry.
+  const { token } = getRingToken();
+  const exp = token ? tokenExpiresAtMs(token) : null;
+  return exp !== null && exp <= Date.now();
 }
 
 const hhmm = z.string().refine((v) => {
