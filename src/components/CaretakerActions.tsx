@@ -2,6 +2,7 @@
 
 import { useId, useState } from "react";
 import type { Alert, Contact, Visitor } from "@/lib/types";
+import { CallSheet } from "./CallSheet";
 import { CheckIcon, ClockIcon, PhoneIcon } from "./icons";
 import { postJson } from "./state";
 
@@ -30,6 +31,7 @@ export function CaretakerActions({
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [expectOpen, setExpectOpen] = useState(false);
+  const [calling, setCalling] = useState<Contact | null>(null);
   const resolved = alert.status === "resolved";
   const callees = callOrder(contacts, alert.rule).slice(0, compact ? 1 : 3);
 
@@ -62,25 +64,16 @@ export function CaretakerActions({
     <div>
       <div className="flex flex-wrap items-center gap-2">
         {callees.map((c, i) => (
-          <a
+          <button
             key={c.id}
-            href={`tel:${c.phone.replace(/[^+0-9]/g, "")}`}
-            onClick={() => {
-              // Log the call, then let the tel: link open the dialler.
-              void fetch(`/api/alerts/${encodeURIComponent(alert.id)}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ action: "call", contactId: c.id }),
-                keepalive: true,
-              }).then(() => onDone());
-            }}
+            onClick={() => setCalling(c)}
             className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-bold ${
               i === 0 ? "bg-ink text-paper" : "border border-line bg-card text-ink hover:border-ink-soft"
             }`}
-            aria-label={`Call ${c.name} on ${c.phone}`}
+            aria-haspopup="dialog"
           >
             <PhoneIcon className="h-4 w-4" /> Call {c.role === "parent" ? c.name : shortName(c.name)}
-          </a>
+          </button>
         ))}
         <button
           onClick={() => (suggestedVisitor && !compact ? setExpectOpen((v) => !v) : act("expected", { action: "expected" }))}
@@ -102,6 +95,13 @@ export function CaretakerActions({
       </div>
       {expectOpen && suggestedVisitor && (
         <ExpectedForm suggested={suggestedVisitor} busy={!!busy} onSubmit={(addVisitor) => act("expected", { action: "expected", addVisitor })} />
+      )}
+      {calling && (
+        <CallSheet
+          contact={calling}
+          onClose={() => setCalling(null)}
+          onLogged={() => void act("call", { action: "call", contactId: calling.id })}
+        />
       )}
       {error && (
         <p role="alert" className="mt-2 text-sm text-rose">

@@ -28,8 +28,9 @@ Defaults chosen without asking, and why. Newest at the bottom of each section.
   - the action history;
   - door events within ±10 minutes as a mini timeline with thumbnails.
 - **Caretaker actions replace "I'm on it / All sorted":** **Call [parent]**, **Call [helper]**, **That was expected**, **Remind me in 30 min**, plus a quiet "It's sorted" link.
-  - Calls are `tel:` links; tapping one logs "Called Grace" and acknowledges the alert.
+  - Calls go through a call sheet (below); using it logs "Called Grace" and acknowledges the alert.
   - "That was expected" resolves the alert. When the alert cites a person or doorbell event, it optionally adds a visitor to the schedule for that weekday, ±30 minutes around the event (editable).
+- **Calls go through a call sheet, not a raw `tel:` link** (on a desktop, `tel:` opened Zoom). The sheet shows name, relationship and number, with **Call now** (`tel:`), **Copy number** and **Cancel**. On phones (coarse pointer or mobile UA) Call now is primary; on computers Copy number is primary, with a note. The call is logged only when Call now or Copy number is used.
 - **Call order:** the parent first; for a missed visit, the aide next; then the neighbour. The second family contact isn't offered as a call target, because they're who alerts escalate *to*.
 - **In-app escalation only.** An **urgent** (late-night) alert that is still `open`, not snoozed and not acted on 15 minutes (app time) after it fired is marked "Escalated to [second family contact]". This is shown in rose on the card and the detail page and recorded in the history. No SMS or email is sent.
 - **App time for reminders and escalation.** In SCENARIO mode, "Remind me in 30 min" and the 15-minute escalation run on the simulated clock (30 s and 15 s at 60×), so they can be demonstrated. A reminder can't come due after a scenario's end time.
