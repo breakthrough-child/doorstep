@@ -62,8 +62,8 @@ Millions of adult children look after a parent who lives alone, often from anoth
 - **Ring Partner API client** (`src/lib/ring/`), used at runtime by the poller, the onboarding token check and the fixture recorder:
   - `GET /v1/devices?include=status,capabilities,configurations` with typed JSON:API normalization (`included` resolved by type + id).
   - `GET /v1/history/devices/{id}/events`, paginated newest-first via `links.next` `page[key]`.
-  - `POST /v1/devices/{id}/media/image/download` (`at_timestamp`).
-  - `POST`/`DELETE /v1/devices/{id}/media/streaming/whep/sessions` for the "Look now" live view. The server relays the browser's SDP offer and closes the session via the returned `Location` (F-15). It follows the 303 to the pre-signed URL manually, without forwarding the Bearer token.
+  - `POST /v1/devices/{id}/media/image/download` (`at_timestamp`, 1920×1080 requested explicitly). It follows the 303 to the pre-signed URL manually, without forwarding the Bearer token.
+  - `POST`/`DELETE /v1/devices/{id}/media/streaming/whep/sessions` for the "Look now" live view. The server relays the browser's SDP offer and closes the session via the returned `Location` (F-15).
   - Exponential backoff honouring `Retry-After` on 429/5xx. A 401 becomes a "token expired — paste a new Playground token" flow in the UI.
 - **Polling instead of webhooks.** The Playground doesn't deliver webhooks, so a background poller reads Event History in LIVE mode, or advances a simulated clock in SCENARIO mode. It then runs snapshot → description → rules → alerts.
 - **A pure rules engine** (`src/lib/rules/engine.ts`) evaluated in the parent's time zone, with deterministic alert ids so a family's actions survive re-evaluation. A pure `explainAlert` turns each alert into a care-plan-specific "why". It's covered by Vitest, including DST spring-forward and fall-back days.
