@@ -24,7 +24,9 @@ async function main() {
   for (const e of loadReplay(Date.now()).events) if (e.snapshotPath) jobs.push({ event: e, image: e.snapshotPath });
 
   const existing = descriptionsFor(jobs.map((j) => j.event.id));
-  const todo = jobs.filter((j) => existing.get(j.event.id)?.mock !== false);
+  // --refresh re-captions example (scenario) events too, e.g. after new stock photos replaced illustrations.
+  const refresh = process.argv.includes("--refresh");
+  const todo = jobs.filter((j) => existing.get(j.event.id)?.mock !== false || (refresh && j.event.origin === "simulated"));
   console.log(`${jobs.length} events, ${todo.length} need a real caption (model ${BEDROCK_MODEL_ID})`);
   let ok = 0, fail = 0, tin = 0, tout = 0;
   const queue = [...todo];

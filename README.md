@@ -48,6 +48,17 @@ No credentials are needed for a first run: REPLAY mode plus labelled sample capt
 
 Requirements: Node 20.9+ (tested on Node 22, Ubuntu 24.04). `better-sqlite3` ships prebuilt binaries for common platforms.
 
+## Public read-only demo
+
+`DOORSTEP_PUBLIC_DEMO=1` runs a safe, public version. It opens straight onto Grace's example day, with the recorded Ring data and the **real Nova Lite captions** recorded in `fixtures/captions.json`. LIVE mode, Ring token entry, Look now and all Bedrock calls are disabled, so the server needs no secrets, and a banner says it's a demo.
+
+- **Deploy on Render (free, no credit card):** New → Blueprint → pick this repo. `render.yaml` does the rest. The SQLite database is rebuilt on each start.
+- **Run it locally the same way:**
+
+```bash
+DOORSTEP_PUBLIC_DEMO=1 npm run setup && DOORSTEP_PUBLIC_DEMO=1 npm run build && DOORSTEP_PUBLIC_DEMO=1 npm start
+```
+
 ## Data modes: what's live, what's replayed, what's simulated
 
 The Ring Developer Playground gives sandbox API access without hardware, but its tokens last ~30 minutes and **it doesn't deliver webhooks**. So Doorstep has three data modes. The current one is always shown as a badge on every screen.

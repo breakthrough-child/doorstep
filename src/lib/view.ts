@@ -1,7 +1,7 @@
 // Builds the JSON the UI renders. One place decides what "today" means in each data mode.
 import { BEDROCK_MODEL_ID, BEDROCK_REGION } from "./bedrock";
 import { bedrockStatus, getBedrockHealth, type BedrockStatus } from "./bedrock/health";
-import { getCarePlan, getDataMode, getRingToken, isOnboarded, isRingTokenExpired } from "./config";
+import { getCarePlan, getDataMode, isPublicDemo, getRingToken, isOnboarded, isRingTokenExpired } from "./config";
 import { getSetting } from "./db";
 import { listScenarios, loadScenario, scenarioEndMs, scenarioStartMs } from "./data/scenarios";
 import type { ReplayMeta } from "./data/replay";
@@ -87,6 +87,8 @@ export interface AppState {
   digestReady: boolean;
   devices: Array<{ id: string; name: string; online: boolean | null }>;
   contacts: Contact[];
+  /** Read-only public demo: no LIVE, no token entry, no Look now, no Bedrock calls. */
+  publicDemo: boolean;
 }
 
 const ACTIVE = (a: Alert) => a.status !== "resolved" && a.clearedAt === null;
@@ -216,6 +218,7 @@ export function buildState(): AppState {
     sampleCaptions: items.some((e) => e.description?.mock && e.description.model !== "metadata-only"),
     digestReady: !!getDigest(origin, dateKey),
     contacts: getCarePlan().contacts,
+    publicDemo: isPublicDemo(),
     devices: store.listDevices(origin === "simulated" ? "replay" : origin).map((d) => ({ id: d.id, name: d.name, online: d.online })),
   };
 }

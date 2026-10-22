@@ -1,4 +1,7 @@
 import { NextResponse } from "next/server";
+import { isPublicDemo } from "@/lib/config";
+
+const DISABLED = () => NextResponse.json({ error: "Disabled in the public demo." }, { status: 403 });
 import { getCarePlan, getRingToken, markRingTokenExpired } from "@/lib/config";
 import { RingApiError, RingClient, RingTokenExpiredError } from "@/lib/ring/client";
 import { listDevices, logApi } from "@/lib/store";
@@ -26,6 +29,7 @@ function fail(e: unknown) {
 
 /** Live view: browser SDP offer in, Ring SDP answer out (WHEP, proxied so the token stays server-side). */
 export async function POST(req: Request) {
+  if (isPublicDemo()) return DISABLED();
   const offer = await req.text();
   if (!offer.startsWith("v=0")) return NextResponse.json({ error: "Expected an SDP offer" }, { status: 400 });
   const id = deviceId();
@@ -43,6 +47,7 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+  if (isPublicDemo()) return DISABLED();
   const session = new URL(req.url).searchParams.get("session");
   const id = deviceId();
   if (!session || !id) return NextResponse.json({ ok: true });

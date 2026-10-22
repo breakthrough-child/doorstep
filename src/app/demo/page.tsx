@@ -79,6 +79,8 @@ export default function DemoPanel() {
                 <button
                   key={m}
                   onClick={() => act(`mode-${m}`, { action: "mode", mode: m })}
+                  disabled={m === "LIVE" && s?.publicDemo}
+                  title={m === "LIVE" && s?.publicDemo ? "Not available in the public demo" : undefined}
                   aria-pressed={s?.mode === m}
                   className={`rounded-2xl border p-3 text-left ${s?.mode === m ? "border-ink bg-ink text-paper" : "border-line bg-card"}`}
                 >
@@ -110,9 +112,9 @@ export default function DemoPanel() {
               </dl>
             )}
             <div className="mt-3 flex flex-wrap gap-2">
-              {s?.mode === "LIVE" && <Small onClick={() => act("poll", { action: "poll-live" })}>Poll Ring now</Small>}
+              {s?.mode === "LIVE" && !s.publicDemo && <Small onClick={() => act("poll", { action: "poll-live" })}>Poll Ring now</Small>}
               {s?.mode === "REPLAY" && <Small onClick={() => act("reload", { action: "reload-replay" })}>Reload fixtures</Small>}
-              {s?.bedrock.status === "unavailable" && <Small onClick={() => act("bedrock", { action: "retry-bedrock" })}>Retry Bedrock now</Small>}
+              {s?.bedrock.status === "unavailable" && !s.publicDemo && <Small onClick={() => act("bedrock", { action: "retry-bedrock" })}>Retry Bedrock now</Small>}
               <Small onClick={() => act("reset", { action: "reset" })}>Reset all state</Small>
             </div>
           </Panel>

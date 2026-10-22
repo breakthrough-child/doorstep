@@ -9,7 +9,7 @@ export function TokenBanner() {
   const [token, setToken] = useState("");
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
-  if (!state || state.mode !== "LIVE" || (state.ring.hasToken && !state.ring.expired)) return null;
+  if (!state || state.publicDemo || state.mode !== "LIVE" || (state.ring.hasToken && !state.ring.expired)) return null;
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();

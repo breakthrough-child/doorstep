@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { resetBedrockHealth } from "@/lib/bedrock/health";
-import { DEFAULT_PLAN, DEFAULT_VISITORS, replaceVisitors, setDataMode } from "@/lib/config";
+import { DEFAULT_PLAN, DEFAULT_VISITORS, isPublicDemo, replaceVisitors, setDataMode } from "@/lib/config";
 import { db, setSetting } from "@/lib/db";
 import { SCENARIO_IDS } from "@/lib/data/scenarios";
 import { forceLivePoll, reloadReplay, startScenario, startShowcase, stopScenario, nudgeTick, updateScenario } from "@/lib/pipeline";
@@ -34,6 +34,8 @@ export async function POST(req: Request) {
   const parsed = action.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "Unknown demo action" }, { status: 400 });
   const a = parsed.data;
+  if (isPublicDemo() && ((a.action === "mode" && a.mode === "LIVE") || a.action === "poll-live" || a.action === "retry-bedrock"))
+    return NextResponse.json({ error: "Not available in the public demo." }, { status: 403 });
   switch (a.action) {
     case "mode":
       setDataMode(a.mode);

@@ -13,7 +13,19 @@ export function envDataMode(): DataMode {
 }
 
 /** The /demo panel can override the env default at runtime. */
+/**
+ * Public read-only demo (DOORSTEP_PUBLIC_DEMO=1): recorded Ring data and example days only.
+ * LIVE mode, Ring token entry, Look now and Bedrock calls are disabled; no secrets are needed.
+ */
+export function isPublicDemo(): boolean {
+  return process.env.DOORSTEP_PUBLIC_DEMO === "1" || process.env.DOORSTEP_PUBLIC_DEMO === "true";
+}
+
 export function getDataMode(): DataMode {
+  if (isPublicDemo()) {
+    const m = getSetting<DataMode | null>("data_mode", null) ?? "SCENARIO";
+    return m === "LIVE" ? "SCENARIO" : m;
+  }
   return getSetting<DataMode | null>("data_mode", null) ?? envDataMode();
 }
 
@@ -23,6 +35,7 @@ export function setDataMode(mode: DataMode): void {
 
 /** A token pasted in onboarding wins over RING_ACCESS_TOKEN (Playground tokens rotate every ~30 min). */
 export function getRingToken(): { token: string | null; source: "pasted" | "env" | null; pastedAt: number | null } {
+  if (isPublicDemo()) return { token: null, source: null, pastedAt: null };
   const pasted = getSetting<{ token: string; at: number } | null>("ring_token", null);
   if (pasted?.token) return { token: pasted.token, source: "pasted", pastedAt: pasted.at };
   const env = process.env.RING_ACCESS_TOKEN?.trim();
@@ -180,6 +193,7 @@ export function isOnboarded(): boolean {
  * AWS credentials are discoverable, otherwise mock — so a fresh clone works with zero setup.
  */
 export function bedrockMock(): boolean {
+  if (isPublicDemo()) return true; // never call AWS from the public demo (cached real captions are imported at setup)
   const v = process.env.BEDROCK_MOCK?.toLowerCase();
   if (v === "1" || v === "true") return true;
   if (v === "0" || v === "false") return false;

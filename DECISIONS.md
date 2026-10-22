@@ -47,6 +47,12 @@ Defaults chosen without asking, and why. Newest at the bottom of each section.
 - **Plain words in the main UI.** "Live from Ring", "Recorded from a Ring camera" and "Example day / Example event" replace LIVE/REPLAY/SCENARIO/"simulated". Raw Ring event types such as `on_demand` sit under "Technical details". The mode names remain only in `/demo`.
 - **Captions never block the screen.** When Bedrock's status is unknown, every new event gets a labelled sample caption immediately, and one event is probed against Bedrock in the background. Samples are upgraded automatically if Bedrock works. Captioning runs per data source, in the background.
 
+## Public demo (Thu Oct 22)
+
+- **`DOORSTEP_PUBLIC_DEMO=1`** turns off LIVE, token entry, Look now and Bedrock calls (server and UI), shows a permanent "Public demo" banner, and opens on the example day.
+- **Recorded real Bedrock captions ship in `fixtures/captions.json`** (`npm run export:captions`). `npm run setup` imports them, so a fresh clone and the public demo both show real Nova Lite output without AWS credentials.
+- **Host: Render free web service** via `render.yaml`, chosen because it runs a persistent Node process with no credit card (unlike Vercel, which is serverless, or Fly.io, which needs a card). The free disk is ephemeral, so `npm run setup` rebuilds SQLite on every start. `npm start` honours `$PORT`.
+
 ## Data modes
 
 - **Default data mode is REPLAY.** A fresh clone shows real-shaped Ring data with no credentials.

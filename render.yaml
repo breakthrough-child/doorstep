@@ -1,0 +1,20 @@
+# Render blueprint for Doorstep's public, read-only demo (free plan, no secrets).
+# Recorded Ring data + example days only; LIVE mode, Ring tokens, Look now and Bedrock calls are off.
+services:
+  - type: web
+    name: doorstep-demo
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    # The SQLite database is rebuilt on every start (the free plan's disk is ephemeral).
+    startCommand: npm run setup && npm start
+    healthCheckPath: /api/state
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DOORSTEP_PUBLIC_DEMO
+        value: "1"
+      - key: BEDROCK_MOCK
+        value: "1"
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"

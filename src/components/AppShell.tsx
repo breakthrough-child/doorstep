@@ -63,6 +63,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {state && <ModeBadge state={state} compact />}
         </header>
 
+        {state?.publicDemo && (
+          <p role="note" className="border-b border-line bg-hero px-4 py-2 text-sm text-on-hero md:px-10">
+            <b>Public demo</b> with recorded Ring data and example days. Nothing here is live, and no Ring account is connected.
+          </p>
+        )}
         {state && <StoryBanner parentName={state.parentName} familyName={state.familyName} />}
         <TokenBanner />
         {error && (

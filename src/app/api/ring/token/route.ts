@@ -1,4 +1,7 @@
 import { NextResponse } from "next/server";
+import { isPublicDemo } from "@/lib/config";
+
+const DISABLED = () => NextResponse.json({ error: "Disabled in the public demo." }, { status: 403 });
 import { z } from "zod";
 import { markRingTokenExpired, setRingToken } from "@/lib/config";
 import { RingApiError, RingClient, RingTokenExpiredError } from "@/lib/ring/client";
@@ -9,6 +12,7 @@ const body = z.object({ token: z.string().trim().min(20).max(8192) });
 
 /** Paste a Playground token: verify it against GET /v1/devices, then store it server-side. */
 export async function POST(req: Request) {
+  if (isPublicDemo()) return DISABLED();
   const parsed = body.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "That doesn't look like a Ring access token." }, { status: 400 });
   try {
@@ -28,6 +32,7 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE() {
+  if (isPublicDemo()) return DISABLED();
   setRingToken(null);
   return NextResponse.json({ ok: true });
 }

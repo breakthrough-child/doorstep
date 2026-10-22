@@ -2,7 +2,7 @@
 
 Real Ring Playground frames already cover the parcel, car and bird-feeder scenes. The empty porch (day and night) uses a CC BY-SA photo from Wikimedia Commons. The scenes below still use illustrations until a photo is added.
 
-**How to add one:** save the photo as `assets/stock/<scene>.jpg`, add an entry to `assets/stock/credits.json` (copy an existing one), then run `npm run stock`. Restart the scenario (or **Reset for recording**) to see it.
+**How to add one:** save the photo as `assets/stock/<scene>.jpg`, add an entry to `assets/stock/credits.json` (copy an existing one), then run `npm run stock`, then `npm run warm:captions -- --refresh && npm run export:captions` so the cached captions describe the new photo. Restart the scenario (or **Reset for recording**) to see it.
 
 Pick **landscape** photos with the door or porch in view, people seen from behind or side-on, and **no clearly identifiable faces**. Unsplash and Pexels licences allow this use. Credit them anyway.
 

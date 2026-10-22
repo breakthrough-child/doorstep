@@ -1,0 +1,763 @@
+{
+  "note": "Real Amazon Bedrock (Nova Lite) captions, recorded Oct 22, 2026. Imported by npm run setup.",
+  "captions": [
+    {
+      "eventId": "rp:ava1.ring.history.event.3U2LFW52CB24Z5VMNL5PQ2ZQ3TYJKCVQS6Q5OGRUOHQYOCX6JSXCD3WZ7WSMLA57QRTSIWUTKEMSZO7HY4TNOFSDW5VQNF5Q",
+      "sentence": "Three cars are parked in a parking lot.",
+      "tags": {
+        "people": 0,
+        "packageVisible": false,
+        "doorOpen": null,
+        "vehicle": true,
+        "roles": []
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2351,
+      "outputTokens": 44,
+      "createdAt": 1792680948010
+    },
+    {
+      "eventId": "rp:ava1.ring.history.event.D33G5LUPFCYFI75VPLC6INK4ZG3GFRNPJWZ54JECTSJONIVWJ2FD4JOT6FACXFYMIAA33VTULFUY7MNRCHHO54VBGSTUXAGH",
+      "sentence": "Two birds are eating from a bird feeder.",
+      "tags": {
+        "people": 0,
+        "packageVisible": false,
+        "doorOpen": null,
+        "vehicle": false,
+        "roles": [
+          "bird"
+        ]
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2351,
+      "outputTokens": 45,
+      "createdAt": 1792679242408
+    },
+    {
+      "eventId": "rp:ava1.ring.history.event.DA6LXVDYXJU65XNPX566LRSSEHFAM3UYQYALVMTWBNCZD4R5T2UJCPKQO4CBCKPLDDIRLDNT75Q4FSAXBHCXYUAGH22HY3UI",
+      "sentence": "Three cars park in a parking lot.",
+      "tags": {
+        "people": 0,
+        "packageVisible": false,
+        "doorOpen": null,
+        "vehicle": true,
+        "roles": []
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2351,
+      "outputTokens": 43,
+      "createdAt": 1792680951970
+    },
+    {
+      "eventId": "rp:ava1.ring.history.event.NQQC73LYXUCUSVH6CQZSIW66VOXKEJ27KHKQWMJNDCMQ2SMOUKSFJWMSMFSBQHOOSET2ZXJM2V4SUUWFEZ52FMES6MTHSNGZ",
+      "sentence": "Three vehicles are parked in a parking lot.",
+      "tags": {
+        "people": 0,
+        "packageVisible": false,
+        "doorOpen": null,
+        "vehicle": true,
+        "roles": []
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2351,
+      "outputTokens": 44,
+      "createdAt": 1792680941230
+    },
+    {
+      "eventId": "rp:ava1.ring.history.event.Q5ERRYJ2LNVH625Q4TOK3KZFANH5QTTKCMMQCTDYYNESQVFWDZ2B4W5F3KPID5YT7DIITZSDOGGHHUUJ7W556JGDF354FMSY",
+      "sentence": "A bird eats from a bird feeder.",
+      "tags": {
+        "people": 0,
+        "packageVisible": null,
+        "doorOpen": null,
+        "vehicle": false,
+        "roles": [
+          "bird"
+        ]
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2351,
+      "outputTokens": 44,
+      "createdAt": 1792680934133
+    },
+    {
+      "eventId": "rp:ava1.ring.history.event.YALR234VMEKNYH24VC2EI54TS5AWXN5MO35E5AGKZT3PFC27XN5RWPZS6GT4OWHHJMHVJZF4TWJGTYQQ6SA4FY4S6EM46XIF",
+      "sentence": "A package rests on the porch covered in snow.",
+      "tags": {
+        "people": 0,
+        "packageVisible": true,
+        "doorOpen": null,
+        "vehicle": false,
+        "roles": []
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2351,
+      "outputTokens": 45,
+      "createdAt": 1792680958784
+    },
+    {
+      "eventId": "sim:grace_normal_day:00",
+      "sentence": "A person stands at the open door.",
+      "tags": {
+        "people": 1,
+        "packageVisible": null,
+        "doorOpen": true,
+        "vehicle": false,
+        "roles": []
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2345,
+      "outputTokens": 43,
+      "createdAt": 1792680709795
+    },
+    {
+      "eventId": "sim:grace_normal_day:01",
+      "sentence": "A light shines through the window of a door.",
+      "tags": {
+        "people": 0,
+        "packageVisible": false,
+        "doorOpen": false,
+        "vehicle": false,
+        "roles": []
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2345,
+      "outputTokens": 45,
+      "createdAt": 1792680724381
+    },
+    {
+      "eventId": "sim:grace_normal_day:02",
+      "sentence": "A person stands at the front door holding a package.",
+      "tags": {
+        "people": 1,
+        "packageVisible": true,
+        "doorOpen": false,
+        "vehicle": false,
+        "roles": [
+          "visitor"
+        ]
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2346,
+      "outputTokens": 47,
+      "createdAt": 1792680709767
+    },
+    {
+      "eventId": "sim:grace_normal_day:03",
+      "sentence": "Two people stand at the open door.",
+      "tags": {
+        "people": 2,
+        "packageVisible": null,
+        "doorOpen": true,
+        "vehicle": false,
+        "roles": [
+          "visitor"
+        ]
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2346,
+      "outputTokens": 43,
+      "createdAt": 1792680726944
+    },
+    {
+      "eventId": "sim:grace_normal_day:04",
+      "sentence": "A person stands at the front door.",
+      "tags": {
+        "people": 1,
+        "packageVisible": null,
+        "doorOpen": false,
+        "vehicle": false,
+        "roles": [
+          "visitor"
+        ]
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2347,
+      "outputTokens": 43,
+      "createdAt": 1792680729674
+    },
+    {
+      "eventId": "sim:grace_normal_day:05",
+      "sentence": "A person stands at the door with a package.",
+      "tags": {
+        "people": 1,
+        "packageVisible": true,
+        "doorOpen": false,
+        "vehicle": false,
+        "roles": [
+          "delivery person"
+        ]
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2347,
+      "outputTokens": 46,
+      "createdAt": 1792680743780
+    },
+    {
+      "eventId": "sim:grace_normal_day:06",
+      "sentence": "Two people stand by an open door, one holding a bag.",
+      "tags": {
+        "people": 2,
+        "packageVisible": null,
+        "doorOpen": true,
+        "vehicle": false,
+        "roles": [
+          "person",
+          "person"
+        ]
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2347,
+      "outputTokens": 52,
+      "createdAt": 1792680743799
+    },
+    {
+      "eventId": "sim:grace_normal_day:07",
+      "sentence": "A parcel is on the porch.",
+      "tags": {
+        "people": 0,
+        "packageVisible": true,
+        "doorOpen": null,
+        "vehicle": false,
+        "roles": []
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2347,
+      "outputTokens": 42,
+      "createdAt": 1792680748739
+    },
+    {
+      "eventId": "sim:grace_normal_day:08",
+      "sentence": "A parcel lies on the porch, partially covered by snow.",
+      "tags": {
+        "people": 0,
+        "packageVisible": true,
+        "doorOpen": null,
+        "vehicle": false,
+        "roles": []
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2346,
+      "outputTokens": 47,
+      "createdAt": 1792680750261
+    },
+    {
+      "eventId": "sim:grace_normal_day:09",
+      "sentence": "A person stands in the doorway.",
+      "tags": {
+        "people": 1,
+        "packageVisible": false,
+        "doorOpen": true,
+        "vehicle": false,
+        "roles": [
+          "person"
+        ]
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2347,
+      "outputTokens": 43,
+      "createdAt": 1792680748756
+    },
+    {
+      "eventId": "sim:grace_normal_day:10",
+      "sentence": "Three vehicles are parked in a parking lot.",
+      "tags": {
+        "people": 0,
+        "packageVisible": null,
+        "doorOpen": null,
+        "vehicle": true,
+        "roles": [
+          "vehicle"
+        ]
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2347,
+      "outputTokens": 45,
+      "createdAt": 1792680757456
+    },
+    {
+      "eventId": "sim:grace_normal_day:11",
+      "sentence": "A bird eats from a bird feeder.",
+      "tags": {
+        "people": 0,
+        "packageVisible": false,
+        "doorOpen": false,
+        "vehicle": false,
+        "roles": [
+          "bird"
+        ]
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2347,
+      "outputTokens": 44,
+      "createdAt": 1792680772145
+    },
+    {
+      "eventId": "sim:late_night_ding:00",
+      "sentence": "A person stands in the doorway.",
+      "tags": {
+        "people": 1,
+        "packageVisible": null,
+        "doorOpen": true,
+        "vehicle": false,
+        "roles": []
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2345,
+      "outputTokens": 42,
+      "createdAt": 1792680900636
+    },
+    {
+      "eventId": "sim:late_night_ding:01",
+      "sentence": "A person stands at the door holding a package.",
+      "tags": {
+        "people": 1,
+        "packageVisible": true,
+        "doorOpen": false,
+        "vehicle": false,
+        "roles": [
+          "visitor"
+        ]
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2346,
+      "outputTokens": 47,
+      "createdAt": 1792680916479
+    },
+    {
+      "eventId": "sim:late_night_ding:02",
+      "sentence": "Two people stand at the entrance, one holding a bag.",
+      "tags": {
+        "people": 2,
+        "packageVisible": true,
+        "doorOpen": true,
+        "vehicle": false,
+        "roles": []
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2346,
+      "outputTokens": 47,
+      "createdAt": 1792680916489
+    },
+    {
+      "eventId": "sim:late_night_ding:03",
+      "sentence": "A person stands near the door, holding a red object.",
+      "tags": {
+        "people": 1,
+        "packageVisible": false,
+        "doorOpen": false,
+        "vehicle": false,
+        "roles": [
+          "person"
+        ]
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2347,
+      "outputTokens": 48,
+      "createdAt": 1792680919658
+    },
+    {
+      "eventId": "sim:late_night_ding:04",
+      "sentence": "A person presses the doorbell while holding a package.",
+      "tags": {
+        "people": 1,
+        "packageVisible": true,
+        "doorOpen": false,
+        "vehicle": false,
+        "roles": [
+          "delivery person"
+        ]
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2347,
+      "outputTokens": 47,
+      "createdAt": 1792680921673
+    },
+    {
+      "eventId": "sim:late_night_ding:05",
+      "sentence": "Two people stand by an open door.",
+      "tags": {
+        "people": 2,
+        "packageVisible": null,
+        "doorOpen": true,
+        "vehicle": false,
+        "roles": [
+          "person",
+          "person"
+        ]
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2347,
+      "outputTokens": 47,
+      "createdAt": 1792680922420
+    },
+    {
+      "eventId": "sim:late_night_ding:06",
+      "sentence": "A person stands near the front door.",
+      "tags": {
+        "people": 1,
+        "packageVisible": null,
+        "doorOpen": false,
+        "vehicle": false,
+        "roles": [
+          "person"
+        ]
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2347,
+      "outputTokens": 44,
+      "createdAt": 1792680923475
+    },
+    {
+      "eventId": "sim:late_night_ding:07",
+      "sentence": "Two people stand in front of a closed door.",
+      "tags": {
+        "people": 1,
+        "packageVisible": null,
+        "doorOpen": false,
+        "vehicle": false,
+        "roles": []
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2347,
+      "outputTokens": 45,
+      "createdAt": 1792680924794
+    },
+    {
+      "eventId": "sim:late_night_ding:08",
+      "sentence": "A person stands by the door, the doorbell light is on.",
+      "tags": {
+        "people": 1,
+        "packageVisible": null,
+        "doorOpen": false,
+        "vehicle": false,
+        "roles": [
+          "person"
+        ]
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2347,
+      "outputTokens": 49,
+      "createdAt": 1792680926319
+    },
+    {
+      "eventId": "sim:late_night_ding:09",
+      "sentence": "The front door and porch are dark.",
+      "tags": {
+        "people": 0,
+        "packageVisible": null,
+        "doorOpen": false,
+        "vehicle": false,
+        "roles": []
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2346,
+      "outputTokens": 43,
+      "createdAt": 1792680932135
+    },
+    {
+      "eventId": "sim:missed_aide_visit:00",
+      "sentence": "A person stands at the open door.",
+      "tags": {
+        "people": 1,
+        "packageVisible": null,
+        "doorOpen": true,
+        "vehicle": false,
+        "roles": [
+          "person"
+        ]
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2345,
+      "outputTokens": 44,
+      "createdAt": 1792680763833
+    },
+    {
+      "eventId": "sim:missed_aide_visit:01",
+      "sentence": "A door is closed with no visible person or parcel.",
+      "tags": {
+        "people": 0,
+        "packageVisible": false,
+        "doorOpen": false,
+        "vehicle": false,
+        "roles": []
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2345,
+      "outputTokens": 46,
+      "createdAt": 1792680993146
+    },
+    {
+      "eventId": "sim:missed_aide_visit:02",
+      "sentence": "Three cars are parked in a parking lot.",
+      "tags": {
+        "people": 0,
+        "packageVisible": false,
+        "doorOpen": null,
+        "vehicle": true,
+        "roles": [
+          "car"
+        ]
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2347,
+      "outputTokens": 45,
+      "createdAt": 1792680991998
+    },
+    {
+      "eventId": "sim:missed_aide_visit:03",
+      "sentence": "A person stands at the door with a package.",
+      "tags": {
+        "people": 1,
+        "packageVisible": true,
+        "doorOpen": false,
+        "vehicle": false,
+        "roles": [
+          "delivery person"
+        ]
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2347,
+      "outputTokens": 46,
+      "createdAt": 1792680990513
+    },
+    {
+      "eventId": "sim:missed_aide_visit:04",
+      "sentence": "Two people stand by an open door, one holding a bag.",
+      "tags": {
+        "people": 2,
+        "packageVisible": true,
+        "doorOpen": true,
+        "vehicle": false,
+        "roles": []
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2347,
+      "outputTokens": 48,
+      "createdAt": 1792680885966
+    },
+    {
+      "eventId": "sim:missed_aide_visit:05",
+      "sentence": "A bird eats from a bird feeder.",
+      "tags": {
+        "people": 0,
+        "packageVisible": false,
+        "doorOpen": null,
+        "vehicle": false,
+        "roles": [
+          "bird"
+        ]
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2347,
+      "outputTokens": 44,
+      "createdAt": 1792680888320
+    },
+    {
+      "eventId": "sim:package_left_out:00",
+      "sentence": "A person stands in the doorway.",
+      "tags": {
+        "people": 1,
+        "packageVisible": null,
+        "doorOpen": true,
+        "vehicle": false,
+        "roles": []
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2345,
+      "outputTokens": 42,
+      "createdAt": 1792680649086
+    },
+    {
+      "eventId": "sim:package_left_out:01",
+      "sentence": "A person presses the doorbell.",
+      "tags": {
+        "people": 1,
+        "packageVisible": null,
+        "doorOpen": null,
+        "vehicle": false,
+        "roles": [
+          "visitor"
+        ]
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2346,
+      "outputTokens": 42,
+      "createdAt": 1792680648100
+    },
+    {
+      "eventId": "sim:package_left_out:02",
+      "sentence": "Two people stand by an open door.",
+      "tags": {
+        "people": 2,
+        "packageVisible": null,
+        "doorOpen": true,
+        "vehicle": false,
+        "roles": []
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2346,
+      "outputTokens": 43,
+      "createdAt": 1792680647175
+    },
+    {
+      "eventId": "sim:package_left_out:03",
+      "sentence": "A person stands at the front door with a bag.",
+      "tags": {
+        "people": 1,
+        "packageVisible": null,
+        "doorOpen": null,
+        "vehicle": false,
+        "roles": [
+          "person"
+        ]
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2347,
+      "outputTokens": 47,
+      "createdAt": 1792680633911
+    },
+    {
+      "eventId": "sim:package_left_out:04",
+      "sentence": "A person presses the doorbell while holding a package.",
+      "tags": {
+        "people": 1,
+        "packageVisible": true,
+        "doorOpen": false,
+        "vehicle": false,
+        "roles": [
+          "courier"
+        ]
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2347,
+      "outputTokens": 47,
+      "createdAt": 1792680634240
+    },
+    {
+      "eventId": "sim:package_left_out:05",
+      "sentence": "Two people stand at the open door of a house.",
+      "tags": {
+        "people": 2,
+        "packageVisible": null,
+        "doorOpen": true,
+        "vehicle": false,
+        "roles": [
+          "person",
+          "person"
+        ]
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2347,
+      "outputTokens": 50,
+      "createdAt": 1792680634244
+    },
+    {
+      "eventId": "sim:package_left_out:06",
+      "sentence": "A package sits on the porch next to a railing.",
+      "tags": {
+        "people": 0,
+        "packageVisible": true,
+        "doorOpen": null,
+        "vehicle": false,
+        "roles": []
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2347,
+      "outputTokens": 46,
+      "createdAt": 1792680627482
+    },
+    {
+      "eventId": "sim:package_left_out:07",
+      "sentence": "A box sits on the porch steps.",
+      "tags": {
+        "people": 0,
+        "packageVisible": true,
+        "doorOpen": null,
+        "vehicle": false,
+        "roles": []
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2346,
+      "outputTokens": 43,
+      "createdAt": 1792680626715
+    },
+    {
+      "eventId": "sim:package_left_out:08",
+      "sentence": "Three vehicles are parked in a parking lot.",
+      "tags": {
+        "people": 0,
+        "packageVisible": null,
+        "doorOpen": null,
+        "vehicle": true,
+        "roles": [
+          "vehicle"
+        ]
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2347,
+      "outputTokens": 45,
+      "createdAt": 1792680626158
+    },
+    {
+      "eventId": "sim:package_left_out:09",
+      "sentence": "A box sits on the porch next to a railing.",
+      "tags": {
+        "people": 0,
+        "packageVisible": true,
+        "doorOpen": null,
+        "vehicle": false,
+        "roles": []
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2346,
+      "outputTokens": 46,
+      "createdAt": 1792680894014
+    },
+    {
+      "eventId": "sim:package_left_out:10",
+      "sentence": "A box lies on the porch next to a railing.",
+      "tags": {
+        "people": 0,
+        "packageVisible": true,
+        "doorOpen": null,
+        "vehicle": false,
+        "roles": []
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2346,
+      "outputTokens": 46,
+      "createdAt": 1792680900628
+    },
+    {
+      "eventId": "sim:quiet_morning:00",
+      "sentence": "A person stands in the doorway.",
+      "tags": {
+        "people": 1,
+        "packageVisible": null,
+        "doorOpen": true,
+        "vehicle": false,
+        "roles": []
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2346,
+      "outputTokens": 42,
+      "createdAt": 1792680894335
+    },
+    {
+      "eventId": "sim:quiet_morning:01",
+      "sentence": "A light shines through the window of a white door.",
+      "tags": {
+        "people": 0,
+        "packageVisible": false,
+        "doorOpen": false,
+        "vehicle": false,
+        "roles": []
+      },
+      "model": "eu.amazon.nova-lite-v1:0",
+      "inputTokens": 2346,
+      "outputTokens": 46,
+      "createdAt": 1792680915681
+    }
+  ]
+}

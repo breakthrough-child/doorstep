@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CarePlanForm } from "@/components/CarePlanForm";
 import { CheckIcon, DoorIcon, HeartIcon } from "@/components/icons";
 import { postJson } from "@/components/state";
@@ -17,6 +17,13 @@ export default function Onboarding() {
   const [devices, setDevices] = useState<Device[] | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [publicDemo, setPublicDemo] = useState(false);
+  useEffect(() => {
+    fetch("/api/state")
+      .then((r) => r.json())
+      .then((d: { publicDemo?: boolean }) => setPublicDemo(!!d.publicDemo))
+      .catch(() => undefined);
+  }, []);
 
   const connect = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,7 +100,11 @@ export default function Onboarding() {
               For this hackathon build, paste a token from the Ring Developer Playground. It lasts about 30 minutes; Doorstep checks it
               against <code className="rounded bg-paper px-1">GET /v1/devices</code> and keeps it on the server.
             </p>
-            {!devices ? (
+            {publicDemo ? (
+              <p className="mt-4 rounded-xl bg-sky-soft px-4 py-3 text-sm">
+                Connecting a Ring account is turned off in this public demo. It uses recorded Ring data and example days instead.
+              </p>
+            ) : !devices ? (
               <form onSubmit={connect} className="mt-4 flex flex-col gap-2 sm:flex-row">
                 <label htmlFor="ob-token" className="sr-only">
                   Ring access token
