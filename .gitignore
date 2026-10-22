@@ -17,3 +17,4 @@ tv/build/
 .claude/
 DOORSTEP_PROMPT.md
 FINISH_PROMPT.md
+.next-build/
