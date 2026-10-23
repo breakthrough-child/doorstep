@@ -1,0 +1,41 @@
+{
+  "title": "Doorstep: caretaking alerts from a parent's Ring doorbell",
+  "titleSeconds": 4,
+  "shots": [
+    { "id": "s1-payoff", "seconds": 15 },
+    { "id": "s2-problem", "seconds": 20 },
+    { "id": "s3-day", "seconds": 30 },
+    { "id": "s4-action", "seconds": 20 },
+    { "id": "s5-digest", "seconds": 15 },
+    { "id": "s6-tv", "seconds": 20 },
+    { "id": "s7-code", "seconds": 20 },
+    { "id": "s8-close", "seconds": 15 }
+  ],
+  "lines": [
+    { "at": 4.5, "text": "Ada lives two hundred miles from her mum, Grace." },
+    { "at": 8.0, "text": "At five o'clock, Doorstep tells her a parcel has sat on Grace's front step for hours," },
+    { "at": 13.5, "text": "shows her the Ring camera's picture, and explains exactly why." },
+    { "at": 19.5, "text": "Doorbell cameras give families clips and a stream of pings." },
+    { "at": 24.0, "text": "But not the answer to the one question that matters: is Mum's day normal?" },
+    { "at": 30.0, "text": "Doorstep watches the timing and the absences, and stays quiet when everything fits." },
+    { "at": 39.5, "text": "Here's an example day at sixty times speed." },
+    { "at": 43.0, "text": "Every Ring event becomes one plain sentence, written by Amazon Bedrock's Nova Lite." },
+    { "at": 49.0, "text": "It describes what happens, and never identifies anyone." },
+    { "at": 53.5, "text": "The carer is due between nine and half past ten." },
+    { "at": 57.5, "text": "When nobody comes, a rules engine, not AI, raises one gentle alert," },
+    { "at": 63.0, "text": "and explains why, in terms of Grace's care plan." },
+    { "at": 69.5, "text": "From the alert, Ada can call her mum or the carer," },
+    { "at": 74.0, "text": "be reminded in half an hour, or, if the visit was moved, mark it as expected." },
+    { "at": 81.5, "text": "Everything is kept in the alert's history." },
+    { "at": 89.5, "text": "At the end of the day, Nova Lite writes Ada a short note:" },
+    { "at": 95.0, "text": "Mum's day, in a few sentences." },
+    { "at": 104.5, "text": "For Grace, who doesn't always hear the chime, a big-screen visual doorbell." },
+    { "at": 111.0, "text": "Late at night, someone rings, and the TV says what's happening at the door, in words." },
+    { "at": 118.0, "text": "One press of OK dismisses it." },
+    { "at": 124.5, "text": "It's built on the real Ring Partner API: devices, event history, snapshots and live view." },
+    { "at": 131.5, "text": "Captions and digests come from Amazon Bedrock, cached so nothing is paid for twice." },
+    { "at": 138.0, "text": "Example days are labelled honestly. Nothing pretends." },
+    { "at": 144.5, "text": "Doorstep." },
+    { "at": 147.0, "text": "Peace of mind that's quiet when everything's fine." }
+  ]
+}
