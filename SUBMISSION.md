@@ -33,7 +33,7 @@ Millions of adult children look after a parent who lives alone, often from anoth
 ## What it does
 
 <!-- AWS-BUILDER:START -->
-- **AI event descriptions.** Each Ring event's snapshot is described by Amazon Bedrock (Nova Lite) in one plain sentence, e.g. *"A courier in a high-visibility vest leaves a package on the step."* It describes what happens and never identifies anyone.
+- **AI event descriptions.** Each Ring event's snapshot is described by Amazon Bedrock (Nova Lite) in one plain sentence. A real example from a recorded Ring frame: *"A package rests on the porch covered in snow."* It describes what happens and never identifies anyone.
 <!-- AWS-BUILDER:END -->
 <!-- NO-AWS -->
 <!-- - **Plain-language event descriptions.** Each Ring event becomes one plain sentence ("A package delivery at the front door at 14:05"), designed to be written by a vision model; descriptions describe what happens and never identify anyone. -->
@@ -48,18 +48,18 @@ Millions of adult children look after a parent who lives alone, often from anoth
   - the caption;
   - a plain-language reason tied to the family's own care plan, e.g. "Doorbell at 23:41 — outside Grace's usual hours (05:00–23:00)";
   - what else happened at the door within ±10 minutes.
-- **Caretaker actions, not just notifications.** **Call Grace** or **Call the aide/neighbour** (one tap, from the care plan's contacts), **That was expected** (and optionally add the visitor to the schedule), or **Remind me in 30 min**. Each alert keeps a history of what was done.
+- **Caretaker actions, not just notifications.** **Call Grace** or **Call the aide/neighbour** through a call sheet with the contact's name, role and number (**Call now** on phones, **Copy number** on computers), **That was expected** (and optionally add the visitor to the schedule), or **Remind me in 30 min**. Each alert keeps a history of what was done.
 - **Look now.** From any alert, open a live WebRTC view of the Ring camera (WHEP), proxied by our server so the token stays private. Verified against the Developer Playground.
 - **Gentle escalation.** An urgent late-night alert that nobody acknowledges for 15 minutes is marked as escalated to a second family member, in-app.
 - **Daily digest**: a short, warm note on the parent's day at the door.
 - **A care plan** where the family describes a normal day: visitors' windows, quiet-morning time, night hours, package threshold.
 - **Visual doorbell for the living room**: a full-screen, high-contrast "someone is at the door" web page for a TV or tablet, with the description. Dismiss with OK/Enter; it clears itself after a minute. Built for residents who can't hear the chime.
-- **Honest demo modes.** LIVE (real Ring Developer Playground), REPLAY (recorded Playground responses), SCENARIO (timed synthetic events, labelled "Simulated"). A badge on every screen shows which is active.
+- **Self-explanatory and honest.** A first-visit explainer says what Doorstep does in one line and three steps, and **See Grace's day** loads an example day. There are three data sources: live Ring Playground, recorded Playground responses, and example days of timed synthetic events. A plain-words badge on every screen ("Live from Ring", "Recorded from a Ring camera", "Example day") shows which is active. Every example event says whether its picture is a real Ring photo, a stock photo or an illustration.
 
 ## How we built it
 
 - **Next.js 15 (App Router) + TypeScript (strict) + Tailwind 4**, with server route handlers for every external API call. Secrets never reach the browser.
-- **Ring Partner API client** (`src/lib/ring/`), used at runtime by the poller, the onboarding token check and the fixture recorder:
+- **Ring Partner API client** (`src/lib/ring/`), used at runtime by the poller, the onboarding token check, the Look now proxy and the fixture recorder:
   - `GET /v1/devices?include=status,capabilities,configurations` with typed JSON:API normalization (`included` resolved by type + id).
   - `GET /v1/history/devices/{id}/events`, paginated newest-first via `links.next` `page[key]`.
   - `POST /v1/devices/{id}/media/image/download` (`at_timestamp`, 1920×1080 requested explicitly). It follows the 303 to the pre-signed URL manually, without forwarding the Bearer token.
@@ -82,7 +82,7 @@ No face recognition, no biometric matching, no identification of anyone. This is
 - **The Ring Developer Playground doesn't deliver webhooks**, and its tokens last ~30 minutes. We designed three explicit data modes (live / replayed / simulated) and label them on screen, so the demo never pretends.
 - **Event History has no documented time-range filter**, so "today's events" means paginating backwards until we pass the window (friction F-01).
 - **Event-type vocabulary differs between webhooks and history**, especially for packages (F-02). In the Playground every simulated event came through as `on_demand` (F-12).
-- **Playground data access starts at each token's issue time.** Fresh tokens see empty history and get undocumented 403s for earlier media (F-09). That led to a real product insight: Doorstep never claims "nobody came" for time it couldn't see. Absence-based alerts respect when coverage began, and the app says "watching since 23:43".
+- **Playground data access starts at each token's issue time.** Fresh tokens see empty history, and requests for earlier media fail (an undocumented `403 TIME_RANGE_NOT_AUTHORIZED`, or a 416 from the pre-signed host) (F-09). That led to a real product insight: Doorstep never claims "nobody came" for time it couldn't see. Absence-based alerts respect when coverage began, and the app says "watching since 23:43".
 - **The official sample app's device normalization doesn't match the documented schema** (F-03, F-04).
 <!-- AWS-BUILDER:START -->
 - **Amazon Bedrock was blocked by account quotas for two days.** Every Nova Lite quota in eu-north-1 was applied at 0 (tokens per day: 0 vs a 5.76B default), and most are "Not adjustable". The runtime error is a retryable `ThrottlingException: Too many tokens per day` on the very first call. We built a fallback: real Bedrock stays the default, failures show clearly labelled sample captions, and the app switches to Nova Lite automatically the moment a call succeeds. That's exactly what happened when the quota was lifted on Oct 22 after a support case (F-08). Calls then took 4–25 s from eu-north-1, so captioning now runs entirely in the background and never blocks the UI.
@@ -90,7 +90,12 @@ No face recognition, no biometric matching, no identification of anyone. This is
 
 ## Accomplishments we're proud of
 
-- It feels like a calm product, not a security dashboard: warm palette, large type, Atkinson Hyperlegible for low-vision readers, and rose red only for genuine late-night concerns.
+- It feels like a calm smart-home product, not a security dashboard:
+  - white and navy surfaces, one teal accent, Inter and Manrope;
+  - red only for genuine late-night concerns and escalations;
+  - every text pair passes WCAG AA in light and dark mode (lowest 5.06:1);
+  - keyboard-navigable throughout.
+- A first-time visitor understands it in five seconds: one headline, three steps, one button into an example day.
 - Honest by construction: every caption and event is labelled with where it came from.
 - The rules are pure, tested, time-zone-correct functions, so judges can trust the alerts.
 
@@ -117,7 +122,7 @@ The most valuable caretaking signals are absences and timing, and those need rul
 - **How it works:**
   - It calls `POST /v1/devices/{id}/media/image/download` with `image_options.resolution` set to 1920×1080 explicitly.
   - It follows the `303` to the pre-signed URL itself, without forwarding the Bearer token.
-  - It turns `TIME_RANGE_NOT_AUTHORIZED`, `MEDIA_NOT_FOUND` and `RECORDING_NOT_READY` (including errors from the pre-signed host) into plain hints.
+  - It turns `TIME_RANGE_NOT_AUTHORIZED`, `MEDIA_NOT_FOUND`, `RECORDING_NOT_READY` and `GRECO_NO_VALID_KEY` (including errors from the pre-signed host) into plain hints.
   - It was tested against the Ring Developer Playground on Oct 22, 2026.
 - **Why it matters:** The sample had no snapshot example. The three behaviours that cost us the most time aren't in the docs:
   - omitting `resolution` silently returns 640×360, so the watermark covers far more of the frame;
@@ -150,9 +155,9 @@ The most valuable caretaking signals are absences and timing, and those need rul
 - **What needs work:**
   - No webhook delivery, so any event-driven app needs a simulation layer.
   - 30-minute tokens with no refresh, so long demo sessions break mid-flow.
-  - A fresh token sees an empty history, and every earlier media request fails with an undocumented `403 TIME_RANGE_NOT_AUTHORIZED`. The authorized window starts at the token's issue time (F-09).
+  - A fresh token sees an empty history, and earlier media requests fail: an undocumented `403 TIME_RANGE_NOT_AUTHORIZED` on one day, a `416` from the pre-signed host on another. The authorized window starts at the token's issue time (F-09).
   - Simulated events arrive in Event History as `on_demand` with no subtype, even when the clip shows a package (F-12), so category logic can't be tested against it.
-  - `latest_in_range` snapshots fail on the pre-signed host with `422 GRECO_NO_VALID_KEY` (F-11). `subscriptions` returns 422 for the Playground user (F-13).
+  - `latest_in_range` snapshots intermittently fail on the pre-signed host with `422 GRECO_NO_VALID_KEY` (F-11). `subscriptions` returns 422 for the Playground user (F-13).
 - **Would we use it again?** Absolutely. We'd love a "simulate event → webhook to my URL" button.
 
 ### Ring sample app (`ring-api-helloworld`)
@@ -172,10 +177,10 @@ The most valuable caretaking signals are absences and timing, and those need rul
   - Passing JPEG bytes directly in an `image` block, with no S3 staging.
   - The JS SDK's typed errors with request ids.
 - **Real results:**
-  - Nova Lite captioned 40+ Ring and example frames.
+  - Nova Lite captioned all 47 events: 6 recorded Ring events and 41 example-day events, cached in `fixtures/captions.json`.
   - A typical caption is ~2,350 input and ~45 output tokens.
   - A digest is ~500 input and ~130 output tokens.
-  - JSON output parsed strictly every time.
+  - We saw no JSON parse failures; the strict parser accepted every response we inspected.
   - Captions describe actions and objects without identifying anyone (e.g. "A package rests on the porch covered in snow.", "A bird eats from a bird feeder.").
 - **What needs work:**
   - See F-08. A new account had every Nova Lite quota in eu-north-1 applied at 0, mostly "Not adjustable". The runtime signal is a retryable `ThrottlingException: Too many tokens per day` on the very first call. That reads as "slow down", and SDKs retry it automatically, when it really means "this account can't use this model".
@@ -190,7 +195,7 @@ The most valuable caretaking signals are absences and timing, and those need rul
 
 Doorstep uses **Amazon Bedrock Runtime (Converse API)** with **Amazon Nova Lite** (`eu.amazon.nova-lite-v1:0`, EU cross-region inference profile, called from eu-north-1):
 
-1. **Snapshot description.** For each Ring event, the server downloads the watermarked JPEG from the Ring Partner API and sends it to Nova Lite with a system prompt that forbids identifying people. It gets back JSON: a one-sentence description plus tags (people count, package visible, door open, vehicle). The tags feed the caretaking rules: was the package brought in, was the door answered.
+1. **Snapshot description.** For each Ring event, the server downloads the watermarked JPEG from the Ring Partner API and sends it to Nova Lite with a system prompt that forbids identifying people. It gets back JSON: a one-sentence description plus tags (people count, package visible, door open, vehicle). For real Ring events, the tags feed the caretaking rules: was the package brought in, was the door answered. On scripted example days the scenario's own tags stay authoritative, so a scripted day always demonstrates the alerts it's meant to.
 2. **Daily digest.** At the end of the day the server sends the day's descriptions and alerts as JSON. Nova Lite writes a warm 2–4 sentence summary for the family.
 
 All calls are server-side, cached by event id / day so nothing is paid for twice, and token usage is logged per call. A busy day costs well under one US cent. Full data flow, IAM policy and cost table: `docs/AWS.md`.
@@ -222,4 +227,5 @@ All calls are server-side, cached by event id / day so nothing is paid for twice
 
 - Repository: https://github.com/breakthrough-child/doorstep (public, MIT)
 - Demo video: [fill in]
+- Public read-only demo: [fill in if deployed; see README → Public read-only demo]
 - Friction log: `FRICTION_LOG.md` in the repo

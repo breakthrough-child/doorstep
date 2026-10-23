@@ -1,6 +1,6 @@
 # Doorstep — Friction Log
 
-A running log of real problems hit while building Doorstep on the Ring Partner API, the Ring Developer Playground, Amazon Bedrock and (if attempted) the Vega SDK. Each entry is specific and reproducible. Severity: **High** (blocked or forced a design change), **Medium** (cost real time, workaround exists), **Low** (annoyance or polish).
+A running log of real problems hit while building Doorstep on the Ring Partner API, the Ring Developer Playground, Amazon Bedrock and the Vega SDK. Each entry is specific and reproducible. Severity: **High** (blocked or forced a design change), **Medium** (cost real time, workaround exists), **Low** (annoyance or polish).
 
 Environment: Ubuntu laptop, Node 22.22, no Ring hardware, no Fire TV hardware. Dates are 2026.
 
@@ -27,7 +27,7 @@ Environment: Ubuntu laptop, Node 22.22, no Ring hardware, no Fire TV hardware. D
 - **Expected:** One vocabulary for event subtypes.
 - **Actual:** The webhook `sub_type` lists `motion`, `human`, `vehicle`, `package_delivery`, `other_motion`. The history filter lists `motion.human`, `motion.vehicle`, `motion.animal`, `motion.other_motion` — no package subtype and an `animal` subtype the webhook doesn't mention. The Playground release notes (May 28) advertise "Package" event simulation. It's unclear how a package event appears in history.
 - **Severity:** Medium (package-left-out is one of our core alerts)
-- **Workaround:** The normalizer accepts any of `package`, `package_delivery`, `motion.package`, `motion.package_delivery` and maps them to `package`; unknown subtypes fall back to `motion`. To be confirmed against real Playground output (see later entries).
+- **Workaround:** The normalizer accepts any of `package`, `package_delivery`, `motion.package`, `motion.package_delivery` and maps them to `package`; unknown subtypes fall back to `motion`. Real Playground output couldn't confirm the package mapping: every simulated event, packages included, arrived as `on_demand` (F-12).
 - **Suggestion:** Publish a single canonical table of event types/subtypes, and state which appear in history vs webhooks.
 
 ## F-03 · Official sample app's device normalization doesn't match the documented schema
@@ -93,9 +93,9 @@ Environment: Ubuntu laptop, Node 22.22, no Ring hardware, no Fire TV hardware. D
   - The very first call fails: `ThrottlingException: Too many tokens per day, please wait before trying again.` (HTTP 429, request id `954594e7-95ac-4fcc-bdab-570cc55d7d5b`, ~15 s including the SDK's automatic retries).
   - Service Quotas shows every Nova Lite quota for the account in eu-north-1 **applied at 0**. For example, *tokens per day* is **0** vs an AWS default of **5.76 billion**. Most of these quotas are marked **"Not adjustable"**, so the console offers no self-service increase.
   - Raised a quota increase request and AWS Support case **179260552100186**.
-  - **Status Thu Oct 22, 09:25 WAT:** still blocked. `npm run check:bedrock` → `ThrottlingException: Too many tokens per day` (HTTP 429, request `85f91cd8-e993-4925-827d-e8696b3e9981`). The 17:30 re-check result is recorded below if it changes.
+  - **Status Thu Oct 22, 09:25 WAT:** still blocked. `npm run check:bedrock` → `ThrottlingException: Too many tokens per day` (HTTP 429, request `85f91cd8-e993-4925-827d-e8696b3e9981`). 
   - **Resolved Thu Oct 22, ~15:27 WAT.** Calls started succeeding without any change on our side; the quota increase and support case came through. The first success is in `bedrock_usage` at 14:27 UTC (2,351 in / 45 out tokens). Doorstep switched from sample captions to Nova Lite automatically, as designed. Afterwards, latency from eu-north-1 via `eu.amazon.nova-lite-v1:0` was 4–25 s per image call (avg ~14 s over 47 calls), with 3 of 37 warm-up calls hitting a 25 s stream timeout. Retried successfully.
-- **Severity:** **High.** It blocks the AWS Builder integration entirely: no Bedrock call can succeed, and there's no self-service fix.
+- **Severity:** **High.** It blocked the AWS Builder integration entirely for about two days (no Bedrock call could succeed), with no self-service fix.
 - **Why it hurt:** The error is a *throttling* error, which reads as "slow down" and which SDKs retry automatically. Its real meaning is "this account may not use this model at all". A new account gets no `AccessDeniedException` or `ServiceQuotaExceededException` and no console banner saying the account's Bedrock quotas are zero. You only find out by reading Service Quotas line by line.
 - **Workaround:** Doorstep keeps real Bedrock as the default path. When a call fails it records the exact error, shows clearly labelled **sample captions**, and retries every 10 minutes for daily-quota errors. On the first success it switches to Nova Lite automatically and re-captions the samples. `npm run check:bedrock` makes one real call and prints success or the exact error with a hint. The SDK is limited to 2 attempts so a zero quota doesn't stall the pipeline.
 - **Suggestions:**
@@ -152,7 +152,7 @@ Environment: Ubuntu laptop, Node 22.22, no Ring hardware, no Fire TV hardware. D
 - **Actual:** All 6 events: `event_type: "on_demand"`, `is_third_party_reviewed: true`, no `sub_type`, plus an undocumented `relationships.cv_detections: {data: []}` and `meta.riid: null`. The snapshot clearly shows a **package** on snowy steps, and its burned-in camera clock reads **2018-12-05**, so it's a canned clip.
 - **Expected:** A `motion` event with a package subtype (as the release notes imply), so apps can test package logic.
 - **Severity:** Medium. Category-specific logic (package left out, person at door) can't be exercised against the Playground. It also blurs live views (opened by a person) with detections.
-- **Workaround:** Doorstep maps `on_demand` to "Live view" and relies on the vision description of the snapshot. Its package logic is exercised via clearly labelled simulated scenarios.
+- **Workaround:** Doorstep maps `on_demand` to "Live view" and relies on the vision description of the snapshot. Its package logic is exercised on clearly labelled example days (simulated scenarios).
 - **Suggestions:** Emit simulated events with their real `event_type`/subtype (`motion` + `package_delivery`, `human`, `vehicle`), and document `cv_detections` (it looks like exactly what a caretaking app needs).
 
 ## F-13 · Response fields that aren't in the reference
